@@ -1,0 +1,20 @@
+{
+  "name": "cred-auth-manager",
+  "version": "1.0.0",
+  "description": "Example centralized auth management system for distributed resource api architecture.",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "Haha. no."
+  },
+  "keywords": [
+    "cred",
+    "jwt",
+    "authentication",
+    "authorization",
+    "example",
+    "central",
+    "management"
+  ],
+  "author": "Rob McLarty",
+  "license": "MIT"
+}
