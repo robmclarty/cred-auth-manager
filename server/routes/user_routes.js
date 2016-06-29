@@ -1,12 +1,13 @@
 'use strict';
 
 const router = require('express').Router();
-const {
-  requireAdmin,
-  requirePermission,
-  requireOwner
-} = require('../middleware/authorization_middleware');
-const { requireValidAccessToken } = require('../middleware/token_middleware');
+// const {
+//   requireAdmin,
+//   requirePermission,
+//   requireOwner
+// } = require('../middleware/authorization_middleware');
+// const { requireValidAccessToken } = require('../middleware/token_middleware');
+const { authorizedAccess } = require('../auth');
 const {
   postUsers,
   getUsers,
@@ -23,13 +24,13 @@ const userRoutes = path => {
 
   // Only admins can create new users and list all users.
   router.route(`${ usersPath }`)
-    .all(requireValidAccessToken, requireAdmin)
+    .all(authorizedAccess.requirePermission('admin'))
     .post(postUsers)
     .get(getUsers);
 
   // Users can only get and change data for themselves, not any other users.
   router.route(`${ usersPath }/:id`)
-    .all(requireValidAccessToken, requireOwner)
+    .all(authorizedAccess.requirePermission('admin'))
     .get(getUser)
     .put(putUser)
     .delete(deleteUser);
@@ -37,7 +38,7 @@ const userRoutes = path => {
   // Only users with the 'admin' action set for the given resource can change a
   // user's permissions for that resource.
   router.route(`${ usersPath }/:id/permissions/:resource_name`)
-    .all(requireValidAccessToken, requirePermission('admin'))
+    .all(authorizedAccess.requirePermission('admin'))
     .get(getPermissions)
     .post(postPermissions)
     .delete(deletePermissions);

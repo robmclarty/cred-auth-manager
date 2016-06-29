@@ -1,11 +1,12 @@
 'use strict';
 
 const router = require('express').Router();
-const {
-  requireAdmin,
-  requirePermission
-} = require('../middleware/authorization_middleware');
-const { requireValidAccessToken } = require('../middleware/token_middleware');
+// const {
+//   requireAdmin,
+//   requirePermission
+// } = require('../middleware/authorization_middleware');
+//const { requireValidAccessToken } = require('../middleware/token_middleware');
+const { authorizedAccess } = require('../auth');
 const {
   postResources,
   getResources,
@@ -18,18 +19,18 @@ const {
 } = require('../controllers/resource_controller');
 
 router.route('resources')
-  .all(requireValidAccessToken, requireAdmin)
+  .all(authorizedAccess.requirePermission('admin'))
   .post(postResources)
   .get(getResources);
 
 router.route('resources/:resource_name')
-  .all(requireValidAccessToken, requirePermission('admin'))
+  .all(authorizedAccess.requirePermission('admin'))
   .get(getResource)
   .put(putResource)
   .delete(deleteResource);
 
 router.route('resources/:resource_name/actions')
-  .all(requireValidAccessToken, requirePermission('admin'))
+  .all(authorizedAccess.requirePermission('admin'))
   .post(postActions)
   .get(getActions)
   .delete(deleteActions);

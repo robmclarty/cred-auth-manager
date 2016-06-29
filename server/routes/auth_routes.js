@@ -1,7 +1,8 @@
 'use strict';
 
 const router = require('express').Router();
-const { requireRefreshToken } = require('../middleware/token_middleware');
+//const { requireRefreshToken } = require('../middleware/token_middleware');
+const { auth, authorizedRefresh } = require('./auth');
 const {
   postTokens,
   putTokens,
@@ -12,9 +13,9 @@ const {
 // Use "token" resource to handle authentication. POST = login, PUT = refresh,
 // DELETE = logout.
 router.route('tokens')
-  .post(postTokens)
-  .put(requireRefreshToken, putTokens)
-  .delete(requireRefreshToken, deleteToken);
+  .post(auth.authenticate('basic'), postTokens)
+  .put(authorizedRefresh.requireToken, putTokens)
+  .delete(authorizedRefresh.requireToken, deleteToken);
 
 // Use "registration" resource to handle signups. This is separate from creating
 // a "user" resource from the user_controller in that it is public-facing and
