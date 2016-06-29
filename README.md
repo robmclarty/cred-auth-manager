@@ -9,7 +9,6 @@ managing your users. It includes a UI (React SPA), a simple build pipeline using
 Gulp 4, and a deployment process using Gulp with rsync and ssh.
 
 The server itself has no front-end. It is a simple JSON API. But the React app
-accesses its interface and enables a UI for changing settings.
-
-Your customer-facing apps can access the API in the same way this React app
-does using the JSON API to login, get tokens, and manage settings.
+accesses its interface and enables a UI for changing settings. Your
+customer-facing apps can access the API in the same way this React app does
+using the JSON API to login, get tokens, and manage settings.
