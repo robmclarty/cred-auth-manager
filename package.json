@@ -16,5 +16,23 @@
     "management"
   ],
   "author": "Rob McLarty",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "argon2": "^0.12.0",
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
+    "cred": "^0.1.1",
+    "express": "^4.14.0",
+    "kerberos": "0.0.21",
+    "mongoose": "^4.5.2",
+    "morgan": "^1.7.0",
+    "redis": "^2.6.2",
+    "striptags": "^2.1.1",
+    "urlsafe-base64": "^1.0.0"
+  },
+  "devDependencies": {
+    "gulp": "github:gulpjs/gulp#4.0",
+    "require-dir": "^0.3.0",
+    "yargs": "^4.7.1"
+  }
 }
