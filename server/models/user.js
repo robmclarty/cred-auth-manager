@@ -114,7 +114,7 @@ const removePermission = function (name) {
 // Replace the permissions for `resource` with `actions`, or add them if they
 // don't already exist.
 const addPermission = function ({ resource = {}, actions = [] }) {
-  const validActions = [];
+  let validActions = [];
 
   // If permissions already exist for this resource, remove the old ones and
   // replace them with the new actions.
@@ -123,9 +123,7 @@ const addPermission = function ({ resource = {}, actions = [] }) {
   // Filter actions to only include valid actions (i.e., strings which already
   // exist in resource.actions).
   if (resource.actions) {
-    validActions = actions.filter(action => {
-      return resource.actions.indexOf(action) >= 0;
-    });
+    validActions = actions.filter(action => resource.actions.indexOf(action) >= 0)
   }
 
   // Add a new permission with valid actions.
@@ -150,11 +148,14 @@ const addPermission = function ({ resource = {}, actions = [] }) {
 //      actions: ["admin", "read:active", "write:new"]
 //    }
 // }
-const tokenPermissions = modelPermissions => {
-  return modelPermissions.reduce((acc, perm) => {
-    return Object.assign(acc, { [perm.name]: perm.toJSON() });
+const tokenPermissions = modelPermissions =>
+  modelPermissions.reduce((acc, perm) => {
+    return Object.assign(acc, {
+      [perm.name]: {
+        actions: perm.actions
+      }
+    });
   }, {});
-};
 
 // Generate limited data object for use in JWT token payload.
 const tokenPayload = function () {

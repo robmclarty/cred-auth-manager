@@ -6,12 +6,7 @@ curl \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"password"}' \
-  http://localhost:3000/login
-
-curl \
-  -X GET \
-  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiIxMjM0NTYiLCJpc0FjdGl2ZSI6dHJ1ZSwicGVybWlzc2lvbnMiOnsibXktYXBwLW5hbWUiOnsiYWN0aW9ucyI6WyJhY3Rpb24xIiwiYWN0aW9uMiIsImFjdGlvbk4iXX19LCJpYXQiOjE0NjY2MjQ5NjIsImV4cCI6MTQ2NjcxMTM2MiwiaXNzIjoibXktaXNzdWVyLW5hbWUiLCJqdGkiOiJyazU2c1BPQiJ9.oigrL7Ikbm59TQbGvZnE42MfcWcB_6IGfGHBVW-wR9-OknZjabh2FpO9jwp2tsO4Y7G3EXlfm6-NGiBQIm_iu_yLoytUvfw_xEL5KDRr_YFpVjQ58OdImld2-8Jin-18" \
-  http://localhost:3000/custom
+  http://localhost:3000/tokens
 
 curl \
   -X PUT \
@@ -22,3 +17,8 @@ curl \
   -X DELETE \
   -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiIxMjM0NTYiLCJpc0FjdGl2ZSI6dHJ1ZSwicGVybWlzc2lvbnMiOnsibXktYXBwLW5hbWUiOnsiYWN0aW9ucyI6WyJhY3Rpb24xIiwiYWN0aW9uMiIsImFjdGlvbk4iXX19LCJpYXQiOjE0NjY3MTYyODAsImV4cCI6MTQ2NzMyMTA4MCwiaXNzIjoibXktaXNzdWVyLW5hbWUiLCJqdGkiOiJyMWdsS3hSdHIifQ.QbbZYGUKN1DKwuIjfmHEXCL6k-Rey_N4c_wRrMnRWvDBsNC708aiprO-4ezyfCW-dpfCb4YqaFdLFzPTGI1RYA" \
   http://localhost:3000/revoke
+
+curl \
+  -X GET \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NzdiZTI2ZDUwZDNlN2E1NTQ4ODZmNWEiLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBlbWFpbC5jb20iLCJpc0FjdGl2ZSI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwicGVybWlzc2lvbnMiOnsiY3JlZC1hdXRoLW1hbmFnZXIiOnsiYWN0aW9ucyI6WyJhZG1pbiJdfX0sImlhdCI6MTQ2Nzc0NDIyMiwiZXhwIjoxNDY3ODMwNjIyLCJpc3MiOiJjcmVkLWF1dGgtbWFuYWdlciIsImp0aSI6IkhKd3llRktMIn0.a4mdW6mTz1dV1b3wrYUjrU1v6Qwzb-XspkGynDDOpbMdS_9EruY1Xyek3ck34yzCPSP5_UVOq7ud2GsXihIItpH55UFhrbMrO5c6Yp3jKKSqlxv1NYOQGP1oB41fcsAk" \
+  http://localhost:3000/users
