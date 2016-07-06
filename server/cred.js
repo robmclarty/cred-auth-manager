@@ -1,18 +1,20 @@
 'use strict';
 
 const { readFileSync } = require('fs')
-const gotCred = require('../../cred/dist')
+const gotCred = require('../../cred/src')
 const config = require('../config/server')
 const User = require('./models/user')
 
 // Authentication
 // --------------
-const cred = gotCred.authentication({
-  key: 'cred',
+const cred = gotCred({
+  //key: 'cred',
+  resource: config.appName,
   issuer: config.issuer,
-  cache: config.redis,
+  //cache: config.redis,
   accessOpts: {
-    secret: readFileSync(config.access.privateKeyPath),
+    privateKey: readFileSync(config.access.privateKeyPath),
+    publicKey: readFileSync(config.access.publicKeyPath),
     expiresIn: config.access.expiresIn,
     algorithm: config.access.algorithm
   },
@@ -41,25 +43,4 @@ cred.use('basic', req => {
     .then(user => user.tokenPayload())
 })
 
-// Authorization
-// -------------
-const authorizedRefresh = gotCred.authorization({
-  key: 'cred',
-  issuer: config.issuer,
-  secret: config.refresh.secret,
-  algorithm: config.refresh.algorithm
-})
-
-const authorizedAccess = gotCred.authorization({
-  name: config.appName,
-  key: 'cred',
-  issuer: config.issuer,
-  secret: readFileSync(config.access.publicKeyPath),
-  algorithm: config.access.algorithm
-})
-
-Object.assign(exports, {
-  cred,
-  authorizedRefresh,
-  authorizedAccess
-})
+module.exports = cred

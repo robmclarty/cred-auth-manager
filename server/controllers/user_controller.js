@@ -4,7 +4,7 @@ const striptags = require('striptags')
 const { createError, BAD_REQUEST } = require('../helpers/error_helper')
 const Resource = require('../models/resource')
 const User = require('../models/user')
-const { cred } = require('../auth')
+const cred = require('../cred')
 
 // Given a user object, check for any corresponding attributes in the request
 // body and update the user object with those properties that the auth object

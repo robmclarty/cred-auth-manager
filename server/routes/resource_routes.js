@@ -1,7 +1,7 @@
 'use strict'
 
 const router = require('express').Router()
-const { authorizedAccess } = require('../auth')
+const cred = require('../cred')
 const {
   postResources,
   getResources,
@@ -14,18 +14,18 @@ const {
 } = require('../controllers/resource_controller')
 
 router.route('resources')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .post(postResources)
   .get(getResources)
 
 router.route('resources/:resource_name')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .get(getResource)
   .put(putResource)
   .delete(deleteResource)
 
 router.route('resources/:resource_name/actions')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .post(postActions)
   .get(getActions)
   .delete(deleteActions)

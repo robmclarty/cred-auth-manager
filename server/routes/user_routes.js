@@ -1,7 +1,7 @@
 'use strict'
 
 const router = require('express').Router()
-const { authorizedAccess } = require('../auth')
+const cred = require('../cred')
 const {
   postUsers,
   getUsers,
@@ -15,13 +15,13 @@ const {
 
 // Only admins can create new users and list all users.
 router.route('/users')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .post(postUsers)
   .get(getUsers)
 
 // Users can only get and change data for themselves, not any other users.
 router.route('/users/:id')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .get(getUser)
   .put(putUser)
   .delete(deleteUser)
@@ -29,7 +29,7 @@ router.route('/users/:id')
 // Only users with the 'admin' action set for the given resource can change a
 // user's permissions for that resource.
 router.route('/users/:id/permissions/:resource_name')
-  .all(authorizedAccess.requirePermission('admin'))
+  .all(cred.requirePermission('admin'))
   .get(getPermissions)
   .post(postPermissions)
   .delete(deletePermissions)

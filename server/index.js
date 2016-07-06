@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const cors = require('cors')
 const fs = require('fs')
-const { authorizedAccess } = require('./auth')
+const cred = require('./cred')
 const config = require('../config/server')
 
 // Express App
@@ -53,7 +53,7 @@ app.use('/', [
 
 // All API routes require a valid token.
 app.use('/', [
-  authorizedAccess.requireToken,
+  cred.requireAccessToken,
   userRoutes,
   resourceRoutes
 ])

@@ -2,27 +2,27 @@
 
 const { createError, UNAUTHORIZED } = require('../helpers/error_helper')
 const User = require('../models/user')
-const { cred } = require('../auth')
+const cred = require('../cred')
 
 // This function assumes the request has already been processed by a cred
 // authentication function and has attached "tokens" to req.cred according to
 // the strategy being used. If that process hit an error or didn't authenticate
 // it would have created its own error and not executed this function.
 const postTokens = (req, res, next) => {
-  if (!req.cred || !req.cred.tokens)
+  if (!req[cred.key] || !req[cred.key].tokens)
     return next(new Error('Authentication failed.'))
 
   res.json({
     success: true,
     message: 'Tokens generated successfully.',
-    tokens: req.cred.tokens
+    tokens: req[cred.key].tokens
   })
 }
 
 // Takes a refresh-token (in the request header, validated in middleware), and
 // returns a fresh access-token.
 const putTokens = (req, res, next) => {
-  auth.refresh(req.cred.token)
+  cred.refresh(req[cred.key].token)
     .then(freshTokens => res.json({
       message: 'Tokens refreshed.',
       tokens: freshTokens
@@ -30,11 +30,11 @@ const putTokens = (req, res, next) => {
     .catch(next)
 }
 
-// Logging out is simply done by adding the current, valid, token to a blacklist
-// which will invalidate the token until its expiration date has been reached.
-// The token is now no longer valid. Respond that the user is now "logged out".
+// Logging out is simply done by removing the current, valid, token from a
+// whitelist which will invalidate the token. Respond that the user is now
+// "logged out".
 const deleteToken = (req, res, next) => {
-  auth.revoke(req.cred.token)
+  cred.revoke(req[cred.key].token)
     .then(revokedToken => res.json({
       message: 'Token revoked.',
       token: revokedToken
