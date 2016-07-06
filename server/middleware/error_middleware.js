@@ -36,8 +36,8 @@ const badRequest = (err, req, res, next) => {
     success: false,
     message: err.message || 'Bad Request',
     error: err
-  });
-};
+  })
+}
 
 const unprocessable = (err, req, res, next) => {
   if (err.status !== UNPROCESSABLE) return next(err)

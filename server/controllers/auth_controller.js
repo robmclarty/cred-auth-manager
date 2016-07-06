@@ -1,25 +1,8 @@
-'use strict';
+'use strict'
 
-const User = require('../models/user');
-const { auth } = require('../auth');
-
-// Create a new user that is guaranteed to not be an admin. This is to be used
-// for public-facing signup/registration with the app.
-const postRegistration = (req, res, next) => {
-  const newUser = req.body;
-
-  // Admin users cannot be created through this endpoint.
-  newUser.isAdmin = false;
-
-  User
-    .create(newUser)
-    .then(user => res.json({
-      success: true,
-      message: 'Registration successful.',
-      user
-    }))
-    .catch(err => next(err));
-};
+const { createError, UNAUTHORIZED } = require('../helpers/error_helper')
+const User = require('../models/user')
+const { cred } = require('../auth')
 
 // This function assumes the request has already been processed by a cred
 // authentication function and has attached "tokens" to req.cred according to
@@ -27,14 +10,14 @@ const postRegistration = (req, res, next) => {
 // it would have created its own error and not executed this function.
 const postTokens = (req, res, next) => {
   if (!req.cred || !req.cred.tokens)
-    return next(new Error('Authentication failed.'));
+    return next(new Error('Authentication failed.'))
 
   res.json({
     success: true,
     message: 'Tokens generated successfully.',
     tokens: req.cred.tokens
-  });
-};
+  })
+}
 
 // Takes a refresh-token (in the request header, validated in middleware), and
 // returns a fresh access-token.
@@ -44,8 +27,8 @@ const putTokens = (req, res, next) => {
       message: 'Tokens refreshed.',
       tokens: freshTokens
     }))
-    .catch(err => next(err));
-};
+    .catch(next)
+}
 
 // Logging out is simply done by adding the current, valid, token to a blacklist
 // which will invalidate the token until its expiration date has been reached.
@@ -56,12 +39,11 @@ const deleteToken = (req, res, next) => {
       message: 'Token revoked.',
       token: revokedToken
     }))
-    .catch(err => next(err));
-};
+    .catch(next)
+}
 
 Object.assign(exports, {
-  postRegistration,
   postTokens,
   putTokens,
   deleteToken
-});
+})

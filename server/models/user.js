@@ -1,17 +1,18 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
-const argon2 = require('argon2');
-const URLSafe = require('urlsafe-base64');
-const Permission = require('./permission');
+const mongoose = require('mongoose')
+const argon2 = require('argon2')
+const URLSafe = require('urlsafe-base64')
+const Permission = require('./permission')
 
-const SALT_LENGTH = 32;
+const SALT_LENGTH = 32
+
 const ARGON2_OPTIONS = {
   timeCost: 3,
   memoryCost: 12, // 2^12kb
   parallelism: 1, // threads
   argon2d: false // use agron2i
-};
+}
 
 // Simple validation regex for email addresses. It just checks for '@' and '.'.
 // Anything more than this is overkill imho and fails to capture new and emerging
@@ -21,7 +22,7 @@ const ARGON2_OPTIONS = {
 // rather than using some convoluted and impossible-to-understand regex, simply
 // send the user a confirmation email to the would-be address directly. If it
 // gets confirmed, it must be real ;)
-const isValidEmail = () => (/.+@.+\..+/i);
+const isValidEmail = () => (/.+@.+\..+/i)
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -60,65 +61,58 @@ const UserSchema = new mongoose.Schema({
   loginAt: { type: Date, required: true, default: Date.now },
   createdAt: { type: Date, required: true, default: Date.now },
   updatedAt: { type: Date, required: true, default: Date.now }
-});
+})
 
 // Keep updatedAt current on each save.
 UserSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-
-  next();
-});
+  this.updatedAt = Date.now()
+  next()
+})
 
 // Convert password as argon2 hash before saving it.
 UserSchema.pre('save', function (next) {
-  const user = this;
+  const user = this
 
   // Break out if the password hasn't changed.
-  if (!user.isModified('password')) return next();
+  if (!user.isModified('password')) return next()
 
-  // If password has changed, hash it.
-  argon2
-    .generateSalt(SALT_LENGTH)
+  // If password has changed, hash it before saving to the database.
+  argon2.generateSalt(SALT_LENGTH)
     .then(salt => argon2.hash(user.password, salt, ARGON2_OPTIONS))
-    .then(hash => {
-      user.password = hash;
-      next();
-    })
-    .catch(err => next(err));
-});
+    .then(hash => user.password = hash)
+    .then(next())
+    .catch(next)
+})
 
 const verifyPassword = function (password) {
   return new Promise((resolve, reject) => {
     argon2
       .verify(this.password, password)
       .then(match => resolve(match))
-      .catch(err => reject(err));
-  });
-};
+      .catch(err => reject(err))
+  })
+}
 
 // Return an array of actions for the permission which matches the given
 // resource name.
 const findPermission = function (name) {
-  return this.permissions.find(perm => (perm.name === name));
-};
+  return this.permissions.find(perm => (perm.name === name))
+}
 
 // Cut the resource matching `name` from the permissions array.
 const removePermission = function (name) {
-  const index = this.permissions.findIndex(permission => {
-    return permission.name === name;
-  });
-
-  if (index >= 0) this.permissions.splice(index, 1);
-};
+  const index = this.permissions.findIndex(permission => permission.name === name)
+  if (index >= 0) this.permissions.splice(index, 1)
+}
 
 // Replace the permissions for `resource` with `actions`, or add them if they
 // don't already exist.
 const addPermission = function ({ resource = {}, actions = [] }) {
-  let validActions = [];
+  let validActions = []
 
   // If permissions already exist for this resource, remove the old ones and
   // replace them with the new actions.
-  this.removePermission(resource.name);
+  this.removePermission(resource.name)
 
   // Filter actions to only include valid actions (i.e., strings which already
   // exist in resource.actions).
@@ -134,8 +128,8 @@ const addPermission = function ({ resource = {}, actions = [] }) {
     resourceId: resource.id,
     name: resource.name,
     actions: validActions
-  }));
-};
+  }))
+}
 
 // Format permissions for use in a JWT access token, returning an object whose
 // keys are the names of a resource which references an array of permissible
@@ -154,8 +148,8 @@ const tokenPermissions = modelPermissions =>
       [perm.name]: {
         actions: perm.actions
       }
-    });
-  }, {});
+    })
+  }, {})
 
 // Generate limited data object for use in JWT token payload.
 const tokenPayload = function () {
@@ -166,8 +160,8 @@ const tokenPayload = function () {
     isActive: this.isActive,
     isAdmin: this.isAdmin,
     permissions: tokenPermissions(this.permissions)
-  };
-};
+  }
+}
 
 // More data returned in JSON form than in token payload.
 const toJSON = function () {
@@ -182,8 +176,8 @@ const toJSON = function () {
     loginAt: this.loginAt,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt
-  };
-};
+  }
+}
 
 Object.assign(UserSchema.methods, {
   verifyPassword,
@@ -192,6 +186,6 @@ Object.assign(UserSchema.methods, {
   addPermission,
   tokenPayload,
   toJSON
-});
+})
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema)

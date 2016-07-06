@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
-const URLSafe = require('urlsafe-base64');
+const mongoose = require('mongoose')
+const URLSafe = require('urlsafe-base64')
 
 // A "resource" in this context is a pointer to some resource in the cloud that
 // will make use of this auth system. That is, some other server that will
@@ -33,13 +33,12 @@ const ResourceSchema = new mongoose.Schema({
   isActive: { type: Boolean, required: true, default: true },
   createdAt: { type: Date, required: true, default: Date.now },
   updatedAt: { type: Date, required: true, default: Date.now }
-});
+})
 
 // Keep updatedAt current.
 ResourceSchema.pre('save', next => {
-  this.updatedAt = Date.now();
+  this.updatedAt = Date.now()
+  next()
+})
 
-  next();
-});
-
-module.exports = mongoose.model('Resource', ResourceSchema);
+module.exports = mongoose.model('Resource', ResourceSchema)

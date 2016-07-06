@@ -30,4 +30,4 @@ router.route('resources/:resource_name/actions')
   .get(getActions)
   .delete(deleteActions)
 
-module.exports = router;
+module.exports = router

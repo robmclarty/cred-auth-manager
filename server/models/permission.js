@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
-const URLSafe = require('urlsafe-base64');
+const mongoose = require('mongoose')
+const URLSafe = require('urlsafe-base64')
 
 // A small object type that contains a name (a unique identifier that is the
 // name of a resource), and an array of strings representing permissible actions
@@ -26,15 +26,15 @@ const PermissionSchema = new mongoose.Schema({
   actions: [String]
 }, {
   autoIndex: false
-});
+})
 
 const toJSON = () => ({
   actions: this.actions
-});
+})
 
 // Merge custom methods with UserSchema.methods.
 Object.assign(PermissionSchema.methods, {
   toJSON
-});
+})
 
-module.exports = mongoose.model('Permission', PermissionSchema);
+module.exports = mongoose.model('Permission', PermissionSchema)
