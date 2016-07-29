@@ -9,7 +9,7 @@ const cred = require('../cred')
 // it would have created its own error and not executed this function.
 // POST /tokens
 const postTokens = (req, res, next) => {
-  if (!req.auth || !req.auth.tokens) return next(createError({
+  if (!req.cred || !req.cred.tokens) return next(createError({
     status: UNAUTHORIZED,
     message: 'Authentication failed.'
   }))
@@ -17,7 +17,7 @@ const postTokens = (req, res, next) => {
   res.json({
     success: true,
     message: 'Tokens generated successfully.',
-    tokens: req.auth.tokens
+    tokens: req.cred.tokens
   })
 }
 
@@ -25,7 +25,7 @@ const postTokens = (req, res, next) => {
 // returns a fresh access-token.
 // PUT /tokens
 const putTokens = (req, res, next) => {
-  cred.refresh(req.auth.token)
+  cred.refresh(req.cred.token)
     .then(freshTokens => res.json({
       message: 'Tokens refreshed.',
       tokens: freshTokens
@@ -41,7 +41,7 @@ const putTokens = (req, res, next) => {
 // "logged out".
 // DELETE /tokens
 const deleteToken = (req, res, next) => {
-  cred.revoke(req.auth.token)
+  cred.revoke(req.cred.token)
     .then(revokedToken => res.json({
       message: 'Token revoked.',
       token: revokedToken

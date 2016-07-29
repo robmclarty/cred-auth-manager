@@ -7,7 +7,8 @@ const cred = require('../cred')
 
 // POST /users
 const postUsers = (req, res, next) => {
-  const filteredUpdates = User.filterAdminProps(req.auth.isAdmin, req.body)
+  const auth = req.cred.payload
+  const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
   const user = new User(filteredUpdates)
 
   user.save()
@@ -23,7 +24,8 @@ const postUsers = (req, res, next) => {
 // for public-facing signup/registration with the app.
 // POST /registration
 const postRegistration = (req, res, next) => {
-  const filteredUpdates = User.filterAdminProps(req.auth.payload, req.body)
+  const auth = req.cred.payload
+  const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
   const user = new User(filteredUpdates)
 
   // Admin users cannot be created through this endpoint.
@@ -72,6 +74,7 @@ const getUser = (req, res, next) => {
 // and strip any html tags from String fields to mitigate XSS attacks.
 // PUT /users/:id
 const putUser = (req, res, next) => {
+  const auth = req.cred.payload
   const userId = String(req.params.id)
 
   User.findById(userId)
@@ -81,7 +84,7 @@ const putUser = (req, res, next) => {
         message: `No user found with id '${ userId }'`
       })
 
-      const filteredUpdates = User.filterAdminProps(req.auth.payload, req.body)
+      const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
 
       Object.keys(filteredUpdates).forEach(key => {
         user[key] = filteredUpdates[key]
