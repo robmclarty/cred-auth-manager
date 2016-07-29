@@ -1,7 +1,8 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const URLSafe = require('base64-url')
+const validator = require('validator')
+const base64url = require('base64-url')
 
 // A small object type that contains a name (a unique identifier that is the
 // name of a resource), and an array of strings representing permissible actions
@@ -16,9 +17,9 @@ const URLSafe = require('base64-url')
 const PermissionSchema = new mongoose.Schema({
   resourceId: {
     type: mongoose.Schema.Types.ObjectId,
-    require: true
+    require: true,
     validate: {
-      validator: validator.isObjectid,
+      validator: validator.isMongoId,
       message: '{ VALUE } is not a valid ObjectId'
     }
   },
@@ -38,7 +39,9 @@ const PermissionSchema = new mongoose.Schema({
 // Helper Methods
 // --------------
 
-const sanitizePermission = permission => {
+const sanitizePermission = ref => {
+  const permission = Object.assign({}, ref)
+
   if (permission.isModified('name'))
     permission.name = validator.trim(permission.name)
     permission.name = base64url.escape(permission.name)
@@ -55,10 +58,14 @@ const sanitizePermission = permission => {
 // ----------------
 
 PermissionSchema.pre('save', function (next) {
-  this = santizePermission(this)
+  const sanitizedPermission = santizePermission(this)
+
+  Object.keys(sanitizedPermission).forEach(key => {
+    this[key] = sanitizedPermission[key]
+  })
 
   next()
-}
+})
 
 // Instance Methods
 // ----------------

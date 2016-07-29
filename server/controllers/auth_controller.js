@@ -11,8 +11,8 @@ const cred = require('../cred')
 const postTokens = (req, res, next) => {
   if (!req.auth || !req.auth.tokens) return next(createError({
     status: UNAUTHORIZED,
-    message: 'Authentication failed.')
-  })
+    message: 'Authentication failed.'
+  }))
 
   res.json({
     success: true,
@@ -33,7 +33,7 @@ const putTokens = (req, res, next) => {
     .catch(err => next(createError({
       status: UNAUTHORIZED,
       message: err
-    }))
+    })))
 }
 
 // Logging out is simply done by removing the current, valid, token from a
@@ -49,7 +49,7 @@ const deleteToken = (req, res, next) => {
     .catch(err => next(createError({
       status: UNAUTHORIZED,
       message: err
-    }))
+    })))
 }
 
 Object.assign(exports, {

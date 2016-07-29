@@ -73,7 +73,12 @@ const notEmptyOrInList = (value, list) => value !== '' && !list.includes(value)
 // ----------------
 
 ResourceSchema.pre('save', function (next) {
-  this = sanitizeResource(this)
+  const sanitizedResource = sanitizeResource(this)
+
+  Object.keys(sanitizedResource).forEach(key => {
+    this[key] = sanitizedResource[key]
+  })
+
   this.updatedAt = Date.now()
 
   next()

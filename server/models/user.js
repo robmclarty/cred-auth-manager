@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
     sparse: true,
     validate: {
-      validator: URLSafe.validate,
+      validator: value => validator.matches(value, /^[A-Za-z0-9\-_]+$/),
       message: '{ VALUE } must be URL-safe (use hyphens instead of spaces, like "my-cool-username")'
     }
   },
@@ -129,7 +129,12 @@ const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
 // ----------------
 
 UserSchema.pre('save', function (next) {
-  this = sanitizeUser(this)
+  const sanitizedUser = sanitizeUser(this)
+
+  Object.keys(sanitizedUser).forEach(key => {
+    this[key] = sanitizedUser[key]
+  })
+
   this.updatedAt = Date.now()
 
   // If the password has changed, hash it before saving, otherwise just go next.

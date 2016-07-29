@@ -1,12 +1,10 @@
 'use strict'
 
 const express = require('express')
-const expressValidator = require('express-validator')
 const mongoSanitize = require('express-mongo-sanitize')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const escape = require('lodash.escape')
 const RateLimit = require('express-rate-limit')
 const morgan = require('morgan')
 const cred = require('./cred')
