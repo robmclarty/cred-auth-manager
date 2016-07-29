@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const { readFileSync } = require('fs')
 const gotCred = require('../../cred/src')
@@ -30,8 +30,11 @@ const cred = gotCred({
 // (just trow them) as they will be handled by cred itself and passed to your
 // error handling middleware from there.
 cred.use('basic', req => {
-  return User.findOne({ username: req.body.username })
-    .then(user => Promise.all([user, user.verifyPassword(req.body.password)]))
+  const username = String(req.body.username)
+  const password = String(req.body.password)
+
+  return User.findOne({ username })
+    .then(user => Promise.all([user, user.verifyPassword(password)]))
     .then(userMatch => {
       const user = userMatch[0]
       const isMatch = userMatch[1]

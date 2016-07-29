@@ -2,7 +2,8 @@
 
 const mongoose = require('mongoose')
 const argon2 = require('argon2')
-const URLSafe = require('urlsafe-base64')
+const validator = require('validator')
+const base64url = require('base64-url')
 const Permission = require('./permission')
 
 const SALT_LENGTH = 32
@@ -14,16 +15,6 @@ const ARGON2_OPTIONS = {
   argon2d: false // use agron2i
 }
 
-// Simple validation regex for email addresses. It just checks for '@' and '.'.
-// Anything more than this is overkill imho and fails to capture new and emerging
-// address schemas (e.g., ending in '.ninja', or including tags with a '+').
-//
-// If it is crucial that email addresses are verified as real email addresses,
-// rather than using some convoluted and impossible-to-understand regex, simply
-// send the user a confirmation email to the would-be address directly. If it
-// gets confirmed, it must be real ;)
-const isValidEmail = () => (/.+@.+\..+/i)
-
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -32,7 +23,7 @@ const UserSchema = new mongoose.Schema({
     sparse: true,
     validate: {
       validator: URLSafe.validate,
-      message: 'must be URL-safe (use hyphens instead of spaces, like "my-cool-username")'
+      message: '{ VALUE } must be URL-safe (use hyphens instead of spaces, like "my-cool-username")'
     }
   },
   password: {
@@ -45,16 +36,39 @@ const UserSchema = new mongoose.Schema({
     sparse: true,
     required: true,
     validate: {
-      validator: isValidEmail,
+      validator: validator.isEmail,
       message: '{ VALUE } is not a valid email address.'
     }
   },
-  isActive: { type: Boolean, required: true, default: true },
-  isAdmin: { type: Boolean, required: true, default: false },
+  isActive: {
+    type: Boolean,
+    required: true,
+    default: true,
+    validate: {
+      validator: validator.isBoolean,
+      message: '{ VALUE } may only be either true or false.'
+    }
+  },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false,
+    validate: {
+      validator: validator.isBoolean,
+      message: '{ VALUE } may only be either true or false.'
+    }
+  },
   profile: {
     name: { type: String, required: false },
     location: { type: String, required: false },
-    website: { type: String, required: false },
+    website: {
+      type: String,
+      required: false,
+      validate: {
+        validator: validator.isURL,
+        message: '{ VALUE } is not a valid URL.'
+      }
+    },
     company: { type: String, require: false }
   },
   permissions: [Permission.schema],
@@ -63,34 +77,79 @@ const UserSchema = new mongoose.Schema({
   updatedAt: { type: Date, required: true, default: Date.now }
 })
 
-// Keep updatedAt current on each save.
+// Helper Methods
+// --------------
+
+// Sanitize all new inputs before saving to database, except for password, which
+// is handled separately using hash function.
+const sanitizeUser = user => {
+  if (user.isModified('username'))
+    user.username = validator.trim(user.username)
+    user.username = base64url.escape(user.username)
+
+  if (this.isModified('email'))
+    user.email = validator.trim(user.email)
+    user.email = validator.normalizeEmail(user.email, {
+      lowercase: true,
+      remove_dots: false,
+      remove_extension: true
+    })
+    user.email = validator.escape(user.email)
+
+  if (user.isModified('isActive'))
+    user.isActive = validator.toBoolean(user.isActive, true)
+
+  if (user.isModified('isAdmin'))
+    user.isAdmin = validator.toBoolean(user.isAdmin, true)
+
+  if (user.isModified('profile.name'))
+    user.profile.name = validator.trim(user.profile.name)
+    user.profile.name = validator.escape(user.profile.name)
+
+  if (user.isModified('profile.location'))
+    user.profile.location = validator.trim(user.profile.location)
+    user.profile.location = validator.escape(user.profile.location)
+
+  if (user.isModified('website'))
+    user.profile.website = validator.trim(user.profile.website)
+    user.profile.website = base64url.escape(user.profile.website)
+
+  if (user.isModified('profile.company'))
+    user.profile.company = validator.trim(user.profile.company)
+    user.profile.company = validator.escape(user.profile.company)
+
+  return user
+}
+
+// Convert password as argon2 hash before saving it.
+const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
+  .then(salt => argon2.hash(password, salt, ARGON2_OPTIONS))
+
+// Pre-save Methods
+// ----------------
+
 UserSchema.pre('save', function (next) {
+  this = sanitizeUser(this)
   this.updatedAt = Date.now()
+
+  // If the password has changed, hash it before saving, otherwise just go next.
+  if (this.isModified('password')) {
+    return hashPassword(this.password)
+      .then(hash => {
+        this.password = hash
+        next()
+      })
+      .catch(err => console.log('Error hashing password.'))
+  }
+
   next()
 })
 
-// Convert password as argon2 hash before saving it.
-UserSchema.pre('save', function (next) {
-  const user = this
-
-  // Break out if the password hasn't changed.
-  if (!user.isModified('password')) return next()
-
-  // If password has changed, hash it before saving to the database.
-  argon2.generateSalt(SALT_LENGTH)
-    .then(salt => argon2.hash(user.password, salt, ARGON2_OPTIONS))
-    .then(hash => user.password = hash)
-    .then(next())
-    .catch(next)
-})
+// Instance Methods
+// ----------------
 
 const verifyPassword = function (password) {
-  return new Promise((resolve, reject) => {
-    argon2
-      .verify(this.password, password)
-      .then(match => resolve(match))
-      .catch(err => reject(err))
-  })
+  return argon2.verify(this.password, password)
 }
 
 // Return an array of actions for the permission which matches the given
@@ -186,6 +245,26 @@ Object.assign(UserSchema.methods, {
   addPermission,
   tokenPayload,
   toJSON
+})
+
+// Static Methods
+// --------------
+
+// Only admins can activate or de-activate users and set the admin status.
+const filterAdminProps = (isAdmin, updates) => {
+  const filteredUpdates = Object.assign({}, updates)
+
+  if (updates.hasOwnProperty('isActive') && !isAdmin)
+    delete filteredUpdates.isActive
+
+  if (updates.hasOwnProperty('isAdmin') && !isAdmin)
+    delete filteredUpdates.isAdmin
+
+  return filteredUpdates
+}
+
+Object.assign(UserSchema.statics, {
+  filterAdminProps
 })
 
 module.exports = mongoose.model('User', UserSchema)

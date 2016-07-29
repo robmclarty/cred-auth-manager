@@ -1,37 +1,14 @@
 'use strict'
 
-const striptags = require('striptags')
 const { createError, BAD_REQUEST } = require('../helpers/error_helper')
 const Resource = require('../models/resource')
 const User = require('../models/user')
 const cred = require('../cred')
 
-// Given a user object, check for any corresponding attributes in the request
-// body and update the user object with those properties that the auth object
-// (from req.auth) is allowed to change.
-// NOTE: permissions are updated through a special endpoint just for that.
-const updatedUser = ({ auth = {}, targetUser = {}, updates = {} }) => {
-  const user = Object.assign({}, targetUser)
-
-  if (updates.hasOwnProperty('username')) user.username = striptags(updates.username)
-  if (updates.hasOwnProperty('email')) user.email = striptags(updates.email)
-  if (updates.hasOwnProperty('password')) user.password = updates.password
-
-  // Only admins can activate or de-activate users.
-  if (updates.hasOwnProperty('isActive') && auth.isAdmin) user.isActive = updates.isActive
-
-  // Only other admins can assign admin status to users.
-  if (updates.hasOwnProperty('isAdmin') && auth.isAdmin) user.isAdmin = updates.isAdmin
-
-  return user
-}
-
+// POST /users
 const postUsers = (req, res, next) => {
-  const user = updatedUser({
-    auth: req[cred.key].payload,
-    targetUser: new User(),
-    updates: req.body
-  })
+  const filteredUpdates = User.filterAdminProps(req.auth.isAdmin, req.body)
+  const user = new User(filteredUpdates)
 
   user.save()
     .then(res.json({
@@ -44,15 +21,13 @@ const postUsers = (req, res, next) => {
 
 // Create a new user that is guaranteed to not be an admin. This is to be used
 // for public-facing signup/registration with the app.
+// POST /registration
 const postRegistration = (req, res, next) => {
-  const user = updatedUser({
-    auth: req[cred.key].payload,
-    targetUser: new User(),
-    updates: req.body
-  })
+  const filteredUpdates = User.filterAdminProps(req.auth.payload, req.body)
+  const user = new User(filteredUpdates)
 
   // Admin users cannot be created through this endpoint.
-  newUser.isAdmin = false
+  user.isAdmin = false
 
   user.save()
     .then(res.json({
@@ -73,12 +48,15 @@ const getUsers = (req, res, next) => {
     .catch(next)
 }
 
+// GET /users/:id
 const getUser = (req, res, next) => {
-  User.findById(req.params.id)
+  const userId = String(req.params.id)
+
+  User.findById(userId)
     .then(user => {
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
       res.json({
@@ -92,21 +70,25 @@ const getUser = (req, res, next) => {
 
 // Only allow updating of specific fields, check for their existence explicitly,
 // and strip any html tags from String fields to mitigate XSS attacks.
+// PUT /users/:id
 const putUser = (req, res, next) => {
-  User.findById(req.params.id)
+  const userId = String(req.params.id)
+
+  User.findById(userId)
     .then(user => {
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
-      return updatedUser({
-        auth: req[cred.key].payload,
-        targetUser: user,
-        updates: req.body
+      const filteredUpdates = User.filterAdminProps(req.auth.payload, req.body)
+
+      Object.keys(filteredUpdates).forEach(key => {
+        user[key] = filteredUpdates[key]
       })
+
+      return user.save()
     })
-    .then(user => user.save())
     .then(user => res.json({
       success: true,
       message: 'User updated.',
@@ -115,12 +97,15 @@ const putUser = (req, res, next) => {
     .catch(next)
 }
 
+// DELETE /users/:id
 const deleteUser = (req, res, next) => {
-  User.findByIdAndRemove(req.params.id)
+  const userId = String(req.params.id)
+
+  User.findByIdAndRemove(userId)
     .then(user => {
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
       res.json({
@@ -134,9 +119,12 @@ const deleteUser = (req, res, next) => {
 
 // GET /users/:id/permissions/:resource_name
 const getPermissions = (req, res, next) => {
+  const userId = String(req.params.id)
+  const resourceName = String(req.params.resource_name)
+
   Promise.all([
-      User.findById(req.params.id),
-      Resource.findOne({ name: req.params.resource_name })
+      User.findById(userId),
+      Resource.findOne({ name: resourceName })
     ])
     .then(userAndResource => {
       const user = userAndResource[0]
@@ -144,12 +132,12 @@ const getPermissions = (req, res, next) => {
 
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with name '${ req.params.resource_name }'`
+        message: `No resource found with name '${ resourceName }'`
       })
 
       const permission = user.findPermission(resource.name)
@@ -165,15 +153,19 @@ const getPermissions = (req, res, next) => {
 
 // POST /users/:id/permissions/:resource_name
 const postPermissions = (req, res, next) => {
+  const userId = String(req.params.id)
+  const resourceName = String(req.params.resource_name)
+  const actions = req.body.actions
+
   // Don't go any further if no actions were provided.
-  if (!req.body.actions) return next(createError({
+  if (!actions) return next(createError({
     status: BAD_REQUEST,
     message: 'No actions provided.'
   }))
 
   Promise.all([
-      User.findById(req.params.id),
-      Resource.findOne({ name: req.params.resource_name })
+      User.findById(userId),
+      Resource.findOne({ name: resourceName })
     ])
     .then(userAndResource => {
       const user = userAndResource[0]
@@ -181,18 +173,18 @@ const postPermissions = (req, res, next) => {
 
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with name '${ req.params.resource_name }'`
+        message: `No resource found with name '${ resourceName }'`
       })
 
       // Old permissions are replaced with new ones.
       user.setPermission({
         resource,
-        actions: req.body.actions
+        actions
       })
 
       return user.save()
@@ -207,9 +199,12 @@ const postPermissions = (req, res, next) => {
 
 // DELETE /users/:id/permissions/:resource_name
 const deletePermissions = (req, res, next) => {
+  const userId = req.params.id
+  const resourceName = req.params.resource_name
+
   Promise.all([
-      User.findById(req.params.id),
-      Resource.findOne({ name: req.params.resource_name })
+      User.findById(userId),
+      Resource.findOne({ name: resourceName })
     ])
     .then(userAndResource => {
       const user = userAndResource[0]
@@ -217,12 +212,12 @@ const deletePermissions = (req, res, next) => {
 
       if (!user) throw createError({
         status: BAD_REQUEST,
-        message: `No user found with id '${ req.params.id }'`
+        message: `No user found with id '${ userId }'`
       })
 
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with name '${ req.params.resource_name }'`
+        message: `No resource found with name '${ resourceName }'`
       })
 
       user.removePermission(resource.name)
@@ -235,7 +230,7 @@ const deletePermissions = (req, res, next) => {
       user
     }))
     .catch(next)
-};
+}
 
 Object.assign(exports, {
   postUsers,

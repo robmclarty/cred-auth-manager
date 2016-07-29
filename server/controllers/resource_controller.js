@@ -1,86 +1,21 @@
 'use strict'
 
-const striptags = require('striptags')
-const URLSafe = require('urlsafe-base64')
+const validator = require('validator')
 const { createError, BAD_REQUEST, FORBIDDEN } = require('../helpers/error_helper')
 const Resource = require('../models/resource')
 
-// Take an existing array of resource actions and merge them with a new array
-// of actions. Filter out duplicates and strip any html tags to ensure that the
-// array of actions returned is a set of safe, unique, strings.
-// TODO: Maybe move this to the Resource model as a pre-save action.
-const updatedActions = ({ oldActions = [], newActions = [] }) => {
-  // Strip any tags in any of the actions and then filter the array to only
-  // include new actions which don't already exist in resourceActions.
-  const updatedActions = newActions.map(action => striptags(action))
-    .filter(action => (action !== '' && oldActions.indexOf(action) < 0))
-
-  // House cleaning: make sure there are no duplicates or empty strings in the
-  // existing list of actions before saving the new actions into it. This
-  // technique uses the array.reduce accumulator to build a new array from
-  // checking if each element of app.actions already exists yet in it and
-  // only adding unique values.
-  // source: http://stackoverflow.com/a/15868720
-  const uniqueActions = oldActions.reduce((acc, action) => {
-    return acc.indexOf(action) < 0 && action !== '' ?
-      [...acc, action] :
-      acc
-  }, [...updatedActions])
-
-  return [...uniqueActions, ...updatedActions]
-}
-
-// At the router level, only admins are allowed to execute any of these functions.
-const updatedResource = ({ targetResource = {}, updates = {} }) => {
-  const resource = Object.assign({}, targetResource)
-
-  if (updates.hasOwnProperty('name')) resource.name = striptags(updates.name)
-  if (updates.hasOwnProperty('url')) resource.url = striptags(updates.url)
-  if (updates.hasOwnProperty('actions')) resource.actions = updatedActions({
-    oldActions: targetResource.actions,
-    newActions: updates.actions
-  })
-  if (updates.hasOwnProperty('isActive')) resource.isActive = updates.isActive
-
-  return resource
-}
-
-const getResources = (req, res, next) => {
-  Resource.find({})
-    .then(resources => res.json({
-      success: true,
-      message: 'Resources found.',
-      resources
-    }))
-    .catch(next)
-}
-
+// POST /resources
 const postResources = (req, res, next) => {
-  if (!req.body.name || !URLSafe.validate(req.body.name)) {
-    return next(createError({
-      status: BAD_REQUEST,
-      message: 'Badly formatted resource name; must be URLSafe.'
-    }))
-  }
+  const resourceName = String(req.body.name)
 
-  if (!req.body.url || !URLSafe.validate(req.body.url)) {
-    return next(createError({
-      status: BAD_REQUEST,
-      message: 'Badly formatted resource url.'
-    }))
-  }
-
-  Resource.findOne({ name: req.body.name })
+  Resource.findOne({ name: resourceName })
     .then(existingResource => {
       if (existingResource) throw createError({
         status: FORBIDDEN,
         message: 'An app by that name already exists.'
       })
 
-      const resource = updatedResource({
-        targetResource: new Resource(),
-        updates: req.body
-      })
+      const resource = new Resource(req.body)
 
       return resource.save()
     })
@@ -92,12 +27,26 @@ const postResources = (req, res, next) => {
     .catch(next)
 }
 
+// GET /resources
+const getResources = (req, res, next) => {
+  Resource.find({})
+    .then(resources => res.json({
+      success: true,
+      message: 'Resources found.',
+      resources
+    }))
+    .catch(next)
+}
+
+// GET /resources/:resource_name
 const getResource = (req, res, next) => {
-  Resource.findOne({ name: req.params.resource_name })
+  const resourceName = String(req.params.resource_name)
+
+  Resource.findOne({ name: resourceName })
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'`
+        message: `No resource found with the name '${ resourceName }'`
       })
 
       res.json({
@@ -113,27 +62,23 @@ const getResource = (req, res, next) => {
 // need to be updated through their own endpoint and can't be changed here.
 // Also, all html tags are stripped from string fields to prevent any kind
 // of XSS attack.
+// PUT /resources/:resource_name
 const putResource = (req, res, next) => {
-  if (!req.body.name || !URLSafe.validate(req.body.name)) {
-    return next(createError({
-      status: BAD_REQUEST,
-      message: 'Badly formatted resource name; must be URLSafe.'
-    }))
-  }
+  const resourceName = String(req.params.resource_name)
 
-  Resource.findOne({ name: req.params.resource_name })
+  Resource.findOne({ name: resourceName })
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'.`
+        message: `No resource found with the name '${ resourceName }'.`
       })
 
-      return updatedResource({
-        targetResource: resource,
-        updates: req.body
+      Object.keys(req.body).forEach(key => {
+        resource[key] = req.body[key]
       })
+
+      return resource.save()
     })
-    .then(resource => resource.save())
     .then(resource => {
       res.json({
         success: true,
@@ -146,12 +91,15 @@ const putResource = (req, res, next) => {
 
 // TODO: when deleting an resource, also cycle through all users and remove any
 // references to the deleted resource from their permissions.
+// DELETE /resources/:resource_name
 const deleteResource = (req, res, next) => {
-  Resource.findOne({ name: req.params.resource_name })
+  const resourceName = String(req.params.resource_name)
+
+  Resource.findOne({ name: resourceName })
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'`
+        message: `No resource found with the name '${ resourceName }'`
       })
 
       return resource.remove()
@@ -164,18 +112,27 @@ const deleteResource = (req, res, next) => {
     .catch(next)
 }
 
+// POST /resources/:resource_name/actions
 const postActions = (req, res, next) => {
-  Resource.findOne(req.params.resource_name)
+  const resourceName = String(req.params.resource_name)
+  const actions = req.body.actions
+
+  if (!actions) return next(createError({
+    status: BAD_REQUEST,
+    message: 'No actions were provided to be add.'
+  }))
+
+  Resource.findOne(resourceName)
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'`
+        message: `No resource found with the name '${ resourceName }'`
       })
 
       // If no actions are provided, the existing actions will be returned.
-      resource.actions = updatedActions({
+      resource.actions = Resource.updateActions({
         oldActions: resource.actions,
-        newActions: req.body.actions
+        newActions: actions
       })
 
       return resource.save()
@@ -188,12 +145,15 @@ const postActions = (req, res, next) => {
     .catch(next)
 }
 
+// GET /resources/:resource_name/actions
 const getActions = (req, res, next) => {
-  Resource.findOne(req.params.resource_name)
+  const resourceName = String(req.params.resource_name)
+
+  Resource.findOne(resourceName)
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'`
+        message: `No resource found with the name '${ resourceName }'`
       })
 
       res.json({
@@ -207,34 +167,25 @@ const getActions = (req, res, next) => {
 
 // Requires a variable called "actions" which is an array of strings sent in the
 // body containing a list of actions to be removed.
+// DELETE /resources/:resource_name/actions
 const deleteActions = (req, res, next) => {
-  // Cycle through each of removedActions[] and remove those that match from
-  // actions[].
-  const sliceActions = (actions, removedActions) => {
-    return removedActions.reduce((remainingActions, action) => {
-      const index = remainingActions.indexOf(action)
+  const resourceName = String(req.params.resource_name)
+  const actions = req.body.actions
 
-      return [
-        ...remainingActions.slice(0, index),
-        ...remainingActions.slice(index + 1)
-      ]
-    }, [...actions])
-  }
+  if (!actions) return next(createError({
+    status: BAD_REQUEST,
+    message: 'No actions were provided to be deleted.'
+  }))
 
-  Resource.findOne(req.params.resource_name)
+  Resource.findOne(resourceName)
     .then(resource => {
       if (!resource) throw createError({
         status: BAD_REQUEST,
-        message: `No resource found with the name '${ req.params.resource_name }'`
-      })
-
-      if (!req.body.actions) throw createError({
-        status: BAD_REQUEST,
-        message: 'No actions were provided to be deleted.'
+        message: `No resource found with the name '${ resourceName }'`
       })
 
       // Remove req.body.actions from resource.actions.
-      resource.actions = sliceActions(resource.actions, req.body.actions)
+      resource.actions = Resource.removeActions(resource.actions, actions)
 
       return resource.save()
     })

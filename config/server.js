@@ -1,8 +1,9 @@
-'use strict';
+'use strict'
 
 module.exports = {
   appName: 'cred-auth-manager',
   issuer: 'cred-auth-manager',
+  origin: process.env.ORIGIN || '*',
   redis: process.env.REDIS || 'redis://localhost:6379',
   database: process.env.DATABASE || 'mongodb://localhost:27017/cred-auth-manager',
   access: {
@@ -16,4 +17,4 @@ module.exports = {
     expiresIn: process.env.EXPIRES_IN || '7 days',
     algorithm: 'HS512' // HMAC using SHA-512 hash algorithm
   }
-};
+}
