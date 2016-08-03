@@ -1,47 +1,70 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const validator = require('validator')
 const base64url = require('base64-url')
 
-// A "resource" in this context is a pointer to some resource in the cloud that
-// will make use of this auth system. That is, some other server that will
-// authenticate its requests using JWTs generated from this server and which
-// uses the public-key for verifying the access-token.
-//
-// Resource servers can also, optionally, make use of a set of specific
-// permission actions to manage a more granular authorization system. The
-// `actions` array in the ResourceSchema is a list of strings which act as keys
-// for possible permissions that the resource server understands (it can just
-// be left blank too).
-//
-// NOTE: The permissions-based authorization only works if the resource server
-// itself implements checks for those permitted actions on its endpoints. This
-// server merely provides the facility for setting actions for a resource on
-// the user's account and generates access-tokens which include them.
-const ResourceSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: true,
-    unique: true,
-    validate: {
-      validator: value => validator.matches(value, /^[A-Za-z0-9\-_]+$/),
-      message: '{ VALUE } must be URL-safe (use hyphens instead of spaces, like "my-amazing-resource")'
+const ResourceSchema = function (sequelize, DataTypes) {
+  const Resource = sequelize.define('Resource', {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isUrlSafe
+      }
     }
+    url: {
+      DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isUrl: true
+      }
+    },
+    actions: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: [],
+      validate: {
+        isArray,
+        isArrayOfStrings
+      }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
   },
-  url: {
-    type: String,
-    required: true,
-    validate: {
-      validator: validator.isURL,
-      message: '{ VALUE } is not a valid URL.'
+  {
+    classMethods: {
+      associate: function (models) {
+        Resource.hasMany(models.Permission, { foreignKey: 'resourceId' })
+      },
+      updateActions,
+      removeActions
+    },
+    hooks: {
+      beforeSave: function (resource, options) {
+        const sanitizedResource = sanitizeResource(resource)
+
+        Object.keys(sanitizedResource).forEach(key => {
+          resource[key] = sanitizedResource[key]
+        })
+      }
     }
-  },
-  actions: [String],
-  isActive: { type: Boolean, required: true, default: true },
-  createdAt: { type: Date, required: true, default: Date.now },
-  updatedAt: { type: Date, required: true, default: Date.now }
-})
+  })
+
+  return Resource
+}
 
 // Sanitize any new inputs before saving to database.
 const sanitizeResource = resource => {
@@ -64,28 +87,24 @@ const sanitizeResource = resource => {
   return resource
 }
 
-// Helper Methods
-// --------------
-
 const notEmptyOrInList = (value, list) => value !== '' && !list.includes(value)
 
-// Pre-save Methods
-// ----------------
+const isUrlSafe = value => {
+  if (validator.validator.matches(value, /^[A-Za-z0-9\-_]+$/))
+    throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
+}
 
-ResourceSchema.pre('save', function (next) {
-  const sanitizedResource = sanitizeResource(this)
+const isArray = arr => {
+  if (!Array.isArray(arr))
+    throw new Error('Actions must be an array.')
+}
 
-  Object.keys(sanitizedResource).forEach(key => {
-    this[key] = sanitizedResource[key]
+const isArrayOfStrings = arr => {
+  arr.forEach(item => {
+    if (typeof item !== 'string')
+      throw new Error('Actions must be string values.')
   })
-
-  this.updatedAt = Date.now()
-
-  next()
-})
-
-// Static Methods
-// --------------
+}
 
 // Take an existing array of resource actions and merge them with a new array
 // of actions. Filter out duplicates and strip any html tags to ensure that the
@@ -122,9 +141,4 @@ const removeActions = (actions, removedActions) => {
   }, [...actions])
 }
 
-Object.assign(ResourceSchema.statics, {
-  updateActions,
-  removeActions
-})
-
-module.exports = mongoose.model('Resource', ResourceSchema)
+module.exports = ResourceSchema

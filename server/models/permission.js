@@ -1,43 +1,77 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const validator = require('validator')
 const base64url = require('base64-url')
 
-// A small object type that contains a name (a unique identifier that is the
-// name of a resource), and an array of strings representing permissible actions
-// for that resource.
-//
-// NOTE: The name attribute is stored (in duplicate to the
-// referenced resource itself) for performance reasons (e.g., there will be many
-// more read operations than write operations, like when creating a token, so
-// this stores everything that's needed for reading directly on the user
-// document, but keeps a reference to the resource document through its id for
-// verification).
-const PermissionSchema = new mongoose.Schema({
-  resourceId: {
-    type: mongoose.Schema.Types.ObjectId,
-    require: true,
-    validate: {
-      validator: validator.isMongoId,
-      message: '{ VALUE } is not a valid ObjectId'
+const PermissionSchema = function (sequelize, DataTypes) {
+  const Permission = sequelize.define('Permission', {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'User',
+        key: 'id'
+      }
+    },
+    resourceId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Resource',
+        key: 'id'
+      }
+    },
+    resourceName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: 'Resource',
+        key: 'name'
+      },
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isUrlSafe
+      }
+    },
+    actions: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: [],
+      allowNull: true,
+      validate: {
+        isArray,
+        isArrayOfStrings
+      }
     }
   },
-  name: {
-    type: String,
-    required: true,
-    validate: {
-      validator: value => validator.matches(value, /^[A-Za-z0-9\-_]+$/),
-      message: '{ VALUE } must be URL-safe (use hyphens instead of spaces, like "my-amazing-resource")'
-    }
-  },
-  actions: [String]
-}, {
-  autoIndex: false
-})
+  {
+    classMethods: {
+      associate: function (models) {
+        Permission.belongsTo(models.Resource, { foreignKey: 'resourceId' })
+        Permission.belongsTo(models.User, { foreignKey: 'userId' })
+      }
+    },
+    instanceMethods: {
+      toJSON: function () {
+        actions: this.actions
+      }
+    },
+    hooks: {
+      beforeSave: function (permission, options) {
+        const sanitizedPermission = sanitizePermission(permission)
 
-// Helper Methods
-// --------------
+        Object.keys(sanitizedPermission).forEach(key => {
+          permission[key] = sanitizedPermission[key]
+        })
+      }
+    }
+  })
+
+  return User
+}
 
 const sanitizePermission = ref => {
   const permission = Object.assign({}, ref)
@@ -54,29 +88,21 @@ const sanitizePermission = ref => {
   return permission
 }
 
-// Pre-save Methods
-// ----------------
+const isUrlSafe = value => {
+  if (validator.validator.matches(value, /^[A-Za-z0-9\-_]+$/))
+    throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
+}
 
-PermissionSchema.pre('save', function (next) {
-  const sanitizedPermission = santizePermission(this)
+const isArray = arr => {
+  if (!Array.isArray(arr))
+    throw new Error('Actions must be an array.')
+}
 
-  Object.keys(sanitizedPermission).forEach(key => {
-    this[key] = sanitizedPermission[key]
+const isArrayOfStrings = arr => {
+  arr.forEach(item => {
+    if (typeof item !== 'string')
+      throw new Error('Actions must be string values.')
   })
+}
 
-  next()
-})
-
-// Instance Methods
-// ----------------
-
-const toJSON = () => ({
-  actions: this.actions
-})
-
-// Merge custom methods with UserSchema.methods.
-Object.assign(PermissionSchema.methods, {
-  toJSON
-})
-
-module.exports = mongoose.model('Permission', PermissionSchema)
+module.exports = PermissionSchema

@@ -1,88 +1,100 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const argon2 = require('argon2')
 const validator = require('validator')
 const base64url = require('base64-url')
-const Permission = require('./permission')
 
-const SALT_LENGTH = 32
-
-const ARGON2_OPTIONS = {
-  timeCost: 3,
-  memoryCost: 12, // 2^12kb
-  parallelism: 1, // threads
-  argon2d: false // use agron2i
-}
-
-const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    sparse: true,
-    validate: {
-      validator: value => validator.matches(value, /^[A-Za-z0-9\-_]+$/),
-      message: '{ VALUE } must be URL-safe (use hyphens instead of spaces, like "my-cool-username")'
-    }
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    unique: true,
-    sparse: true,
-    required: true,
-    validate: {
-      validator: validator.isEmail,
-      message: '{ VALUE } is not a valid email address.'
-    }
-  },
-  isActive: {
-    type: Boolean,
-    required: true,
-    default: true,
-    validate: {
-      validator: validator.isBoolean,
-      message: '{ VALUE } may only be either true or false.'
-    }
-  },
-  isAdmin: {
-    type: Boolean,
-    required: true,
-    default: false,
-    validate: {
-      validator: validator.isBoolean,
-      message: '{ VALUE } may only be either true or false.'
-    }
-  },
-  profile: {
-    name: { type: String, required: false },
-    location: { type: String, required: false },
-    website: {
-      type: String,
-      required: false,
+const UserSchema = function (sequelize, DataTypes) {
+  const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      defaultValue: DataTypes.UUIDv4,
       validate: {
-        validator: validator.isURL,
-        message: '{ VALUE } is not a valid URL.'
+        notNull: true,
+        notEmpty: true,
+        isUrlSafe
       }
     },
-    company: { type: String, require: false }
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    loginAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+      validate: {
+        isDate
+      }
+    }
   },
-  permissions: [Permission.schema],
-  loginAt: { type: Date, required: true, default: Date.now },
-  createdAt: { type: Date, required: true, default: Date.now },
-  updatedAt: { type: Date, required: true, default: Date.now }
-})
+  {
+    classMethods: {
+      associate: function (models) {
+        User.hasMany(models.Permission, { foreignKey: 'userId' })
+      },
+      filterAdminProps
+    },
+    instanceMethods: {
+      verifyPassword,
+      findPermission,
+      removePermission,
+      addPermission,
+      tokenPayload,
+      toJSON
+    },
+    scopes: {
+    },
+    hooks: {
+      beforeSave: function (user, next) {
+        Promise.all([
+          sanitizeUser(user),
+          hashPasswordHook(user)
+        ])
+          .then(next)
+          .catch(next)
+      }
+    }
+  })
 
-// Helper Methods
-// --------------
+  return User
+}
 
 // Sanitize all new inputs before saving to database, except for password, which
 // is handled separately using hash function.
-const sanitizeUser = user => {
+const sanitizeUser = user => new Promise((resolve, reject) => {
   if (user.isModified('username'))
     user.username = validator.trim(user.username)
     user.username = base64url.escape(user.username)
@@ -118,44 +130,46 @@ const sanitizeUser = user => {
     user.profile.company = validator.trim(user.profile.company)
     user.profile.company = validator.escape(user.profile.company)
 
-  return user
-}
+  resolve(user)
+})
 
 // Convert password as argon2 hash before saving it.
 const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
   .then(salt => argon2.hash(password, salt, ARGON2_OPTIONS))
 
-// Pre-save Methods
-// ----------------
+const isUrlSafe = value => {
+  if (validator.validator.matches(value, /^[A-Za-z0-9\-_]+$/))
+    throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
+}
 
-UserSchema.pre('save', function (next) {
-  const sanitizedUser = sanitizeUser(this)
+// Only admins can activate or de-activate users and set the admin status.
+const filterAdminProps = (isAdmin, updates) => {
+  const filteredUpdates = Object.assign({}, updates)
 
-  Object.keys(sanitizedUser).forEach(key => {
-    this[key] = sanitizedUser[key]
-  })
+  if (updates.hasOwnProperty('isActive') && !isAdmin)
+    delete filteredUpdates.isActive
 
-  this.updatedAt = Date.now()
+  if (updates.hasOwnProperty('isAdmin') && !isAdmin)
+    delete filteredUpdates.isAdmin
 
-  // If the password has changed, hash it before saving, otherwise just go next.
-  if (this.isModified('password')) {
-    return hashPassword(this.password)
-      .then(hash => {
-        this.password = hash
-        next()
-      })
-      .catch(err => console.log('Error hashing password.'))
-  }
-
-  next()
-})
-
-// Instance Methods
-// ----------------
+  return filteredUpdates
+}
 
 const verifyPassword = function (password) {
   return argon2.verify(this.password, password)
 }
+
+const hashPasswordHook = user => new Promise((resolve, reject) => {
+  if (!user.changed('password')) return resolve()
+
+  // If the password has changed, hash it before saving, otherwise just go next.
+  hashPassword(user.password)
+    .then(hash => {
+      user.set('password', hash)
+      resolve()
+    })
+    .catch(reject)
+})
 
 // Return an array of actions for the permission which matches the given
 // resource name.
@@ -243,33 +257,4 @@ const toJSON = function () {
   }
 }
 
-Object.assign(UserSchema.methods, {
-  verifyPassword,
-  findPermission,
-  removePermission,
-  addPermission,
-  tokenPayload,
-  toJSON
-})
-
-// Static Methods
-// --------------
-
-// Only admins can activate or de-activate users and set the admin status.
-const filterAdminProps = (isAdmin, updates) => {
-  const filteredUpdates = Object.assign({}, updates)
-
-  if (updates.hasOwnProperty('isActive') && !isAdmin)
-    delete filteredUpdates.isActive
-
-  if (updates.hasOwnProperty('isAdmin') && !isAdmin)
-    delete filteredUpdates.isAdmin
-
-  return filteredUpdates
-}
-
-Object.assign(UserSchema.statics, {
-  filterAdminProps
-})
-
-module.exports = mongoose.model('User', UserSchema)
+module.exports = UserSchema
