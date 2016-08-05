@@ -1,14 +1,13 @@
 'use strict'
 
 const express = require('express')
-const mongoSanitize = require('express-mongo-sanitize')
-const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const RateLimit = require('express-rate-limit')
 const morgan = require('morgan')
 const cred = require('./cred')
 const config = require('../config/server')
+const db = require('./models')
 
 // Express App
 // -----------
@@ -19,10 +18,6 @@ app.set('assets-path', './client')
 
 // Only accept application/json requests.
 app.use(bodyParser.json())
-
-// Remove object keys containing prohibited characters ($ and .) to prevent DB
-// injection attacks.
-app.use(mongoSanitize())
 
 // Enable cross-origin resource sharing.
 app.use(cors({
@@ -71,14 +66,6 @@ app.use(limiter)
 if (process.env.NODE_ENV === ('development' || 'test')) {
   app.use(morgan('dev'))
 }
-
-// Database
-// --------
-mongoose.Promise = global.Promise
-mongoose.connect(config.database)
-mongoose.connection.on('connected', () => console.log('Connected to Mongo.'))
-mongoose.connection.on('error', err => console.log('Database Error: ', err))
-mongoose.connection.on('disconnected', () => console.log('Disconnected from Mongo.'))
 
 // Routes
 // ------

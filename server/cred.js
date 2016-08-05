@@ -3,7 +3,7 @@
 const { readFileSync } = require('fs')
 const gotCred = require('../../cred/src')
 const config = require('../config/server')
-const User = require('./models/user')
+//const User = require('./models/user')
 
 // Authentication
 // --------------
@@ -33,17 +33,17 @@ cred.use('basic', req => {
   const username = String(req.body.username)
   const password = String(req.body.password)
 
-  return User.findOne({ username })
-    .then(user => Promise.all([user, user.verifyPassword(password)]))
-    .then(userMatch => {
-      const user = userMatch[0]
-      const isMatch = userMatch[1]
-
-      if (!isMatch) throw 'Unauthorized: username or password do not match.'
-
-      return user
-    })
-    .then(user => user.tokenPayload())
+  // return User.findOne({ username })
+  //   .then(user => Promise.all([user, user.verifyPassword(password)]))
+  //   .then(userMatch => {
+  //     const user = userMatch[0]
+  //     const isMatch = userMatch[1]
+  //
+  //     if (!isMatch) throw 'Unauthorized: username or password do not match.'
+  //
+  //     return user
+  //   })
+  //   .then(user => user.tokenPayload())
 })
 
 module.exports = cred

@@ -3,144 +3,23 @@
 const argon2 = require('argon2')
 const validator = require('validator')
 const base64url = require('base64-url')
+const { isUrlSafe } = require('../helpers/validation_helper')
+const { Permission } = require('./index')
 
-const UserSchema = function (sequelize, DataTypes) {
-  const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      defaultValue: DataTypes.UUIDv4,
-      validate: {
-        notNull: true,
-        notEmpty: true,
-        isUrlSafe
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: true,
-        notEmpty: true
-      }
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
-        notNull: true,
-        notEmpty: true
-      }
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    },
-    isAdmin: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    },
-    loginAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-      validate: {
-        isDate
-      }
-    }
-  },
-  {
-    classMethods: {
-      associate: function (models) {
-        User.hasMany(models.Permission, { foreignKey: 'userId' })
-      },
-      filterAdminProps
-    },
-    instanceMethods: {
-      verifyPassword,
-      findPermission,
-      removePermission,
-      addPermission,
-      tokenPayload,
-      toJSON
-    },
-    scopes: {
-    },
-    hooks: {
-      beforeSave: function (user, next) {
-        Promise.all([
-          sanitizeUser(user),
-          hashPasswordHook(user)
-        ])
-          .then(next)
-          .catch(next)
-      }
-    }
-  })
+const SALT_LENGTH = 32
 
-  return User
+const ARGON2_OPTIONS = {
+  timeCost: 3,
+  memoryCost: 12, // 2^12kb
+  parallelism: 1, // threads
+  argon2d: false // use agron2i
 }
 
-// Sanitize all new inputs before saving to database, except for password, which
-// is handled separately using hash function.
-const sanitizeUser = user => new Promise((resolve, reject) => {
-  if (user.isModified('username'))
-    user.username = validator.trim(user.username)
-    user.username = base64url.escape(user.username)
-
-  if (this.isModified('email'))
-    user.email = validator.trim(user.email)
-    user.email = validator.normalizeEmail(user.email, {
-      lowercase: true,
-      remove_dots: false,
-      remove_extension: true
-    })
-    user.email = validator.escape(user.email)
-
-  if (user.isModified('isActive'))
-    user.isActive = validator.toBoolean(user.isActive, true)
-
-  if (user.isModified('isAdmin'))
-    user.isAdmin = validator.toBoolean(user.isAdmin, true)
-
-  if (user.isModified('profile.name'))
-    user.profile.name = validator.trim(user.profile.name)
-    user.profile.name = validator.escape(user.profile.name)
-
-  if (user.isModified('profile.location'))
-    user.profile.location = validator.trim(user.profile.location)
-    user.profile.location = validator.escape(user.profile.location)
-
-  if (user.isModified('website'))
-    user.profile.website = validator.trim(user.profile.website)
-    user.profile.website = base64url.escape(user.profile.website)
-
-  if (user.isModified('profile.company'))
-    user.profile.company = validator.trim(user.profile.company)
-    user.profile.company = validator.escape(user.profile.company)
-
-  resolve(user)
-})
-
-// Convert password as argon2 hash before saving it.
+// Return argon2 hash from password string.
 const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
   .then(salt => argon2.hash(password, salt, ARGON2_OPTIONS))
 
-const isUrlSafe = value => {
-  if (validator.validator.matches(value, /^[A-Za-z0-9\-_]+$/))
-    throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
-}
+const verifyPassword = p1 => p2 => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.
 const filterAdminProps = (isAdmin, updates) => {
@@ -155,37 +34,26 @@ const filterAdminProps = (isAdmin, updates) => {
   return filteredUpdates
 }
 
-const verifyPassword = function (password) {
-  return argon2.verify(this.password, password)
-}
-
-const hashPasswordHook = user => new Promise((resolve, reject) => {
-  if (!user.changed('password')) return resolve()
-
-  // If the password has changed, hash it before saving, otherwise just go next.
-  hashPassword(user.password)
-    .then(hash => {
-      user.set('password', hash)
-      resolve()
-    })
-    .catch(reject)
-})
-
 // Return an array of actions for the permission which matches the given
 // resource name.
-const findPermission = function (name) {
-  return this.permissions.find(perm => (perm.name === name))
-}
+const findPermissionIn = permissions => name =>
+  permissions.find(perm => (perm.name === name))
 
 // Cut the resource matching `name` from the permissions array.
-const removePermission = function (name) {
-  const index = this.permissions.findIndex(permission => permission.name === name)
-  if (index >= 0) this.permissions.splice(index, 1)
+const removePermissionFrom = permissions => name => {
+  const index = permissions.findIndex(permission => permission.name === name)
+
+  return index >= 0 ?
+    [
+      ...permissions.slice(0, index),
+      ...permissions.slice(index + 1)
+    ] :
+    permissions
 }
 
 // Replace the permissions for `resource` with `actions`, or add them if they
 // don't already exist.
-const addPermission = function ({ resource = {}, actions = [] }) {
+const addPermissionTo = permissions => name => function ({ resource = {}, actions = [] }) {
   let validActions = []
 
   // If permissions already exist for this resource, remove the old ones and
@@ -220,41 +88,158 @@ const addPermission = function ({ resource = {}, actions = [] }) {
 //      actions: ["admin", "read:active", "write:new"]
 //    }
 // }
-const tokenPermissions = modelPermissions =>
-  modelPermissions.reduce((acc, perm) => {
-    return Object.assign(acc, {
-      [perm.name]: {
-        actions: perm.actions
-      }
-    })
-  }, {})
+const tokenPermissions = permissions => permissions.reduce((acc, perm) => {
+  return Object.assign(acc, {
+    [perm.name]: {
+      actions: perm.actions
+    }
+  })
+}, {})
 
 // Generate limited data object for use in JWT token payload.
-const tokenPayload = function () {
-  return {
-    userId: this.id,
-    username: this.username,
-    email: this.email,
-    isActive: this.isActive,
-    isAdmin: this.isAdmin,
-    permissions: tokenPermissions(this.permissions)
-  }
-}
+const tokenPayload = user => () => ({
+  userId: user.id,
+  username: user.username,
+  email: user.email,
+  isActive: user.isActive,
+  isAdmin: user.isAdmin,
+  permissions: tokenPermissions(user.permissions)
+})
 
 // More data returned in JSON form than in token payload.
-const toJSON = function () {
-  return {
-    id: this.id,
-    username: this.username,
-    email: this.email,
-    isActive: this.isActive,
-    isSuperAdmin: this.isSuperAdmin,
-    permissions: tokenPermissions(this.permissions),
-    profile: this.profile,
-    loginAt: this.loginAt,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt
-  }
+const toJSON = user => () => ({
+  id: user.id,
+  username: user.username,
+  email: user.email,
+  isActive: user.isActive,
+  isSuperAdmin: user.isSuperAdmin,
+  permissions: tokenPermissions(user.permissions),
+  loginAt: user.loginAt,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt
+})
+
+const UserSchema = function (sequelize, DataTypes) {
+  const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      defaultValue: DataTypes.UUIDv4,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isUrlSafe
+      },
+      set: function (val) {
+        this.setDataValue('username', base64url.escape(validator.trim(val)))
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+        notNull: true,
+        notEmpty: true
+      },
+      set: function (val) {
+        let email = validator.trim(val)
+        email = validator.normalizeEmail(email, {
+          lowercase: true,
+          remove_dots: false,
+          remove_extension: true
+        })
+        email = validator.escape(email)
+
+        this.setDataValue('email', email)
+      }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+      set: function (val) {
+        this.setDataValue('isActive', validator.toBoolean(val, true))
+      }
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      set: function (val) {
+        this.setDataValue('isAdmin', validator.toBoolean(val, true))
+      }
+    },
+    loginAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+      validate: {
+        isDate: true
+      }
+    }
+  },
+  {
+    tableName: 'Users',
+    classMethods: {
+      associate: models => {
+        User.hasMany(models.Permission, { foreignKey: 'userId' })
+      },
+      filterAdminProps
+    },
+    instanceMethods: {
+      // verifyPassword: verifyPassword(this.password),
+      // findPermission: findPermissionIn(this.permissions),
+      // removePermission: name => this.set('permissions', removePermissionFrom(this.permissions, name)),
+      // addPermission: name => this.set('permissions', addPermissionTo(this.permissions, name)),
+      tokenPayload: tokenPayload(this),
+      toJSON: toJSON(this)
+    },
+    hooks: {
+      // If the password has changed, hash it before saving,
+      // otherwise just continue.
+      beforeSave: (user, next) => {
+        if (!user.changed('password')) return next()
+
+        argon2Password(user.password)
+          .then(hash => {
+            user.set('password', hash)
+            next()
+          })
+          .catch(next)
+      }
+    },
+    defaultScope: {
+      include: [{
+        model: Permission,
+        attributes: ['resource.name', 'actions']
+      }]
+    },
+    scopes: {
+      active: { where: { isActive: true } },
+      inactive: { where: { isActive: false } },
+      admins: { where: { isAdmin: true } },
+      nonAdmins: { where: { isAdmin: false } }
+    }
+  })
+
+  return User
 }
 
 module.exports = UserSchema

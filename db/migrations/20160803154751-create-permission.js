@@ -1,4 +1,5 @@
-'use strict';
+'use strict'
+
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Permissions', {
@@ -12,7 +13,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'User',
+          model: 'Users',
           key: 'id'
         },
         onUpdate: 'cascade',
@@ -22,15 +23,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'Resource',
+          model: 'Resources',
           key: 'id'
         },
         onUpdate: 'cascade',
         onDelete: 'restrict'
-      },
-      resourceName: {
-        allowNull: false,
-        type: Sequelize.STRING
       },
       actions: {
         type: Sequelize.ARRAY(Sequelize.STRING),
@@ -44,9 +41,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    })
   },
+
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Permissions');
+    return queryInterface.dropTable('Permissions')
   }
-};
+}
