@@ -51,6 +51,7 @@ const unprocessable = (err, req, res, next) => {
 
 // If there's still an error at this point, return a generic 500 error.
 const genericError = (err, req, res, next) => {
+  console.log('err: ', err)
   res.status(GENERIC_ERROR).send({
     success: false,
     message: err.message || 'Internal server error.',

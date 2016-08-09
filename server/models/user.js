@@ -4,7 +4,7 @@ const argon2 = require('argon2')
 const validator = require('validator')
 const base64url = require('base64-url')
 const { isUrlSafe } = require('../helpers/validation_helper')
-const { Permission } = require('./index')
+const { Permission, Resource } = require('./')
 
 const SALT_LENGTH = 32
 
@@ -19,7 +19,7 @@ const ARGON2_OPTIONS = {
 const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
   .then(salt => argon2.hash(password, salt, ARGON2_OPTIONS))
 
-const verifyPassword = p1 => p2 => argon2.verify(p1, p2)
+const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.
 const filterAdminProps = (isAdmin, updates) => {
@@ -34,13 +34,12 @@ const filterAdminProps = (isAdmin, updates) => {
   return filteredUpdates
 }
 
-// Return an array of actions for the permission which matches the given
-// resource name.
-const findPermissionIn = permissions => name =>
+// Return a permission model which has the name `name`.
+const getPermission = (name, permissions) =>
   permissions.find(perm => (perm.name === name))
 
 // Cut the resource matching `name` from the permissions array.
-const removePermissionFrom = permissions => name => {
+const removePermission = (name, permissions) => {
   const index = permissions.findIndex(permission => permission.name === name)
 
   return index >= 0 ?
@@ -53,7 +52,7 @@ const removePermissionFrom = permissions => name => {
 
 // Replace the permissions for `resource` with `actions`, or add them if they
 // don't already exist.
-const addPermissionTo = permissions => name => function ({ resource = {}, actions = [] }) {
+const addPermission = (name, permissions) => {
   let validActions = []
 
   // If permissions already exist for this resource, remove the old ones and
@@ -77,9 +76,23 @@ const addPermissionTo = permissions => name => function ({ resource = {}, action
   }))
 }
 
-// Format permissions for use in a JWT access token, returning an object whose
-// keys are the names of a resource which references an array of permissible
-// actions.
+// Format an array of permissions for use in a JWT access token, returning an
+// object whose keys are the names of a resource which references an array of
+// permissible actions.
+//
+// Input (from a user's array of permissions from Permission.toJSON()):
+// [
+//   {
+//     name: "my-amazing-resource",
+//     actions: ["read:active"]
+//   },
+//   {
+//     name: "some-other-resource",
+//     actions: ["admin", "read:active", "write:new"]
+//   }
+// ]
+//
+// Output:
 // {
 //    "my-amazing-resource": {
 //      actions: ["read:active"]
@@ -90,14 +103,12 @@ const addPermissionTo = permissions => name => function ({ resource = {}, action
 // }
 const tokenPermissions = permissions => permissions.reduce((acc, perm) => {
   return Object.assign(acc, {
-    [perm.name]: {
-      actions: perm.actions
-    }
+    [perm.name]: { actions: perm.actions }
   })
 }, {})
 
 // Generate limited data object for use in JWT token payload.
-const tokenPayload = user => () => ({
+const tokenPayload = user => ({
   userId: user.id,
   username: user.username,
   email: user.email,
@@ -107,17 +118,28 @@ const tokenPayload = user => () => ({
 })
 
 // More data returned in JSON form than in token payload.
-const toJSON = user => () => ({
+const toJSON = user => ({
   id: user.id,
   username: user.username,
   email: user.email,
   isActive: user.isActive,
-  isSuperAdmin: user.isSuperAdmin,
+  isAdmin: user.isAdmin,
   permissions: tokenPermissions(user.permissions),
   loginAt: user.loginAt,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt
 })
+
+// If the password has changed, hash it before saving, otherwise just continue.
+const beforeSave = user => {
+  if (!user.changed('password')) return
+
+  return hashPassword(user.password)
+    .then(hash => {
+      user.password = hash
+    })
+    .catch(err => console.log("Error hashing password.", err))
+}
 
 const UserSchema = function (sequelize, DataTypes) {
   const User = sequelize.define('User', {
@@ -133,7 +155,6 @@ const UserSchema = function (sequelize, DataTypes) {
       unique: true,
       defaultValue: DataTypes.UUIDv4,
       validate: {
-        notNull: true,
         notEmpty: true,
         isUrlSafe
       },
@@ -145,7 +166,6 @@ const UserSchema = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true
       }
     },
@@ -155,7 +175,6 @@ const UserSchema = function (sequelize, DataTypes) {
       unique: true,
       validate: {
         isEmail: true,
-        notNull: true,
         notEmpty: true
       },
       set: function (val) {
@@ -172,23 +191,17 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-      set: function (val) {
-        this.setDataValue('isActive', validator.toBoolean(val, true))
-      }
+      allowNull: true,
+      defaultValue: true
     },
     isAdmin: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-      set: function (val) {
-        this.setDataValue('isAdmin', validator.toBoolean(val, true))
-      }
+      allowNull: true,
+      defaultValue: false
     },
     loginAt: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
       defaultValue: DataTypes.NOW,
       validate: {
         isDate: true
@@ -196,6 +209,10 @@ const UserSchema = function (sequelize, DataTypes) {
     }
   },
   {
+    name: {
+      singular: 'user',
+      plural: 'users'
+    },
     tableName: 'Users',
     classMethods: {
       associate: models => {
@@ -204,32 +221,28 @@ const UserSchema = function (sequelize, DataTypes) {
       filterAdminProps
     },
     instanceMethods: {
-      // verifyPassword: verifyPassword(this.password),
-      // findPermission: findPermissionIn(this.permissions),
+      verifyPassword: function (password) { return verifyPassword(this.password, password) },
+      // getActions: function (name) {
+      //   return getActions(name, this.permissions)
+      // }
       // removePermission: name => this.set('permissions', removePermissionFrom(this.permissions, name)),
       // addPermission: name => this.set('permissions', addPermissionTo(this.permissions, name)),
-      tokenPayload: tokenPayload(this),
-      toJSON: toJSON(this)
-    },
-    hooks: {
-      // If the password has changed, hash it before saving,
-      // otherwise just continue.
-      beforeSave: (user, next) => {
-        if (!user.changed('password')) return next()
+      tokenPayload: function () { return tokenPayload(this.get()) },
+      toJSON: function () {
+        const user = this.get()
 
-        argon2Password(user.password)
-          .then(hash => {
-            user.set('password', hash)
-            next()
-          })
-          .catch(next)
+        // Run toJSON() on each permission so the data is in the expected format
+        // for the custom user toJSON() function.
+        user.permissions = user.permissions.map(permission => {
+          return permission.toJSON()
+        })
+
+        return toJSON(user)
       }
     },
-    defaultScope: {
-      include: [{
-        model: Permission,
-        attributes: ['resource.name', 'actions']
-      }]
+    hooks: {
+      beforeCreate: beforeSave,
+      beforeUpdate: beforeSave
     },
     scopes: {
       active: { where: { isActive: true } },

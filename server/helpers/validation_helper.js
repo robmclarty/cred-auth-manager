@@ -1,7 +1,9 @@
 'use strict'
 
+const validator = require('validator')
+
 const isUrlSafe = value => {
-  if (validator.validator.matches(value, /^[A-Za-z0-9\-_]+$/))
+  if (!validator.matches(value, /^[A-Za-z0-9\-_]+$/))
     throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
 }
 

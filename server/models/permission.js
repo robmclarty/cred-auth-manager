@@ -18,11 +18,14 @@ const removeActionsFrom = permission => actions => {
   permission.setDataValue('actions', removeActions(permission.actions, actions))
 }
 
-const toJSON = permission => () => ({
-  [permission.resource.name]: {
-    actions: permission.actions
-  }
+// Return a JSON object in the format expected by tokenPermissions().
+const toJSON = permission => {
+  console.log('permission: ', JSON.stringify(permission, null, 4))
+  return ({
+  name: permission.resource.name,
+  actions: permission.actions
 })
+}
 
 const PermissionSchema = function (sequelize, DataTypes) {
   const Permission = sequelize.define('Permission', {
@@ -55,12 +58,16 @@ const PermissionSchema = function (sequelize, DataTypes) {
       },
       set: function (val) {
         this.setDataValue('actions', val.map(action => {
-          validator.escape(validator.trim(action))
+          return validator.escape(validator.trim(action))
         }))
       }
     }
   },
   {
+    name: {
+      singular: 'permission',
+      plural: 'permissions'
+    },
     tableName: 'Permissions',
     classMethods: {
       associate: models => {
@@ -69,15 +76,9 @@ const PermissionSchema = function (sequelize, DataTypes) {
       }
     },
     instanceMethods: {
-      addActions: addActionsTo(this),
-      removeActions: removeActionsFrom(this),
-      toJSON: toJSON(this)
-    },
-    defaultScope: {
-      include: [{
-        model: Resource,
-        attributes: ['name']
-      }]
+      addActions: function () { return addActionsTo(this) },
+      removeActions: function () { return removeActionsFrom(this) },
+      toJSON: function () { return toJSON(this.get()) }
     }
   })
 

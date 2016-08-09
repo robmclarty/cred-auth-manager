@@ -18,7 +18,7 @@ const removeActionsFrom = resource => actions => {
   resource.setDataValue('actions', removeActions(resource.actions, actions))
 }
 
-const toJSON = resource => () => ({
+const toJSON = resource => ({
   name: resource.name,
   url: resource.url,
   actions: resource.actions,
@@ -38,7 +38,6 @@ const ResourceSchema = function (sequelize, DataTypes) {
       allowNull: false,
       unique: true,
       validate: {
-        notNull: true,
         notEmpty: true,
         isUrlSafe
       },
@@ -50,12 +49,17 @@ const ResourceSchema = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notNull: true,
         notEmpty: true,
-        isUrl: true
+        isUrl: function (val) {
+          return validator.isUrl(val, {
+            require_tld: false,
+            require_protocol: true,
+            allow_underscores: true
+          })
+        }
       },
       set: function (val) {
-        this.setDataValue('url', base64url.escape(validator.trim(val)))
+        this.setDataValue('url', validator.trim(val))
       }
     },
     actions: {
@@ -67,7 +71,7 @@ const ResourceSchema = function (sequelize, DataTypes) {
       },
       set: function (val) {
         this.setDataValue('actions', val.map(action => {
-          validator.escape(validator.trim(action))
+          return validator.escape(validator.trim(action))
         }))
       }
     },
@@ -81,6 +85,10 @@ const ResourceSchema = function (sequelize, DataTypes) {
     },
   },
   {
+    name: {
+      singular: 'resource',
+      plural: 'resources'
+    },
     tableName: 'Resources',
     classMethods: {
       associate: models => {
@@ -88,9 +96,9 @@ const ResourceSchema = function (sequelize, DataTypes) {
       }
     },
     instanceMethods: {
-      toJSON: toJSON(this),
-      addActions: addActionsTo(this),
-      removeActions: removeActionsFrom(this)
+      toJSON: function () { return toJSON(this.get()) },
+      addActions: function () { return addActionsTo(this) },
+      removeActions: function () { return removeActionsFrom(this) }
     },
     scopes: {
       active: { where: { isActive: true } },
