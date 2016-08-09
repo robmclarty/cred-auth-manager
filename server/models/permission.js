@@ -19,13 +19,10 @@ const removeActionsFrom = permission => actions => {
 }
 
 // Return a JSON object in the format expected by tokenPermissions().
-const toJSON = permission => {
-  console.log('permission: ', JSON.stringify(permission, null, 4))
-  return ({
+const toJSON = permission => ({
   name: permission.resource.name,
   actions: permission.actions
 })
-}
 
 const PermissionSchema = function (sequelize, DataTypes) {
   const Permission = sequelize.define('Permission', {

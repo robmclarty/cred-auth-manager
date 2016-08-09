@@ -107,6 +107,16 @@ const tokenPermissions = permissions => permissions.reduce((acc, perm) => {
   })
 }, {})
 
+// Run toJSON() on each permission so the data is in the expected format for the
+// custom user toJSON() function.
+const userWithJSONPermissions = user => {
+  const permissions = user.permissions.map(permission => {
+    return permission.toJSON()
+  })
+
+  return Object.assign({}, user, { permissions })
+}
+
 // Generate limited data object for use in JWT token payload.
 const tokenPayload = user => ({
   userId: user.id,
@@ -227,18 +237,8 @@ const UserSchema = function (sequelize, DataTypes) {
       // }
       // removePermission: name => this.set('permissions', removePermissionFrom(this.permissions, name)),
       // addPermission: name => this.set('permissions', addPermissionTo(this.permissions, name)),
-      tokenPayload: function () { return tokenPayload(this.get()) },
-      toJSON: function () {
-        const user = this.get()
-
-        // Run toJSON() on each permission so the data is in the expected format
-        // for the custom user toJSON() function.
-        user.permissions = user.permissions.map(permission => {
-          return permission.toJSON()
-        })
-
-        return toJSON(user)
-      }
+      tokenPayload: function () { return tokenPayload(userWithJSONPermissions(this.get())) },
+      toJSON: function () { return toJSON(userWithJSONPermissions(this.get())) }
     },
     hooks: {
       beforeCreate: beforeSave,

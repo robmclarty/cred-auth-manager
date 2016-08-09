@@ -21,9 +21,9 @@ const postUsers = (req, res, next) => {
   //   .catch(next)
 }
 
+// POST /registration
 // Create a new user that is guaranteed to not be an admin. This is to be used
 // for public-facing signup/registration with the app.
-// POST /registration
 const postRegistration = (req, res, next) => {
   // const auth = req.cred.payload
   // const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
@@ -81,9 +81,9 @@ const getUser = (req, res, next) => {
     .catch(next)
 }
 
+// PUT /users/:id
 // Only allow updating of specific fields, check for their existence explicitly,
 // and strip any html tags from String fields to mitigate XSS attacks.
-// PUT /users/:id
 const putUser = (req, res, next) => {
   // const auth = req.cred.payload
   // const userId = String(req.params.id)

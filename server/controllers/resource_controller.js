@@ -58,11 +58,11 @@ const getResource = (req, res, next) => {
     .catch(next)
 }
 
+// PUT /resources/:resource_name
 // Only allow updates to explicitly defined fields. So, for example, actions
 // need to be updated through their own endpoint and can't be changed here.
 // Also, all html tags are stripped from string fields to prevent any kind
 // of XSS attack.
-// PUT /resources/:resource_name
 const putResource = (req, res, next) => {
   const resourceName = String(req.params.resource_name)
 
@@ -89,9 +89,9 @@ const putResource = (req, res, next) => {
     .catch(next)
 }
 
+// DELETE /resources/:resource_name
 // TODO: when deleting an resource, also cycle through all users and remove any
 // references to the deleted resource from their permissions.
-// DELETE /resources/:resource_name
 const deleteResource = (req, res, next) => {
   const resourceName = String(req.params.resource_name)
 
@@ -165,9 +165,9 @@ const getActions = (req, res, next) => {
     .catch(next)
 }
 
+// DELETE /resources/:resource_name/actions
 // Requires a variable called "actions" which is an array of strings sent in the
 // body containing a list of actions to be removed.
-// DELETE /resources/:resource_name/actions
 const deleteActions = (req, res, next) => {
   const resourceName = String(req.params.resource_name)
   const actions = req.body.actions

@@ -3,10 +3,6 @@ curl \
   http://localhost:3000
 
 curl \
-  -X GET \
-  http://localhost:3000/users
-
-curl \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{"username":"admin", "password":"password"}' \

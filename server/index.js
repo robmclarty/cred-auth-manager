@@ -5,9 +5,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const RateLimit = require('express-rate-limit')
 const morgan = require('morgan')
-//const cred = require('./cred')
+const cred = require('./cred')
 const config = require('../config/server')
-//const db = require('./models')
 
 // Express App
 // -----------
@@ -69,16 +68,16 @@ if (process.env.NODE_ENV === ('development' || 'test')) {
 
 // Routes
 // ------
-//const authRoutes = require('./routes/auth_routes')
-//const publicRoutes = require('./routes/public_routes')
+const authRoutes = require('./routes/auth_routes')
+const publicRoutes = require('./routes/public_routes')
 const userRoutes = require('./routes/user_routes')
 //const resourceRoutes = require('./routes/resource_routes')
 
 // Unauthenticated routes
-// app.use('/', [
-//   authRoutes,
-//   publicRoutes
-// ])
+app.use('/', [
+  authRoutes,
+  publicRoutes
+])
 
 // All API routes require a valid token.
 app.use('/', [
