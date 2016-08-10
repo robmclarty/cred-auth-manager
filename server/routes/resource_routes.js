@@ -13,21 +13,21 @@ const {
   deleteActions
 } = require('../controllers/resource_controller')
 
+const requireReadResource = cred.requirePermission('resource:read')
+const requireWriteResource = cred.requirePermission('resource:write')
+
 router.route('resources')
-  .all(cred.requirePermission('admin'))
-  .post(postResources)
-  .get(getResources)
+  .post(requireWriteResource, postResources)
+  .get(requireReadResource, getResources)
 
 router.route('resources/:resource_name')
-  .all(cred.requirePermission('admin'))
-  .get(getResource)
-  .put(putResource)
-  .delete(deleteResource)
+  .get(requireReadResource, getResource)
+  .put(requireWriteResource, putResource)
+  .delete(requireWriteResource, deleteResource)
 
 router.route('resources/:resource_name/actions')
-  .all(cred.requirePermission('admin'))
-  .post(postActions)
-  .get(getActions)
-  .delete(deleteActions)
+  .post(requireWriteResource, postActions)
+  .get(requireReadResource, getActions)
+  .delete(requireWriteResource, deleteActions)
 
 module.exports = router

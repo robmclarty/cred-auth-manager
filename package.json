@@ -4,7 +4,9 @@
   "description": "Example centralized auth management system for distributed resource api architecture.",
   "main": "server/index.js",
   "scripts": {
-    "test": "Haha. no."
+    "start": "node ./server/start.js",
+    "pm2": "pm2 start ./server/start.js",
+    "test": "mocha --timeout 5000 --require ./tests/server/common --recursive ./tests --debug-brk"
   },
   "keywords": [
     "cred",
@@ -36,9 +38,13 @@
     "validator": "5.5.0"
   },
   "devDependencies": {
+    "chai": "3.5.0",
     "gulp": "github:gulpjs/gulp#4.0",
+    "mocha": "3.0.2",
     "require-dir": "0.3.0",
     "sequelize-cli": "2.4.0",
+    "supertest": "2.0.0",
+    "supertest-as-promised": "3.2.0",
     "yargs": "4.7.1"
   }
 }

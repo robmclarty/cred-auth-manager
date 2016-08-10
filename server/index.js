@@ -71,7 +71,7 @@ if (process.env.NODE_ENV === ('development' || 'test')) {
 const authRoutes = require('./routes/auth_routes')
 const publicRoutes = require('./routes/public_routes')
 const userRoutes = require('./routes/user_routes')
-//const resourceRoutes = require('./routes/resource_routes')
+const resourceRoutes = require('./routes/resource_routes')
 
 // Unauthenticated routes
 app.use('/', [
@@ -81,9 +81,9 @@ app.use('/', [
 
 // All API routes require a valid token.
 app.use('/', [
-  //cred.requireAccessToken,
-  userRoutes
-  //resourceRoutes
+  cred.requireAccessToken,
+  userRoutes,
+  resourceRoutes
 ])
 
 // Error handlers
