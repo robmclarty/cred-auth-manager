@@ -8,17 +8,16 @@ const { User, Resource, Permission } = require('../models')
 
 // POST /users
 const postUsers = (req, res, next) => {
-  // const auth = req.cred.payload
-  // const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
-  // const user = new User(filteredUpdates)
-  //
-  // user.save()
-  //   .then(res.json({
-  //     success: true,
-  //     message: 'User created.',
-  //     user: newUser
-  //   }))
-  //   .catch(next)
+  const auth = req.cred.payload
+  const filteredAttrs = User.filterAdminProps(auth.isAdmin, req.body)
+
+  User.create(filteredAttrs)
+    .then(user => res.json({
+      success: true,
+      message: 'User created.',
+      user
+    }))
+    .catch(next)
 }
 
 // POST /registration
@@ -85,50 +84,51 @@ const getUser = (req, res, next) => {
 // Only allow updating of specific fields, check for their existence explicitly,
 // and strip any html tags from String fields to mitigate XSS attacks.
 const putUser = (req, res, next) => {
-  // const auth = req.cred.payload
-  // const userId = String(req.params.id)
-  //
-  // User.findById(userId)
-  //   .then(user => {
-  //     if (!user) throw createError({
-  //       status: BAD_REQUEST,
-  //       message: `No user found with id '${ userId }'`
-  //     })
-  //
-  //     const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
-  //
-  //     Object.keys(filteredUpdates).forEach(key => {
-  //       user[key] = filteredUpdates[key]
-  //     })
-  //
-  //     return user.save()
-  //   })
-  //   .then(user => res.json({
-  //     success: true,
-  //     message: 'User updated.',
-  //     user
-  //   }))
-  //   .catch(next)
+  const auth = req.cred.payload
+  const userId = req.params.id
+
+  User.findById(userId)
+    .then(user => {
+      if (!user) throw createError({
+        status: BAD_REQUEST,
+        message: `No user found with id '${ userId }'`
+      })
+
+      const filteredAttrs = User.filterAdminProps(auth.isAdmin, req.body)
+
+      Object.key(filteredAttrs).forEach(key => {
+        user[key] = filteredAttrs[key]
+      })
+
+      return user.save()
+    })
+    .then(user => res.json({
+      success: true,
+      message: 'User updated.',
+      user
+    }))
+    .catch(next)
 }
 
 // DELETE /users/:id
 const deleteUser = (req, res, next) => {
-  // const userId = String(req.params.id)
-  //
-  // User.findByIdAndRemove(userId)
-  //   .then(user => {
-  //     if (!user) throw createError({
-  //       status: BAD_REQUEST,
-  //       message: `No user found with id '${ userId }'`
-  //     })
-  //
-  //     res.json({
-  //       success: true,
-  //       message: 'User deleted.',
-  //       user
-  //     })
-  //   })
-  //   .catch(next)
+  const userId = String(req.params.id)
+
+  User.findById(userId)
+    .then(user => {
+      if (!user) throw createError({
+        status: BAD_REQUEST,
+        message: `No user found with id '${ userId }'`
+      })
+
+      return user.destroy()
+    })
+    .then(user => res.json({
+      success: true,
+      message: 'User deleted.',
+      user
+    }))
+    .catch(next)
 }
 
 // GET /users/:id/permissions/:resource_name

@@ -101,15 +101,21 @@ const addPermission = (name, permissions) => {
 //      actions: ["admin", "read:active", "write:new"]
 //    }
 // }
-const tokenPermissions = permissions => permissions.reduce((acc, perm) => {
-  return Object.assign(acc, {
-    [perm.name]: { actions: perm.actions }
-  })
-}, {})
+const tokenPermissions = permissions => {
+  if (!permissions) return {}
+
+  return permissions.reduce((acc, perm) => {
+    return Object.assign(acc, {
+      [perm.name]: { actions: perm.actions }
+    })
+  }, {})
+}
 
 // Run toJSON() on each permission so the data is in the expected format for the
 // custom user toJSON() function.
 const userWithJSONPermissions = user => {
+  if (!user.permissions) return user
+
   const permissions = user.permissions.map(permission => {
     return permission.toJSON()
   })
