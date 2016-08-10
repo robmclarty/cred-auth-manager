@@ -68,14 +68,14 @@ if (process.env.NODE_ENV === ('development' || 'test')) {
 
 // Routes
 // ------
-const authRoutes = require('./routes/auth_routes')
+const tokenRoutes = require('./routes/token_routes')
 const publicRoutes = require('./routes/public_routes')
 const userRoutes = require('./routes/user_routes')
 const resourceRoutes = require('./routes/resource_routes')
 
 // Unauthenticated routes
 app.use('/', [
-  authRoutes,
+  tokenRoutes,
   publicRoutes
 ])
 

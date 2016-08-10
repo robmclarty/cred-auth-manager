@@ -6,7 +6,7 @@ const {
   postTokens,
   putTokens,
   deleteToken
-} = require('../controllers/auth_controller')
+} = require('../controllers/token_controller')
 
 // Use "tokens" resource to handle authentication.
 // POST = login

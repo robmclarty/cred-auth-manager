@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./server/start.js",
     "pm2": "pm2 start ./server/start.js",
-    "test": "mocha --timeout 5000 --require ./tests/server/common --recursive ./tests --debug-brk"
+    "test": "mocha --timeout 5000 --require ./tests/server/env --recursive ./tests"
   },
   "keywords": [
     "cred",

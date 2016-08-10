@@ -18,7 +18,7 @@ global.app = require(serverPath)
 global.request = supertest.agent(app)
 
 // Models
-const models = require(`${ serverPath }/models`)
+global.models = require(`${ serverPath }/models`)
 global.User = models.User
 global.Resource = models.Resource
 global.Permission = models.Permission
