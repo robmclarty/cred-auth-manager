@@ -8,25 +8,25 @@ const {
   getResource,
   putResource,
   deleteResource,
-  postActions,
+  putActions,
   getActions,
   deleteActions
 } = require('../controllers/resource_controller')
 
-const requireReadResource = cred.requirePermission('resource:read')
-const requireWriteResource = cred.requirePermission('resource:write')
+const requireReadResource = cred.requirePermission('resources:read')
+const requireWriteResource = cred.requirePermission('resources:write')
 
-router.route('resources')
+router.route('/resources')
   .post(requireWriteResource, postResources)
   .get(requireReadResource, getResources)
 
-router.route('resources/:resource_name')
+router.route('/resources/:id')
   .get(requireReadResource, getResource)
   .put(requireWriteResource, putResource)
   .delete(requireWriteResource, deleteResource)
 
-router.route('resources/:resource_name/actions')
-  .post(requireWriteResource, postActions)
+router.route('/resources/:id/actions')
+  .put(requireWriteResource, putActions)
   .get(requireReadResource, getActions)
   .delete(requireWriteResource, deleteActions)
 

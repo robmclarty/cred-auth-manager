@@ -100,15 +100,7 @@ const putUser = (req, res, next) => {
   const userId = req.params.id
 
   findUserById(userId)
-    .then(user => {
-      const filteredAttrs = User.filterAdminProps(auth.isAdmin, req.body)
-
-      Object.keys(filteredAttrs).forEach(key => {
-        user[key] = filteredAttrs[key]
-      })
-
-      return user.save()
-    })
+    .then(user => user.update(User.filterAdminProps(auth.isAdmin, req.body)))
     .then(user => res.json({
       success: true,
       message: 'User updated.',
@@ -181,7 +173,7 @@ const postPermissions = (req, res, next) => {
       // the existing permission with the new actions (the valid ones).
       if (user.permissions && user.permissions[resourceName]) {
         return Permission.findById(user.permissions[resourceName].id)
-          .then(permission =>
+          .then(permission => {
             if (!permission) throw createError({
               status: UNPROCESSABLE,
               message: `Could not find matching permission for user '${ userId }' and resource '${ resourcename }'`
@@ -228,7 +220,7 @@ const deletePermissions = (req, res, next) => {
 
       // Find the matching permission and destroy it.
       return Permission.findById(user.permissions[resourceName].id)
-        .then(permission =>
+        .then(permission => {
           if (!permission) throw createError({
             status: UNPROCESSABLE,
             message: `Could not find matching permission for user '${ userId }' and resource '${ resourcename }'`

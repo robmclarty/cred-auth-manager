@@ -67,10 +67,10 @@ const PermissionSchema = function (sequelize, DataTypes) {
     },
     instanceMethods: {
       addActions: function (actions) {
-        return this.setDataValue('actions', addActions(this.actions, actions))
+        return this.set('actions', addActions(this.actions, actions))
       },
       removeActions: function (actions) {
-        return this.setDataValue('actions', removeActions(this.actions, actions))
+        return this.set('actions', removeActions(this.actions, actions))
       },
       toJSON: function () {
         return toJSON(this.get())

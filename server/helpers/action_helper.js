@@ -1,20 +1,18 @@
 'use strict'
 
+const { notEmptyOrInList } = require('./validation_helper')
+
 // Return a new array which merges oldActions[] with newActions[] without
 // duplicates.
-const addActions = ({ actions = [], newActions = [] }) => {
-  const updatedActions = newActions.filter(action => notEmptyOrInList(action, actions))
+const addActions = (actions = [], newActions = []) => {
+  const uniqueActions = newActions.filter(action => !actions.includes(action))
 
-  const uniqueActions = actions.reduce((acc, action) => {
-    return notEmptyOrInList(action, acc) ? [...acc, action] : acc
-  }, [...updatedActions])
-
-  return [...uniqueActions, ...updatedActions]
+  return [...actions, ...uniqueActions]
 }
 
 // Return a new array containing only the elements in actions[] which do not
 // match any of the elements in removedActions[].
-const removeActions = (actions, removedActions) => {
+const removeActions = (actions = [], removedActions = []) => {
   return removedActions.reduce((remainingActions, action) => {
     const index = remainingActions.indexOf(action)
 
