@@ -34,3 +34,15 @@ curl \
   -H "Content-Type: application/json" \
   -d '{"username":"rob4", "email":"rob.m+4@myplanet.com", "password":"password"}' \
   http://localhost:3000/users
+
+curl \
+  -X PUT \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlzQWN0aXZlIjp0cnVlLCJpc0FkbWluIjp0cnVlLCJwZXJtaXNzaW9ucyI6eyJjcmVkLWF1dGgtbWFuYWdlciI6eyJhY3Rpb25zIjpbInVzZXJzOnJlYWQiLCJ1c2Vyczp3cml0ZSIsInJlc291cmNlczpyZWFkIiwicmVzb3VyY2VzOndyaXRlIiwicGVybWlzc2lvbnM6cmVhZCIsInBlcm1pc3Npb25zOndyaXRlIl19fSwiaWF0IjoxNDcwODU1MjcxLCJleHAiOjE0NzA5NDE2NzEsImlzcyI6ImNyZWQtYXV0aC1tYW5hZ2VyIiwic3ViIjoiYWNjZXNzIiwianRpIjoiQkp5ZF9nRksifQ.eV4afXZ7lu2GrWZ2urpAumlXb_A76y-Invt5tZf5FOJWe7ZbsIRsYGzgfP44STCTrWcXgh35MbDC5G23T0ZNsNjnuOAyFgJhns74C7k7P219Why4F4nC30YW9CBSFBBz" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"rob8"}' \
+  http://localhost:3000/users/4
+
+curl \
+  -X DELETE \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlzQWN0aXZlIjp0cnVlLCJpc0FkbWluIjp0cnVlLCJwZXJtaXNzaW9ucyI6eyJjcmVkLWF1dGgtbWFuYWdlciI6eyJhY3Rpb25zIjpbInVzZXJzOnJlYWQiLCJ1c2Vyczp3cml0ZSIsInJlc291cmNlczpyZWFkIiwicmVzb3VyY2VzOndyaXRlIiwicGVybWlzc2lvbnM6cmVhZCIsInBlcm1pc3Npb25zOndyaXRlIl19fSwiaWF0IjoxNDcwODU1MjcxLCJleHAiOjE0NzA5NDE2NzEsImlzcyI6ImNyZWQtYXV0aC1tYW5hZ2VyIiwic3ViIjoiYWNjZXNzIiwianRpIjoiQkp5ZF9nRksifQ.eV4afXZ7lu2GrWZ2urpAumlXb_A76y-Invt5tZf5FOJWe7ZbsIRsYGzgfP44STCTrWcXgh35MbDC5G23T0ZNsNjnuOAyFgJhns74C7k7P219Why4F4nC30YW9CBSFBBz" \
+  http://localhost:3000/users/7

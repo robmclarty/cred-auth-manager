@@ -78,7 +78,8 @@ const addPermission = (name, permissions) => {
 
 // Format an array of permissions for use in a JWT access token, returning an
 // object whose keys are the names of a resource which references an array of
-// permissible actions.
+// permissible actions. Optionally include an `id` attribute along with
+// `actions` (used mostly for regular user.toJSON construction).
 //
 // Input (from a user's array of permissions from Permission.toJSON()):
 // [
@@ -101,13 +102,15 @@ const addPermission = (name, permissions) => {
 //      actions: ["admin", "read:active", "write:new"]
 //    }
 // }
-const tokenPermissions = permissions => {
+const tokenPermissions = (permissions = [], includeId = false) => {
   if (!permissions) return {}
 
   return permissions.reduce((acc, perm) => {
-    return Object.assign(acc, {
-      [perm.name]: { actions: perm.actions }
-    })
+    const attrs = { actions: perm.actions }
+
+    if (includeId) Object.assign(attrs, { id: perm.id })
+
+    return Object.assign(acc, { [perm.name]: attrs })
   }, {})
 }
 
@@ -140,7 +143,7 @@ const toJSON = user => ({
   email: user.email,
   isActive: user.isActive,
   isAdmin: user.isAdmin,
-  permissions: tokenPermissions(user.permissions),
+  permissions: tokenPermissions(user.permissions, true),
   loginAt: user.loginAt,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt
@@ -237,14 +240,20 @@ const UserSchema = function (sequelize, DataTypes) {
       filterAdminProps
     },
     instanceMethods: {
-      verifyPassword: function (password) { return verifyPassword(this.password, password) },
+      verifyPassword: function (password) {
+        return verifyPassword(this.password, password)
+      },
       // getActions: function (name) {
       //   return getActions(name, this.permissions)
       // }
       // removePermission: name => this.set('permissions', removePermissionFrom(this.permissions, name)),
       // addPermission: name => this.set('permissions', addPermissionTo(this.permissions, name)),
-      tokenPayload: function () { return tokenPayload(userWithJSONPermissions(this.get())) },
-      toJSON: function () { return toJSON(userWithJSONPermissions(this.get())) }
+      tokenPayload: function () {
+        return tokenPayload(userWithJSONPermissions(this.get()))
+      },
+      toJSON: function () {
+        return toJSON(userWithJSONPermissions(this.get()))
+      }
     },
     hooks: {
       beforeCreate: beforeSave,

@@ -10,16 +10,9 @@ const {
 const { addActions, removeActions } = require('../helpers/action_helper')
 const { Resource, User } = require('./index')
 
-const addActionsTo = permission => actions => {
-  permission.setDataValue('actions', addActions(permission.actions, actions))
-}
-
-const removeActionsFrom = permission => actions => {
-  permission.setDataValue('actions', removeActions(permission.actions, actions))
-}
-
 // Return a JSON object in the format expected by tokenPermissions().
 const toJSON = permission => ({
+  id: permission.id,
   name: permission.resource.name,
   actions: permission.actions
 })
@@ -73,9 +66,15 @@ const PermissionSchema = function (sequelize, DataTypes) {
       }
     },
     instanceMethods: {
-      addActions: function () { return addActionsTo(this) },
-      removeActions: function () { return removeActionsFrom(this) },
-      toJSON: function () { return toJSON(this.get()) }
+      addActions: function (actions) {
+        return this.setDataValue('actions', addActions(this.actions, actions))
+      },
+      removeActions: function (actions) {
+        return this.setDataValue('actions', removeActions(this.actions, actions))
+      },
+      toJSON: function () {
+        return toJSON(this.get())
+      }
     }
   })
 

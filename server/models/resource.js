@@ -10,15 +10,8 @@ const {
 } = require('../helpers/validation_helper')
 const { addActions, removeActions } = require('../helpers/action_helper')
 
-const addActionsTo = resource => actions => {
-  resource.setDataValue('actions', addActions(resource.actions, actions))
-}
-
-const removeActionsFrom = resource => actions => {
-  resource.setDataValue('actions', removeActions(resource.actions, actions))
-}
-
 const toJSON = resource => ({
+  id: resource.id,
   name: resource.name,
   url: resource.url,
   actions: resource.actions,
@@ -96,9 +89,18 @@ const ResourceSchema = function (sequelize, DataTypes) {
       }
     },
     instanceMethods: {
-      toJSON: function () { return toJSON(this.get()) },
-      addActions: function () { return addActionsTo(this) },
-      removeActions: function () { return removeActionsFrom(this) }
+      addActions: function (actions) {
+        return this.setDataValue('actions', addActions(this.actions, actions))
+      },
+      removeActions: function (actions) {
+        return this.setDataValue('actions', removeActions(this.actions, actions))
+      },
+      validActions: function (actions) {
+        return actions.filter(action => this.actions.includes(action))
+      },
+      toJSON: function () {
+        return toJSON(this.get())
+      }
     },
     scopes: {
       active: { where: { isActive: true } },
