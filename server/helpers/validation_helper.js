@@ -25,9 +25,9 @@ const notEmptyOrInList = (value, list) => {
   return value !== '' && !list.includes(value)
 }
 
-Object.assign(exports, {
+module.exports = {
   isUrlSafe,
   isArray,
   isArrayOfStrings,
   notEmptyOrInList
-})
+}

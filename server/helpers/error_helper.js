@@ -12,7 +12,7 @@ const createError = ({
   return error
 }
 
-Object.assign(exports, {
+module.exports = {
   createError,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
@@ -20,4 +20,4 @@ Object.assign(exports, {
   PAGE_NOT_FOUND: 404,
   UNPROCESSABLE: 422,
   GENERIC_ERROR: 500
-})
+}

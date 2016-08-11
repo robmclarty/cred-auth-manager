@@ -25,7 +25,7 @@ const removeActions = (actions, removedActions) => {
   }, [...actions])
 }
 
-Object.assign(exports, {
+module.exports = {
   addActions,
   removeActions
-})
+}

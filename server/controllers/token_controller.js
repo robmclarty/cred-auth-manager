@@ -52,8 +52,8 @@ const deleteToken = (req, res, next) => {
     })))
 }
 
-Object.assign(exports, {
+module.exports = {
   postTokens,
   putTokens,
   deleteToken
-})
+}

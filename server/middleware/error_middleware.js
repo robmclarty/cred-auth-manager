@@ -68,11 +68,11 @@ const pageNotFound = (req, res, next) => {
   })
 }
 
-Object.assign(exports, {
+module.exports = {
   unauthorized,
   forbidden,
   badRequest,
   unprocessable,
   genericError,
   pageNotFound
-})
+}

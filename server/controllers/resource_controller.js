@@ -1,6 +1,5 @@
 'use strict'
 
-//const validator = require('validator')
 const { createError, BAD_REQUEST, FORBIDDEN } = require('../helpers/error_helper')
 const { Resource } = require('../models')
 
@@ -184,7 +183,7 @@ const deleteActions = (req, res, next) => {
     .catch(next)
 }
 
-Object.assign(exports, {
+module.exports = {
   getResources,
   postResources,
   getResource,
@@ -193,4 +192,4 @@ Object.assign(exports, {
   postActions,
   getActions,
   deleteActions
-})
+}

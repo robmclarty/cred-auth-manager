@@ -244,7 +244,7 @@ const deletePermissions = (req, res, next) => {
     .catch(next)
 }
 
-Object.assign(exports, {
+module.exports = {
   postUsers,
   postRegistration,
   getUsers,
@@ -254,4 +254,4 @@ Object.assign(exports, {
   getPermissions,
   postPermissions,
   deletePermissions
-})
+}
