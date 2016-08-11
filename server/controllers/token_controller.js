@@ -11,12 +11,12 @@ const cred = require('../cred')
 const postTokens = (req, res, next) => {
   if (!req.cred || !req.cred.tokens) return next(createError({
     status: UNAUTHORIZED,
-    message: 'Authentication failed.'
+    message: 'Authentication failed'
   }))
 
   res.json({
     success: true,
-    message: 'Tokens generated successfully.',
+    message: 'Tokens generated successfully',
     tokens: req.cred.tokens
   })
 }
@@ -27,7 +27,7 @@ const postTokens = (req, res, next) => {
 const putTokens = (req, res, next) => {
   cred.refresh(req.cred.token)
     .then(freshTokens => res.json({
-      message: 'Tokens refreshed.',
+      message: 'Tokens refreshed',
       tokens: freshTokens
     }))
     .catch(err => next(createError({
@@ -43,7 +43,7 @@ const putTokens = (req, res, next) => {
 const deleteToken = (req, res, next) => {
   cred.revoke(req.cred.token)
     .then(revokedToken => res.json({
-      message: 'Token revoked.',
+      message: 'Token revoked',
       token: revokedToken
     }))
     .catch(err => next(createError({

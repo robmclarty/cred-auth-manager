@@ -4,7 +4,7 @@
 // attached to them, to match up with the codes and methods below.
 const createError = ({
   status = 500,
-  message = 'Something went wrong.'
+  message = 'Something went wrong'
 }) => {
   const error = new Error(message)
   error.status = status

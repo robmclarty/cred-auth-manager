@@ -9,13 +9,13 @@ const isUrlSafe = value => {
 
 const isArray = arr => {
   if (!Array.isArray(arr))
-    throw new Error('Actions must be an array.')
+    throw new Error('Actions must be an array')
 }
 
 const isArrayOfStrings = arr => {
   arr.forEach(item => {
     if (typeof item !== 'string')
-      throw new Error('Actions must be string values.')
+      throw new Error('Actions must be string values')
   })
 }
 

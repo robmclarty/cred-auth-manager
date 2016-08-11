@@ -38,7 +38,7 @@ const postUsers = (req, res, next) => {
   User.create(filteredAttrs)
     .then(user => res.json({
       success: true,
-      message: 'User created.',
+      message: 'User created',
       user
     }))
     .catch(next)
@@ -73,7 +73,7 @@ const getUsers = (req, res, next) => {
   })
     .then(users => res.json({
       success: true,
-      message: 'Users found.',
+      message: 'Users found',
       users
     }))
     .catch(next)
@@ -86,7 +86,7 @@ const getUser = (req, res, next) => {
   findUserById(userId)
     .then(user => res.json({
       success: true,
-      message: 'User found.',
+      message: 'User found',
       user
     }))
     .catch(next)
@@ -103,7 +103,7 @@ const putUser = (req, res, next) => {
     .then(user => user.update(User.filterAdminProps(auth.isAdmin, req.body)))
     .then(user => res.json({
       success: true,
-      message: 'User updated.',
+      message: 'User updated',
       user
     }))
     .catch(next)
@@ -117,7 +117,7 @@ const deleteUser = (req, res, next) => {
     .then(user => user.destroy())
     .then(() => res.json({
       success: true,
-      message: 'User deleted.'
+      message: 'User deleted'
     }))
     .catch(next)
 }
@@ -142,7 +142,7 @@ const getPermissions = (req, res, next) => {
 
       res.json({
         success: true,
-        message: 'Permissions found.',
+        message: 'Permissions found',
         actions
       })
     })
@@ -157,7 +157,7 @@ const postPermissions = (req, res, next) => {
 
   if (!actions) return next(createError({
     status: BAD_REQUEST,
-    message: 'No actions provided.'
+    message: 'No actions provided'
   }))
 
   Promise.all([
@@ -194,7 +194,7 @@ const postPermissions = (req, res, next) => {
     })
     .then(permission => res.json({
       success: true,
-      message: 'Permission saved.',
+      message: 'Permission saved',
       permission
     }))
     .catch(next)
@@ -231,7 +231,7 @@ const deletePermissions = (req, res, next) => {
     })
     .then(permission => res.json({
       success: true,
-      message: 'Permission removed.'
+      message: 'Permission removed'
     }))
     .catch(next)
 }

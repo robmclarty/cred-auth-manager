@@ -14,7 +14,7 @@ const unauthorized = (err, req, res, next) => {
 
   res.status(UNAUTHORIZED).send({
     success: false,
-    message: err.message || 'Unauthorized.',
+    message: err.message || 'Unauthorized',
     error: err
   })
 }
@@ -24,7 +24,7 @@ const forbidden = (err, req, res, next) => {
 
   res.status(FORBIDDEN).send({
     success: false,
-    message: err.message || 'Forbidden.',
+    message: err.message || 'Forbidden',
     error: err
   })
 }
@@ -44,7 +44,7 @@ const unprocessable = (err, req, res, next) => {
 
   res.status(UNPROCESSABLE).send({
     success: false,
-    message: err.message || 'Unprocessable entity.',
+    message: err.message || 'Unprocessable entity',
     error: err
   })
 }
@@ -54,7 +54,7 @@ const genericError = (err, req, res, next) => {
   console.log('err: ', err)
   res.status(GENERIC_ERROR).send({
     success: false,
-    message: err.message || 'Internal server error.',
+    message: err.message || 'Internal server error',
     error: err
   })
 }
@@ -64,7 +64,7 @@ const genericError = (err, req, res, next) => {
 const pageNotFound = (req, res, next) => {
   res.status(PAGE_NOT_FOUND).send({
     success: false,
-    message: 'Page not found.'
+    message: 'Page not found'
   })
 }
 

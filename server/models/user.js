@@ -157,7 +157,7 @@ const beforeSave = user => {
     .then(hash => {
       user.password = hash
     })
-    .catch(err => console.log("Error hashing password.", err))
+    .catch(err => console.log("Error hashing password", err))
 }
 
 const UserSchema = function (sequelize, DataTypes) {
