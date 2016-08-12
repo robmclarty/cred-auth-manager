@@ -13,9 +13,17 @@ global.expect = chai.expect
 global.supertest = require('supertest-as-promised')(Promise)
 global.cred = require(`${ serverPath }/cred`)
 global.config = require(`${ configPath }/server`)
-global.errorHelper = require(`${ serverPath }/helpers/error_helper`)
 global.app = require(serverPath)
 global.request = supertest.agent(app)
+
+// Response Codes
+global.OK = 200
+global.BAD_REQUEST = 400
+global.UNAUTHORIZED = 401
+global.FORBIDDEN = 403
+global.PAGE_NOT_FOUND = 404
+global.UNPROCESSABLE = 422
+global.GENERIC_ERROR = 500
 
 // Models
 global.models = require(`${ serverPath }/models`)
