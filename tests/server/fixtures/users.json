@@ -1,0 +1,79 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "id": 1,
+      "username": "admin",
+      "password": "password",
+      "email": "admin@email.com",
+      "isAdmin": true,
+      "isActive": true
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 2,
+      "username": "no-perms",
+      "password": "password",
+      "email": "no-perms@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 3,
+      "username": "write-user",
+      "password": "password",
+      "email": "write-user@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 4,
+      "username": "read-user",
+      "password": "password",
+      "email": "read-user@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 5,
+      "username": "inactive",
+      "password": "password",
+      "email": "inactive@email.com",
+      "isAdmin": false,
+      "isActive": false
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 6,
+      "username": "empty-resource-perms",
+      "password": "password",
+      "email": "empty-resource-perms@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 7,
+      "username": "other-resource-perms",
+      "password": "password",
+      "email": "other-resource-perms@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
+  }
+]

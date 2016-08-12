@@ -1,0 +1,29 @@
+[
+  {
+    "model": "Resource",
+    "data": {
+      "id": 1,
+      "name": "cred-auth-manager",
+      "url": "http://somewhere.com",
+      "actions": [
+        "users:read",
+        "users:write",
+        "resources:read",
+        "resources:write",
+        "permissions:read",
+        "permissions:write"
+      ],
+      "isActive": true
+    }
+  },
+  {
+    "model": "Resource",
+    "data": {
+      "id": 2,
+      "name": "some-other-resource",
+      "url": "http://somewhere.com",
+      "actions": ["action1", "action2", "action3"],
+      "isActive": true
+    }
+  }
+]

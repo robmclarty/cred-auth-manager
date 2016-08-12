@@ -34,48 +34,6 @@ const filterAdminProps = (isAdmin, updates) => {
   return filteredUpdates
 }
 
-// Return a permission model which has the name `name`.
-const getPermission = (name, permissions) =>
-  permissions.find(perm => (perm.name === name))
-
-// Cut the resource matching `name` from the permissions array.
-const removePermission = (name, permissions) => {
-  const index = permissions.findIndex(permission => permission.name === name)
-
-  return index >= 0 ?
-    [
-      ...permissions.slice(0, index),
-      ...permissions.slice(index + 1)
-    ] :
-    permissions
-}
-
-// Replace the permissions for `resource` with `actions`, or add them if they
-// don't already exist.
-const addPermission = (name, permissions) => {
-  let validActions = []
-
-  // If permissions already exist for this resource, remove the old ones and
-  // replace them with the new actions.
-  this.removePermission(resource.name)
-
-  // Filter actions to only include valid actions (i.e., strings which already
-  // exist in resource.actions).
-  if (resource.actions) {
-    validActions = actions.filter(action => resource.actions.indexOf(action) >= 0)
-  }
-
-  // Add a new permission with valid actions.
-  // Accept an empty array of actions. The absence of a given action means it
-  // will remove that permitted action from the user, regardless of what they
-  // already had.
-  this.permissions.push(new Permission({
-    resourceId: resource.id,
-    name: resource.name,
-    actions: validActions
-  }))
-}
-
 // Format an array of permissions for use in a JWT access token, returning an
 // object whose keys are the names of a resource which references an array of
 // permissible actions. Optionally include an `id` attribute along with

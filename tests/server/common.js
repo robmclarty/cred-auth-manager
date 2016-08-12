@@ -3,7 +3,7 @@
 const configPath = '../../config'
 const serverPath = '../../server'
 
-// Vars
+// Env Vars
 process.env.NODE_ENV = 'test'
 process.env.DATABASE = require(`${ configPath }/database`).test
 
@@ -13,7 +13,7 @@ global.expect = chai.expect
 global.supertest = require('supertest-as-promised')(Promise)
 global.cred = require(`${ serverPath }/cred`)
 global.config = require(`${ configPath }/server`)
-global.errorCodes = require(`${ serverPath }/helpers/error_helper`)
+global.errorHelper = require(`${ serverPath }/helpers/error_helper`)
 global.app = require(serverPath)
 global.request = supertest.agent(app)
 
@@ -22,3 +22,11 @@ global.models = require(`${ serverPath }/models`)
 global.User = models.User
 global.Resource = models.Resource
 global.Permission = models.Permission
+
+// Helpers
+global.login = (username, password) => request.post('/tokens')
+  .set('Accept', 'application/json')
+  .send({ username, password })
+  .expect('Content-Type', /json/)
+  .expect(200)
+  .then(res => res.body.tokens)

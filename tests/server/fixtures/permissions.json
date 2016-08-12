@@ -1,0 +1,61 @@
+[
+  {
+    "model": "Permission",
+    "data": {
+      "user": 3,
+      "resource": 1,
+      "actions": [
+        "users:write",
+        "resources:write",
+        "permissions:write"
+      ]
+    }
+  },
+  {
+    "model": "Permission",
+    "data": {
+      "user": 4,
+      "resource": 1,
+      "actions": [
+        "users:read",
+        "resources:read",
+        "permissions:read"
+      ]
+    }
+  },
+  {
+    "model": "Permission",
+    "data": {
+      "user": 5,
+      "resource": 1,
+      "actions": [
+        "users:write",
+        "users:read",
+        "resources:write",
+        "resources:read",
+        "permissions:write",
+        "permissions:read"
+      ]
+    }
+  },
+  {
+    "model": "Permission",
+    "data": {
+      "user": 6,
+      "resource": 1,
+      "actions": []
+    }
+  },
+  {
+    "model": "Permission",
+    "data": {
+      "user": 7,
+      "resource": 2,
+      "actions": [
+        "action1",
+        "action2",
+        "action3"
+      ]
+    }
+  }
+]

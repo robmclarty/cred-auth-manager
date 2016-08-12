@@ -79,9 +79,10 @@ app.use('/', [
   publicRoutes
 ])
 
-// All API routes require a valid token.
+// All API routes require a valid token and an active user account.
 app.use('/', [
   cred.requireAccessToken,
+  cred.requireProp('isActive', true),
   userRoutes,
   resourceRoutes
 ])

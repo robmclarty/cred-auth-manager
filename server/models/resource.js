@@ -71,10 +71,7 @@ const ResourceSchema = function (sequelize, DataTypes) {
     isActive: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: true,
-      set: function (val) {
-        this.setDataValue('isActive', validator.toBoolean(val, true))
-      }
+      defaultValue: true
     },
   },
   {

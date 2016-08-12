@@ -6,7 +6,8 @@ const Sequelize = require('sequelize')
 const env = process.env.NODE_ENV || 'development'
 const config = require('../../config/database')
 const sequelize = new Sequelize(config[env].url, {
-  dialect: config[env].dialect
+  dialect: config[env].dialect,
+  logging: false
 })
 const models = {}
 
