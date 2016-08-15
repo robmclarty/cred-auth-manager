@@ -92,6 +92,7 @@ app.use('/', [
 const errorHandlers = require('./middleware/error_middleware')
 
 app.use([
+  errorHandlers.sequelizeError,
   errorHandlers.unauthorized,
   errorHandlers.forbidden,
   errorHandlers.badRequest,

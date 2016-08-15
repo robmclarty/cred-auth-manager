@@ -15,9 +15,7 @@ beforeEach('insert fresh models', () => {
     'tests/server/fixtures/users.json',
     'tests/server/fixtures/resources.json',
     'tests/server/fixtures/permissions.json'
-  ],
-  models,
-  { log: msg => {} })
+  ], models, { log: msg => {} })
 })
 
 afterEach('clean up db', () => {

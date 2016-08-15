@@ -22,16 +22,19 @@ const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
 const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.
-const filterAdminProps = (isAdmin, updates) => {
-  const filteredUpdates = Object.assign({}, updates)
+const filterProps = (isAdmin, props) => {
+  const filteredProps = Object.assign({}, props)
 
-  if (updates.hasOwnProperty('isActive') && !isAdmin)
-    delete filteredUpdates.isActive
+  if (props.hasOwnProperty('id'))
+    delete filteredProps.id
 
-  if (updates.hasOwnProperty('isAdmin') && !isAdmin)
-    delete filteredUpdates.isAdmin
+  if (props.hasOwnProperty('isActive') && !isAdmin)
+    delete filteredProps.isActive
 
-  return filteredUpdates
+  if (props.hasOwnProperty('isAdmin') && !isAdmin)
+    delete filteredProps.isAdmin
+
+  return filteredProps
 }
 
 // Format an array of permissions for use in a JWT access token, returning an
@@ -88,7 +91,6 @@ const userWithJSONPermissions = user => {
 const tokenPayload = user => ({
   userId: user.id,
   username: user.username,
-  email: user.email,
   isActive: user.isActive,
   isAdmin: user.isAdmin,
   permissions: tokenPermissions(user.permissions)
@@ -124,7 +126,8 @@ const UserSchema = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
+      unique: true
     },
     username: {
       type: DataTypes.STRING,
@@ -195,7 +198,7 @@ const UserSchema = function (sequelize, DataTypes) {
       associate: models => {
         User.hasMany(models.Permission, { foreignKey: 'userId' })
       },
-      filterAdminProps
+      filterProps
     },
     instanceMethods: {
       verifyPassword: function (password) {

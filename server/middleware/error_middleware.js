@@ -9,6 +9,22 @@ const {
   GENERIC_ERROR
 } = require('../helpers/error_helper')
 
+// Catch any Sequelize-generated errors (e.g., DB validation errors) and
+// consider them "unprocessable". If the process got the point of trying to do
+// something in the database, it must have at least "understood" the request,
+// but was unable to process the request, hence 422 response.
+const sequelizeError = (err, req, res, next) => {
+  if (!err.status && err.name && err.name.includes('Sequelize')) {
+    return res.status(UNPROCESSABLE).send({
+      success: false,
+      message: err.message,
+      errors: err.errors
+    })
+  }
+
+  return next(err)
+}
+
 const unauthorized = (err, req, res, next) => {
   if (err.status !== UNAUTHORIZED) return next(err)
 
@@ -69,6 +85,7 @@ const pageNotFound = (req, res, next) => {
 }
 
 module.exports = {
+  sequelizeError,
   unauthorized,
   forbidden,
   badRequest,

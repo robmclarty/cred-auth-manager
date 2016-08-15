@@ -32,27 +32,27 @@ describe('GET /users', () => {
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
-        expect(res.body.users).not.to.be.an('array')
+        expect(res.body.users).to.be.undefined
       })
   })
 
   it('should respond with BAD REQUEST for users missing all resource permissions', () => {
     return login('other-resource-perms', 'password')
-      .then(tokens => getUsers(tokens.accessToken).expect(BAD_REQUEST))
+      .then(tokens => getUsers(tokens.accessToken).expect(UNAUTHORIZED))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
-        expect(res.body.users).not.to.be.an('array')
+        expect(res.body.users).to.be.undefined
       })
   })
 
   it('should respond with BAD REQUEST for users with no permissions at all', () => {
     return login('no-perms', 'password')
-      .then(tokens => getUsers(tokens.accessToken).expect(BAD_REQUEST))
+      .then(tokens => getUsers(tokens.accessToken).expect(UNAUTHORIZED))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
-        expect(res.body.users).not.to.be.an('array')
+        expect(res.body.users).to.be.undefined
       })
   })
 
@@ -62,7 +62,7 @@ describe('GET /users', () => {
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
-        expect(res.body.users).not.to.be.an('array')
+        expect(res.body.users).to.be.undefined
       })
   })
 })

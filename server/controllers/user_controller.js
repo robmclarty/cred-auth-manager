@@ -33,9 +33,9 @@ const findResourceByName = resourceName => Resource.findOne({
 // POST /users
 const postUsers = (req, res, next) => {
   const auth = req.cred.payload
-  const filteredAttrs = User.filterAdminProps(auth.isAdmin, req.body)
+  const props = User.filterProps(auth.isAdmin, req.body)
 
-  User.create(filteredAttrs)
+  User.create(props)
     .then(user => res.json({
       success: true,
       message: 'User created',
@@ -100,7 +100,7 @@ const putUser = (req, res, next) => {
   const userId = req.params.id
 
   findUserById(userId)
-    .then(user => user.update(User.filterAdminProps(auth.isAdmin, req.body)))
+    .then(user => user.update(User.filterProps(auth.isAdmin, req.body)))
     .then(user => res.json({
       success: true,
       message: 'User updated',
@@ -110,6 +110,7 @@ const putUser = (req, res, next) => {
 }
 
 // DELETE /users/:id
+// TODO: Should also remove corresponding permissions objects.
 const deleteUser = (req, res, next) => {
   const userId = req.params.id
 

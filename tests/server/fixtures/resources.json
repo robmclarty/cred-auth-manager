@@ -2,7 +2,6 @@
   {
     "model": "Resource",
     "data": {
-      "id": 1,
       "name": "cred-auth-manager",
       "url": "http://somewhere.com",
       "actions": [
@@ -19,7 +18,6 @@
   {
     "model": "Resource",
     "data": {
-      "id": 2,
       "name": "some-other-resource",
       "url": "http://somewhere.com",
       "actions": ["action1", "action2", "action3"],

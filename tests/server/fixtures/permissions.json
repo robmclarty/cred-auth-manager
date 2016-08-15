@@ -2,8 +2,12 @@
   {
     "model": "Permission",
     "data": {
-      "user": 3,
-      "resource": 1,
+      "user": {
+        "username": "write-user"
+      },
+      "resource": {
+        "name": "cred-auth-manager"
+      },
       "actions": [
         "users:write",
         "resources:write",
@@ -14,8 +18,12 @@
   {
     "model": "Permission",
     "data": {
-      "user": 4,
-      "resource": 1,
+      "user": {
+        "username": "read-user"
+      },
+      "resource": {
+        "name": "cred-auth-manager"
+      },
       "actions": [
         "users:read",
         "resources:read",
@@ -26,8 +34,12 @@
   {
     "model": "Permission",
     "data": {
-      "user": 5,
-      "resource": 1,
+      "user": {
+        "username": "inactive"
+      },
+      "resource": {
+        "name": "cred-auth-manager"
+      },
       "actions": [
         "users:write",
         "users:read",
@@ -41,16 +53,24 @@
   {
     "model": "Permission",
     "data": {
-      "user": 6,
-      "resource": 1,
+      "user": {
+        "username": "empty-resource-perms"
+      },
+      "resource": {
+        "name": "cred-auth-manager"
+      },
       "actions": []
     }
   },
   {
     "model": "Permission",
     "data": {
-      "user": 7,
-      "resource": 2,
+      "user": {
+        "username": "other-resource-perms"
+      },
+      "resource": {
+        "name": "some-other-resource"
+      },
       "actions": [
         "action1",
         "action2",
