@@ -68,4 +68,17 @@ describe('POST /tokens', () => {
         expect(res.body.tokens).to.be.undefined
       })
   })
+
+  it('should respond with UNAUTHORIZED if username/password match, but user is inactive', () => {
+    return postTokens({
+      username: 'inactive-user',
+      password: 'password'
+    })
+      .expect(UNAUTHORIZED)
+      .then(res => {
+        expect(res).not.to.be.null
+        expect(res.body.success).to.be.false
+        expect(res.body.tokens).to.be.undefined
+      })
+  })
 })

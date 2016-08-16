@@ -76,7 +76,7 @@ const postPermissions = (token, userId, resourceName, perms) =>
   request.post(`/users/${ userId }/permissions/${ resourceName }`)
     .set('Accept', 'application/json')
     .set('Authorization', `Bearer ${ token }`)
-    .send(perms)
+    .send({ actions: perms })
     .expect('Content-Type', /json/)
 
 const deletePermissions = (token, userId, resourceName, perms) =>

@@ -132,7 +132,7 @@ const getPermissions = (req, res, next) => {
     .then(user => user.toJSON())
     .then(user => {
       if (!user.permissions[resourceName]) throw createError({
-        status: BAD_REQUEST,
+        status: UNPROCESSABLE,
         message: `User has no permissions set for resource '${ resourceName }'`
       })
 
@@ -233,7 +233,7 @@ const deletePermissions = (req, res, next) => {
     })
     .then(permission => res.json({
       success: true,
-      message: 'Permission removed'
+      message: 'Permissions removed'
     }))
     .catch(next)
 }
