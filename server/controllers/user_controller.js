@@ -129,16 +129,17 @@ const getPermissions = (req, res, next) => {
   const resourceName = req.params.resource_name
 
   findUserById(userId)
+    .then(user => user.toJSON())
     .then(user => {
-      if (!user.permissions.resourceName) throw createError({
+      if (!user.permissions[resourceName]) throw createError({
         status: BAD_REQUEST,
         message: `User has no permissions set for resource '${ resourceName }'`
       })
 
       const actions = user.permissions &&
-          user.permissions.resourceName &&
-          user.permissions.resourceName.actions ?
-        user.permissions.resourceName.actions :
+          user.permissions[resourceName] &&
+          user.permissions[resourceName].actions ?
+        user.permissions[resourceName].actions :
         []
 
       res.json({
@@ -166,7 +167,7 @@ const postPermissions = (req, res, next) => {
     findResourceByName(resourceName)
   ])
     .then(userAndResource => {
-      const user = userAndResource[0]
+      const user = userAndResource[0].toJSON()
       const resource = userAndResource[1]
       const validActions = resource.validActions(actions)
 
@@ -196,7 +197,7 @@ const postPermissions = (req, res, next) => {
     .then(permission => res.json({
       success: true,
       message: 'Permission saved',
-      permission
+      actions: permission.actions
     }))
     .catch(next)
 }
@@ -211,7 +212,7 @@ const deletePermissions = (req, res, next) => {
     findResourceByName(resourceName)
   ])
     .then(userAndResource => {
-      const user = userAndResource[0]
+      const user = userAndResource[0].toJSON()
       const resource = userAndResource[1]
 
       // If user does not have a permission for resource, fail silently (if the

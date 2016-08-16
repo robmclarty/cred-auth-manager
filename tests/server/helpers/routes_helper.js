@@ -16,12 +16,12 @@ const postTokens = credentials => request.post('/tokens')
 
 // Refresh tokens can be revoked in one of two ways:
 // 1. revoke your own token (i.e., the token passed in the Auth header)
-// 2. revoke someone else's token (in this case `optionalRefreshToken`)
 const deleteTokens = refreshToken => request.delete('/tokens')
     .set('Accept', 'application/json')
     .set('Authorization', `Bearer ${ refreshToken }`)
     .expect('Content-Type', /json/)
 
+// 2. revoke someone else's token (in this case `optionalRefreshToken`)
 const deleteTokensTargeted = (refreshToken, targetRefreshToken) => request.delete('/tokens')
   .set('Accept', 'application/json')
   .set('Authorization', `Bearer ${ refreshToken }`)
@@ -63,6 +63,29 @@ const deleteUser = (token, userId) => request.delete(`/users/${ userId }`)
   .set('Authorization', `Bearer ${ token }`)
   .expect('Content-Type', /json/)
 
+
+// Permissions
+// -----------
+const getPermissions = (token, userId, resourceName) =>
+  request.get(`/users/${ userId }/permissions/${ resourceName }`)
+    .set('Accept', 'application/json')
+    .set('Authorization', `Bearer ${ token }`)
+    .expect('Content-Type', /json/)
+
+const postPermissions = (token, userId, resourceName, perms) =>
+  request.post(`/users/${ userId }/permissions/${ resourceName }`)
+    .set('Accept', 'application/json')
+    .set('Authorization', `Bearer ${ token }`)
+    .send(perms)
+    .expect('Content-Type', /json/)
+
+const deletePermissions = (token, userId, resourceName, perms) =>
+  request.delete(`/users/${ userId }/permissions/${ resourceName }`)
+    .set('Accept', 'application/json')
+    .set('Authorization', `Bearer ${ token }`)
+    .send(perms)
+    .expect('Content-Type', /json/)
+
 module.exports = {
   login,
   postTokens,
@@ -73,5 +96,8 @@ module.exports = {
   postUsers,
   getUser,
   putUser,
-  deleteUser
+  deleteUser,
+  getPermissions,
+  postPermissions,
+  deletePermissions
 }
