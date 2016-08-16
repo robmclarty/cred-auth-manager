@@ -27,10 +27,12 @@ const postTokens = (req, res, next) => {
 const putTokens = (req, res, next) => {
   cred.refresh(req.cred.token)
     .then(freshTokens => res.json({
+      success: true,
       message: 'Tokens refreshed',
       tokens: freshTokens
     }))
     .catch(err => next(createError({
+      success: false,
       status: UNAUTHORIZED,
       message: err
     })))
@@ -41,12 +43,28 @@ const putTokens = (req, res, next) => {
 // whitelist which will invalidate the token. Respond that the user is now
 // "logged out".
 const deleteToken = (req, res, next) => {
-  cred.revoke(req.cred.token)
+  let token = req.cred.token
+
+  // Don't allow non-admin users to revoke other users' tokens.
+  if (req.body.token && !req.cred.payload.isAdmin) return next(createError({
+    success: false,
+    status: UNAUTHORIZED,
+    message: 'You are not authorized to revoke this token.'
+  }))
+
+  // If a token was provided in the body, delete that token instead of the one
+  // that was used to authorize the request (this allows users to delete other
+  // user's tokens).
+  if (req.body.token && req.cred.payload.isAdmin) token = req.body.token
+
+  cred.revoke(token)
     .then(revokedToken => res.json({
+      success: true,
       message: 'Token revoked',
       token: revokedToken
     }))
     .catch(err => next(createError({
+      success: false,
       status: UNAUTHORIZED,
       message: err
     })))

@@ -1,5 +1,6 @@
 'use strict'
 
+const { login, postUsers } = require('../../helpers/routes_helper')
 const userProps = {
   username: 'sample-user',
   password: 'password',
@@ -7,16 +8,11 @@ const userProps = {
 }
 const adminProps = Object.assign({}, userProps, { isAdmin: true })
 const inactiveProps = Object.assign({}, userProps, { isActive: false })
-const postUser = (token, props) => request.post(`/users`)
-  .set('Accept', 'application/json')
-  .set('Authorization', `Bearer ${ token }`)
-  .send(props)
-  .expect('Content-Type', /json/)
 
 describe('POST /users', () => {
   it('should allow admins to create new users', () => {
     return login('admin', 'password')
-      .then(tokens => postUser(tokens.accessToken, userProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, userProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -27,7 +23,7 @@ describe('POST /users', () => {
 
   it('should allow admins to set the isAdmin attribute on new users', () => {
     return login('admin', 'password')
-      .then(tokens => postUser(tokens.accessToken, adminProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, adminProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -39,7 +35,7 @@ describe('POST /users', () => {
 
   it('should allow admins to set the isActive attribute on new users', () => {
     return login('admin', 'password')
-      .then(tokens => postUser(tokens.accessToken, inactiveProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, inactiveProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -51,7 +47,7 @@ describe('POST /users', () => {
 
   it('should allow users with permission "users:write" to create new users', () => {
     return login('write-user', 'password')
-      .then(tokens => postUser(tokens.accessToken, userProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, userProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -62,7 +58,7 @@ describe('POST /users', () => {
 
   it('should not allow non-admins to set the isAdmin attribute on new users', () => {
     return login('write-user', 'password')
-      .then(tokens => postUser(tokens.accessToken, adminProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, adminProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -74,7 +70,7 @@ describe('POST /users', () => {
 
   it('should not allow non-admins to set the isActive attribute on new users', () => {
     return login('write-user', 'password')
-      .then(tokens => postUser(tokens.accessToken, inactiveProps).expect(OK))
+      .then(tokens => postUsers(tokens.accessToken, inactiveProps).expect(OK))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
@@ -86,7 +82,7 @@ describe('POST /users', () => {
 
   it('should not allow users missing permission "users:write" to create new users', () => {
     return login('empty-resource-perms', 'password')
-      .then(tokens => postUser(tokens.accessToken, userProps).expect(UNAUTHORIZED))
+      .then(tokens => postUsers(tokens.accessToken, userProps).expect(UNAUTHORIZED))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
@@ -98,7 +94,7 @@ describe('POST /users', () => {
     const dupUsernameProps = Object.assign({}, userProps, { username: 'read-user' })
 
     return login('write-user', 'password')
-      .then(tokens => postUser(tokens.accessToken, dupUsernameProps).expect(UNPROCESSABLE))
+      .then(tokens => postUsers(tokens.accessToken, dupUsernameProps).expect(UNPROCESSABLE))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
@@ -110,7 +106,7 @@ describe('POST /users', () => {
     const dupEmailProps = Object.assign({}, userProps, { email: 'read-user@email.com' })
 
     return login('write-user', 'password')
-      .then(tokens => postUser(tokens.accessToken, dupEmailProps).expect(UNPROCESSABLE))
+      .then(tokens => postUsers(tokens.accessToken, dupEmailProps).expect(UNPROCESSABLE))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false

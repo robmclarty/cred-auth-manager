@@ -1,10 +1,7 @@
 'use strict'
 
+const { login, deleteUser } = require('../../helpers/routes_helper')
 const deleteUserId = 8
-const deleteUser = (token, userId) => request.delete(`/users/${ userId }`)
-  .set('Accept', 'application/json')
-  .set('Authorization', `Bearer ${ token }`)
-  .expect('Content-Type', /json/)
 
 describe('DELETE /users/:id', () => {
   it('should allow admins to delete other users', () => {

@@ -1,15 +1,11 @@
 'use strict'
 
+const { login, putUser } = require('../../helpers/routes_helper')
 const updateUserId = 8
 const updateProps = {
   username: 'some-other-username',
   email: 'some-other@email.com'
 }
-const putUser = (token, userId, props) => request.put(`/users/${ userId }`)
-  .set('Accept', 'application/json')
-  .set('Authorization', `Bearer ${ token }`)
-  .send(props)
-  .expect('Content-Type', /json/)
 
 describe('PUT /users/:id', () => {
   it('should allow admins to modify other users', () => {

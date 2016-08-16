@@ -30,11 +30,3 @@ global.models = require(`${ serverPath }/models`)
 global.User = models.User
 global.Resource = models.Resource
 global.Permission = models.Permission
-
-// Helpers
-global.login = (username, password) => request.post('/tokens')
-  .set('Accept', 'application/json')
-  .send({ username, password })
-  .expect('Content-Type', /json/)
-  .expect(200)
-  .then(res => res.body.tokens)

@@ -1,9 +1,6 @@
 'use strict'
 
-const getUsers = token => request.get('/users')
-  .set('Accept', 'application/json')
-  .set('Authorization', `Bearer ${ token }`)
-  .expect('Content-Type', /json/)
+const { login, getUsers } = require('../../helpers/routes_helper')
 
 describe('GET /users', () => {
   it('should always allow admins to list users', () => {

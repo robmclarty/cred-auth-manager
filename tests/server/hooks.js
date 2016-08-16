@@ -3,7 +3,7 @@
 const sequelizeFixtures = require('sequelize-fixtures')
 
 // Run sequelize.sync() to reset the db with all the schemas.
-// `models` is defined as a global in env.js
+// `models` is defined as a global in common.js
 const resetDatabase = () => models.sequelize.sync({ force: true })
 
 before('setup db', () => {

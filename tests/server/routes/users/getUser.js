@@ -1,10 +1,7 @@
 'use strict'
 
+const { login, getUser } = require('../../helpers/routes_helper')
 const noPermsUserId = 2
-const getUser = (token, userId) => request.get(`/users/${ userId }`)
-  .set('Accept', 'application/json')
-  .set('Authorization', `Bearer ${ token }`)
-  .expect('Content-Type', /json/)
 
 describe('GET /users/:id', () => {
   it('should allow admins to get a user other than themselves', () => {
