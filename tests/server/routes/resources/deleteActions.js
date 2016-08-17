@@ -40,4 +40,14 @@ describe('DELETE /resources/:id/actions', () => {
         expect(res.body.actions).to.be.undefined
       })
   })
+
+  it('should respond with BAD REQUEST if no actions are sent', () => {
+    return login('admin', 'password')
+      .then(tokens => deleteResourceActions(tokens.accessToken, resourceId, null).expect(BAD_REQUEST))
+      .then(res => {
+        expect(res).not.to.be.null
+        expect(res.body.success).to.be.false
+        expect(res.body.actions).to.be.undefined
+      })
+  })
 })

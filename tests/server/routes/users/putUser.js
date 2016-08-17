@@ -106,7 +106,7 @@ describe('PUT /users/:id', () => {
     const dupUsernameProps = { username: 'read-user' }
 
     return login('write-user', 'password')
-      .then(tokens => putUser(tokens.accessToken, updateUserId, dupUsernameProps).expect(UNPROCESSABLE))
+      .then(tokens => putUser(tokens.accessToken, updateUserId, dupUsernameProps).expect(CONFLICT))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
@@ -118,7 +118,7 @@ describe('PUT /users/:id', () => {
     const dupEmailProps = { email: 'read-user@email.com' }
 
     return login('write-user', 'password')
-      .then(tokens => putUser(tokens.accessToken, updateUserId, dupEmailProps).expect(UNPROCESSABLE))
+      .then(tokens => putUser(tokens.accessToken, updateUserId, dupEmailProps).expect(CONFLICT))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false

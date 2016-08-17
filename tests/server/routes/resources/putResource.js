@@ -1,6 +1,7 @@
 'use strict'
 
 const resourceId = 2
+const existingResourceName = 'cred-auth-manager'
 const resourceUpdates = {
   name: 'another-resource-name'
 }
@@ -32,6 +33,20 @@ describe('PUT /resources/:id', () => {
   it('should not allow users missing permission "resources:write" to modify a resources', () => {
     return login('read-user', 'password')
       .then(tokens => putResource(tokens.accessToken, resourceId, resourceUpdates).expect(UNAUTHORIZED))
+      .then(res => {
+        expect(res).not.to.be.null
+        expect(res.body.success).to.be.false
+        expect(res.body.resource).to.be.undefined
+      })
+  })
+
+  it('should respond with CONFLICT if new resource name already exists', () => {
+    const conflictingResourceProps = Object.assign({}, resourceUpdates, {
+      name: existingResourceName
+    })
+
+    return login('admin', 'password')
+      .then(tokens => putResource(tokens.accessToken, resourceId, conflictingResourceProps).expect(CONFLICT))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false

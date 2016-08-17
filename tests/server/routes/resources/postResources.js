@@ -116,4 +116,18 @@ describe('POST /resources', () => {
         expect(res.body.resource).to.be.undefined
       })
   })
+
+  it('should respond with UNPROCESSABLE if resource is missing props', () => {
+    const missingProps = {
+      actions: ['action1', 'action2']
+    }
+
+    return login('admin', 'password')
+      .then(tokens => postResources(tokens.accessToken, missingProps).expect(UNPROCESSABLE))
+      .then(res => {
+        expect(res).not.to.be.null
+        expect(res.body.success).to.be.false
+        expect(res.body.resource).to.be.undefined
+      })
+  })
 })

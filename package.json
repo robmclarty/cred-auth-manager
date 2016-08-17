@@ -7,7 +7,7 @@
     "start": "node ./server/start.js",
     "pm2": "pm2 start ./server/start.js",
     "test": "mocha --opts ./mocha.opts",
-    "coverage": "./node_modules/.bin/istanbul cover _mocha -- --opts ./mocha.opts"
+    "coverage": "istanbul cover _mocha -- --opts ./mocha.opts"
   },
   "keywords": [
     "cred",

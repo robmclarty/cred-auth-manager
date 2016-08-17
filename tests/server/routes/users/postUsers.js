@@ -94,7 +94,7 @@ describe('POST /users', () => {
     const dupUsernameProps = Object.assign({}, userProps, { username: 'read-user' })
 
     return login('write-user', 'password')
-      .then(tokens => postUsers(tokens.accessToken, dupUsernameProps).expect(UNPROCESSABLE))
+      .then(tokens => postUsers(tokens.accessToken, dupUsernameProps).expect(CONFLICT))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false
@@ -106,7 +106,7 @@ describe('POST /users', () => {
     const dupEmailProps = Object.assign({}, userProps, { email: 'read-user@email.com' })
 
     return login('write-user', 'password')
-      .then(tokens => postUsers(tokens.accessToken, dupEmailProps).expect(UNPROCESSABLE))
+      .then(tokens => postUsers(tokens.accessToken, dupEmailProps).expect(CONFLICT))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false

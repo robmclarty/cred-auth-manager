@@ -16,7 +16,12 @@ const {
 // but was unable to process the request, hence 422 response.
 const sequelizeError = (err, req, res, next) => {
   if (!err.status && err.name && err.name.includes('Sequelize')) {
-    return res.status(UNPROCESSABLE).send({
+    let status = UNPROCESSABLE
+
+    // If there was a uniqueness conflict, return 409 instead of 422.
+    if (err.name === 'SequelizeUniqueConstraintError') status = CONFLICT
+
+    return res.status(status).send({
       success: false,
       message: err.message,
       errors: err.errors

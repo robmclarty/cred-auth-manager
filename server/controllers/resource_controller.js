@@ -17,15 +17,7 @@ const findResourceById = resourceId => Resource.findById(resourceId)
 const postResources = (req, res, next) => {
   const resourceName = req.body.name
 
-  Resource.findOne({ where: { name: resourceName } })
-    .then(resource => {
-      if (resource) throw createError({
-        status: CONFLICT,
-        message: 'A resource by that name already exists'
-      })
-
-      return Resource.create(req.body)
-    })
+  Resource.create(req.body)
     .then(resource => res.json({
       success: true,
       message: 'Resource created',

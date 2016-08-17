@@ -98,9 +98,10 @@ const getUser = (req, res, next) => {
 const putUser = (req, res, next) => {
   const auth = req.cred.payload
   const userId = req.params.id
+  const props = User.filterProps(auth.isAdmin, req.body)
 
   findUserById(userId)
-    .then(user => user.update(User.filterProps(auth.isAdmin, req.body)))
+    .then(user => user.update(props))
     .then(user => res.json({
       success: true,
       message: 'User updated',
