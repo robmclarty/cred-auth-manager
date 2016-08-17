@@ -81,4 +81,13 @@ describe('POST /tokens', () => {
         expect(res.body.tokens).to.be.undefined
       })
   })
+
+  it('should respond with UNAUTHORIZED if no credentials are sent', () => {
+    return postTokens({}).expect(UNAUTHORIZED)
+      .then(res => {
+        expect(res).not.to.be.null
+        expect(res.body.success).to.be.false
+        expect(res.body.tokens).to.be.undefined
+      })
+  })
 })
