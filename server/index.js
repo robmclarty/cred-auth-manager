@@ -4,6 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const RateLimit = require('express-rate-limit')
+const statusMonitor = require('express-status-monitor')
 const morgan = require('morgan')
 const cred = require('./cred')
 const config = require('../config/server')
@@ -11,6 +12,26 @@ const config = require('../config/server')
 // Express App
 // -----------
 const app = express()
+
+// Status Monitor
+app.use(statusMonitor({
+  path: '/status',
+  socketPort: 41338,
+  spans: [
+    {
+      interval: 1, // every second
+      retention: 60 // keep 60 datapoints in memory
+    },
+    {
+      interval: 5, // every 5 seconds
+      retention: 60
+    },
+    {
+      interval: 15, // every 15 seconds
+      retention: 60
+    }
+  ]
+}))
 
 // Store re-usable values.
 app.set('assets-path', './client')
