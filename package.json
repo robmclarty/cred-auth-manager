@@ -1,6 +1,6 @@
 {
   "name": "cred-auth-manager",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "description": "Example authenticated resource API using `cred` JWT library.",
   "main": "server/index.js",
   "scripts": {
