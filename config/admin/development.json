@@ -1,0 +1,4 @@
+{
+  "appName": "cred-auth-manager",
+  "authRoot": "http://localhost:3000"
+}
