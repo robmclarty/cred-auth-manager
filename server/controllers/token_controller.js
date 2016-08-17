@@ -48,7 +48,7 @@ const deleteToken = (req, res, next) => {
   // Don't allow non-admin users to revoke other users' tokens.
   if (req.body.token && !req.cred.payload.isAdmin) return next(createError({
     success: false,
-    status: UNAUTHORIZED,
+    status: FORBIDDEN,
     message: 'You are not authorized to revoke this token.'
   }))
 

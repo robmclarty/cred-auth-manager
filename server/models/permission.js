@@ -62,8 +62,14 @@ const PermissionSchema = function (sequelize, DataTypes) {
     tableName: 'Permissions',
     classMethods: {
       associate: models => {
-        Permission.belongsTo(models.User, { foreignKey: 'userId' })
-        Permission.belongsTo(models.Resource, { foreignKey: 'resourceId' })
+        Permission.belongsTo(models.User, {
+          foreignKey: 'userId',
+          onDelete: 'cascade'
+        })
+        Permission.belongsTo(models.Resource, {
+          foreignKey: 'resourceId',
+          onDelete: 'cascade'
+        })
       }
     },
     instanceMethods: {

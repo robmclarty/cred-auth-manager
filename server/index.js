@@ -89,16 +89,18 @@ app.use('/', [
 
 // Error handlers
 // --------------
-const errorHandlers = require('./middleware/error_middleware')
+const errorHandler = require('./middleware/error_middleware')
 
 app.use([
-  errorHandlers.sequelizeError,
-  errorHandlers.unauthorized,
-  errorHandlers.forbidden,
-  errorHandlers.badRequest,
-  errorHandlers.unprocessable,
-  errorHandlers.genericError,
-  errorHandlers.pageNotFound
+  errorHandler.sequelizeError,
+  errorHandler.unauthorized,
+  errorHandler.forbidden,
+  errorHandler.conflict,
+  errorHandler.badRequest,
+  errorHandler.unprocessable,
+  errorHandler.notFound,
+  errorHandler.genericError,
+  errorHandler.catchall
 ])
 
 module.exports = app

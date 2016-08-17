@@ -77,7 +77,7 @@ describe('DELETE /tokens', () => {
         const user1RefreshToken = tokens[0].refreshToken
         const user2RefreshToken = tokens[1].refreshToken
 
-        return deleteTokensTargeted(user1RefreshToken, user2RefreshToken).expect(UNAUTHORIZED)
+        return deleteTokensTargeted(user1RefreshToken, user2RefreshToken).expect(FORBIDDEN)
       })
       .then(res => {
         expect(res).not.to.be.null

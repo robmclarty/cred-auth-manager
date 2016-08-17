@@ -61,9 +61,9 @@ describe('GET /users/:id/permissions/:resource_name', () => {
       })
   })
 
-  it('should respond with BAD REQUEST if userId does not match a real user', () => {
+  it('should respond with NOT FOUND if userId does not match a real user', () => {
     return login('read-user', 'password')
-      .then(tokens => getPermissions(tokens.accessToken, invalidUserId, resourceName).expect(BAD_REQUEST))
+      .then(tokens => getPermissions(tokens.accessToken, invalidUserId, resourceName).expect(NOT_FOUND))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.false

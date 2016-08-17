@@ -1,12 +1,12 @@
 'use strict'
 
-const { createError, BAD_REQUEST, FORBIDDEN } = require('../helpers/error_helper')
+const { createError, BAD_REQUEST, CONFLICT, NOT_FOUND } = require('../helpers/error_helper')
 const { Resource } = require('../models')
 
 const findResourceById = resourceId => Resource.findById(resourceId)
   .then(resource => {
     if (!resource) throw createError({
-      status: BAD_REQUEST,
+      status: NOT_FOUND,
       message: `No resource found with the id '${ resourceId }'`
     })
 
@@ -20,7 +20,7 @@ const postResources = (req, res, next) => {
   Resource.findOne({ where: { name: resourceName } })
     .then(resource => {
       if (resource) throw createError({
-        status: FORBIDDEN,
+        status: CONFLICT,
         message: 'A resource by that name already exists'
       })
 
@@ -82,8 +82,7 @@ const deleteResource = (req, res, next) => {
     .then(resource => resource.destroy())
     .then(resource => res.json({
       success: true,
-      message: 'Resource deleted',
-      resource
+      message: 'Resource deleted'
     }))
     .catch(next)
 }

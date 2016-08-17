@@ -4,7 +4,8 @@ const {
   BAD_REQUEST,
   UNAUTHORIZED,
   FORBIDDEN,
-  PAGE_NOT_FOUND,
+  CONFLICT,
+  NOT_FOUND,
   UNPROCESSABLE,
   GENERIC_ERROR
 } = require('../helpers/error_helper')
@@ -45,6 +46,16 @@ const forbidden = (err, req, res, next) => {
   })
 }
 
+const conflict = (err, req, res, next) => {
+  if (err.status !== CONFLICT) return next(err)
+
+  res.status(CONFLICT).send({
+    success: false,
+    message: err.message || 'Conflict',
+    error: err
+  })
+}
+
 const badRequest = (err, req, res, next) => {
   if (err.status !== BAD_REQUEST) return next(err)
 
@@ -65,6 +76,17 @@ const unprocessable = (err, req, res, next) => {
   })
 }
 
+// If there's nothing left to do after all this (and there's no error),
+// return a 404 error.
+const notFound = (err, req, res, next) => {
+  if (err.status !== NOT_FOUND) return next(err)
+
+  res.status(NOT_FOUND).send({
+    success: false,
+    message: 'The requested resource could not be found'
+  })
+}
+
 // If there's still an error at this point, return a generic 500 error.
 const genericError = (err, req, res, next) => {
   console.log('err: ', err)
@@ -77,10 +99,10 @@ const genericError = (err, req, res, next) => {
 
 // If there's nothing left to do after all this (and there's no error),
 // return a 404 error.
-const pageNotFound = (req, res, next) => {
-  res.status(PAGE_NOT_FOUND).send({
+const catchall = (req, res, next) => {
+  res.status(NOT_FOUND).send({
     success: false,
-    message: 'Page not found'
+    message: 'The requested resource could not be found'
   })
 }
 
@@ -88,8 +110,10 @@ module.exports = {
   sequelizeError,
   unauthorized,
   forbidden,
+  conflict,
   badRequest,
   unprocessable,
   genericError,
-  pageNotFound
+  notFound,
+  catchall
 }

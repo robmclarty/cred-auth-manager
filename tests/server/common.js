@@ -21,7 +21,7 @@ global.OK = 200
 global.BAD_REQUEST = 400
 global.UNAUTHORIZED = 401
 global.FORBIDDEN = 403
-global.PAGE_NOT_FOUND = 404
+global.NOT_FOUND = 404
 global.UNPROCESSABLE = 422
 global.GENERIC_ERROR = 500
 

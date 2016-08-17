@@ -1,6 +1,6 @@
 'use strict'
 
-const { createError, BAD_REQUEST, UNPROCESSABLE } = require('../helpers/error_helper')
+const { createError, BAD_REQUEST, UNPROCESSABLE, NOT_FOUND } = require('../helpers/error_helper')
 const { User, Resource, Permission } = require('../models')
 
 const findUserById = userId => User.findById(userId, {
@@ -11,7 +11,7 @@ const findUserById = userId => User.findById(userId, {
 })
   .then(user => {
     if (!user) throw createError({
-      status: BAD_REQUEST,
+      status: NOT_FOUND,
       message: `No user found with id '${ userId }'`
     })
 
@@ -23,7 +23,7 @@ const findResourceByName = resourceName => Resource.findOne({
 })
   .then(resource => {
     if (!resource) throw createError({
-      status: BAD_REQUEST,
+      status: NOT_FOUND,
       message: `No resource found with name '${ resourceName }'`
     })
 
@@ -178,7 +178,7 @@ const postPermissions = (req, res, next) => {
           .then(permission => {
             if (!permission) throw createError({
               status: UNPROCESSABLE,
-              message: `Could not find matching permission for user '${ userId }' and resource '${ resourcename }'`
+              message: `User '${ userId }' has no matching permission for resource '${ resourcename }'`
             })
 
             return permission.update({
@@ -225,7 +225,7 @@ const deletePermissions = (req, res, next) => {
         .then(permission => {
           if (!permission) throw createError({
             status: UNPROCESSABLE,
-            message: `Could not find matching permission for user '${ userId }' and resource '${ resourcename }'`
+            message: `User '${ userId }' has no matching permission for resource '${ resourcename }'`
           })
 
           return permission.destroy()

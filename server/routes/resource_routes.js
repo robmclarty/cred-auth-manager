@@ -1,7 +1,6 @@
 'use strict'
 
 const router = require('express').Router()
-const cred = require('../cred')
 const {
   postResources,
   getResources,
@@ -12,9 +11,10 @@ const {
   getActions,
   deleteActions
 } = require('../controllers/resource_controller')
-
-const requireReadResource = cred.requirePermission('resources:read')
-const requireWriteResource = cred.requirePermission('resources:write')
+const {
+  requireReadResource,
+  requireWriteResource
+} = require('../middleware/resource_permission_middleware')
 
 router.route('/resources')
   .post(requireWriteResource, postResources)

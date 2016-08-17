@@ -47,18 +47,18 @@ const postUsers = (token, props) => request.post(`/users`)
   .send(props)
   .expect('Content-Type', /json/)
 
-const getUser = (token, userId) => request.get(`/users/${ userId }`)
+const getUser = (token, id) => request.get(`/users/${ id }`)
   .set('Accept', 'application/json')
   .set('Authorization', `Bearer ${ token }`)
   .expect('Content-Type', /json/)
 
-const putUser = (token, userId, props) => request.put(`/users/${ userId }`)
+const putUser = (token, id, props) => request.put(`/users/${ id }`)
   .set('Accept', 'application/json')
   .set('Authorization', `Bearer ${ token }`)
   .send(props)
   .expect('Content-Type', /json/)
 
-const deleteUser = (token, userId) => request.delete(`/users/${ userId }`)
+const deleteUser = (token, id) => request.delete(`/users/${ id }`)
   .set('Accept', 'application/json')
   .set('Authorization', `Bearer ${ token }`)
   .expect('Content-Type', /json/)
@@ -66,25 +66,76 @@ const deleteUser = (token, userId) => request.delete(`/users/${ userId }`)
 
 // Permissions
 // -----------
-const getPermissions = (token, userId, resourceName) =>
-  request.get(`/users/${ userId }/permissions/${ resourceName }`)
+const getPermissions = (token, id, resourceName) =>
+  request.get(`/users/${ id }/permissions/${ resourceName }`)
     .set('Accept', 'application/json')
     .set('Authorization', `Bearer ${ token }`)
     .expect('Content-Type', /json/)
 
-const postPermissions = (token, userId, resourceName, perms) =>
-  request.post(`/users/${ userId }/permissions/${ resourceName }`)
+const postPermissions = (token, id, resourceName, perms) =>
+  request.post(`/users/${ id }/permissions/${ resourceName }`)
     .set('Accept', 'application/json')
     .set('Authorization', `Bearer ${ token }`)
     .send({ actions: perms })
     .expect('Content-Type', /json/)
 
-const deletePermissions = (token, userId, resourceName, perms) =>
-  request.delete(`/users/${ userId }/permissions/${ resourceName }`)
+const deletePermissions = (token, id, resourceName, perms) =>
+  request.delete(`/users/${ id }/permissions/${ resourceName }`)
     .set('Accept', 'application/json')
     .set('Authorization', `Bearer ${ token }`)
     .send(perms)
     .expect('Content-Type', /json/)
+
+
+// Resources
+// ---------
+const getResources = token => request.get('/resources')
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .expect('Content-Type', /json/)
+
+const postResources = (token, props) => request.post('/resources')
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .send(props)
+  .expect('Content-Type', /json/)
+
+const getResource = (token, id) => request.get(`/resources/${ id }`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .expect('Content-Type', /json/)
+
+const putResource = (token, id, props) => request.put(`/resources/${ id }`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .send(props)
+  .expect('Content-Type', /json/)
+
+const deleteResource = (token, id) => request.delete(`/resources/${ id }`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .expect('Content-Type', /json/)
+
+
+// Resource Actions
+// ----------------
+const getResourceActions = (token, id) => request.get(`/resources/${ id }/actions`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .expect('Content-Type', /json/)
+
+const postResourceActions = (token, id, actions) => request.put(`/resources/${ id }/actions`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .send({ actions })
+  .expect('Content-Type', /json/)
+
+const deleteResourceActions = (token, id, actions) => request.delete(`/resources/${ id }/actions`)
+  .set('Accept', 'application/json')
+  .set('Authorization', `Bearer ${ token }`)
+  .send({ actions })
+  .expect('Content-Type', /json/)
+
 
 module.exports = {
   login,
@@ -99,5 +150,13 @@ module.exports = {
   deleteUser,
   getPermissions,
   postPermissions,
-  deletePermissions
+  deletePermissions,
+  getResources,
+  postResources,
+  getResource,
+  putResource,
+  deleteResource,
+  getResourceActions,
+  postResourceActions,
+  deleteResourceActions
 }
