@@ -28,7 +28,7 @@ const buildProduction = gulp.series(
   setProductionEnv,
   gulp.parallel(
     'build:vendors',
-    'build:client',
+    'build:admin',
     // 'build:styles',
     // 'build:styles:templates',
     'build:assets',
@@ -44,7 +44,7 @@ const buildDevelopment = gulp.series(
   'clean',
   gulp.parallel(
     'build:vendors',
-    'build:client',
+    'build:admin',
     // 'build:styles',
     // 'build:styles:templates',
     'build:assets',

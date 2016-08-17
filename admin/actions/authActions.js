@@ -1,5 +1,5 @@
 import { push } from 'react-router-redux';
-import config from '../../config/client';
+import config from '../../config/admin';
 import {
   REGISTER_PENDING,
   REGISTER_SUCCESS,

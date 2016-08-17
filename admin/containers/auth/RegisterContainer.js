@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { register, showFlash } from '../actions';
-import { STATUS_SUCCESS } from '../constants/FlashTypes';
+import { register, showFlash } from '../../actions';
+import { STATUS_SUCCESS } from '../../constants/FlashTypes';
 
-import Register from '../components/Register';
+import Register from '../../components/auth/Register';
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
