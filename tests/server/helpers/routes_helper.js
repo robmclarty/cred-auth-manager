@@ -124,7 +124,7 @@ const getResourceActions = (token, id) => request.get(`/resources/${ id }/action
   .set('Authorization', `Bearer ${ token }`)
   .expect('Content-Type', /json/)
 
-const postResourceActions = (token, id, actions) => request.put(`/resources/${ id }/actions`)
+const putResourceActions = (token, id, actions) => request.put(`/resources/${ id }/actions`)
   .set('Accept', 'application/json')
   .set('Authorization', `Bearer ${ token }`)
   .send({ actions })
@@ -157,6 +157,6 @@ module.exports = {
   putResource,
   deleteResource,
   getResourceActions,
-  postResourceActions,
+  putResourceActions,
   deleteResourceActions
 }

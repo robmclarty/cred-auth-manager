@@ -145,7 +145,7 @@ const deleteActions = (req, res, next) => {
     .then(resource => res.json({
       success: true,
       message: 'Actions removed',
-      resource
+      actions: resource.actions
     }))
     .catch(next)
 }
