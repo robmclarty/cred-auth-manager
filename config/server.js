@@ -5,6 +5,7 @@ module.exports = {
   issuer: process.env.ISSUER || 'cred-auth-manager',
   origin: process.env.ORIGIN || '*',
   redis: process.env.REDIS || 'redis://localhost:6379',
+  assetsPath: process.env.ASSETS_PATH || './build',
   access: {
     privateKeyPath: process.env.ACCESS_PRIVATE_KEY || './config/sample-private-key.pem',
     publicKeyPath: process.env.ACCESS_PUBLIC_KEY || './config/sample-public-key.pem',

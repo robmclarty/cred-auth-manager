@@ -14,7 +14,7 @@ const config = require('../config/server')
 const app = express()
 
 // Store re-usable values.
-app.set('assets-path', './client')
+app.set('assets-path', config.assetsPath)
 
 // Only accept application/json requests.
 app.use(bodyParser.json())
@@ -75,28 +75,47 @@ const userRoutes = require('./routes/user_routes')
 const resourceRoutes = require('./routes/resource_routes')
 
 // Status Monitor
-app.use([
-  cred.requireAccessToken,
-  cred.requireProp('isActive', true),
-  statusMonitor({
-    path: '/status',
-    socketPort: 41338,
-    spans: [
-      {
-        interval: 1, // every second
-        retention: 60 // keep 60 datapoints in memory
-      },
-      {
-        interval: 5, // every 5 seconds
-        retention: 60
-      },
-      {
-        interval: 15, // every 15 seconds
-        retention: 60
-      }
-    ]
-  })
-])
+// app.use('/status', [
+//   cred.requireAccessToken,
+//   cred.requireProp('isActive', true),
+//   statusMonitor({
+//     path: '/status',
+//     socketPort: 41338,
+//     spans: [
+//       {
+//         interval: 1, // every second
+//         retention: 60 // keep 60 datapoints in memory
+//       },
+//       {
+//         interval: 5, // every 5 seconds
+//         retention: 60
+//       },
+//       {
+//         interval: 15, // every 15 seconds
+//         retention: 60
+//       }
+//     ]
+//   })
+// ])
+
+app.use(statusMonitor({
+  path: '/status',
+  socketPort: 41338,
+  spans: [
+    {
+      interval: 1, // every second
+      retention: 60 // keep 60 datapoints in memory
+    },
+    {
+      interval: 5, // every 5 seconds
+      retention: 60
+    },
+    {
+      interval: 15, // every 15 seconds
+      retention: 60
+    }
+  ]
+}))
 
 // Unauthenticated routes
 app.use('/', [
