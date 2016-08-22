@@ -16,4 +16,12 @@ router.route('/')
 router.route('/registration')
   .post(postRegistration)
 
+// Admin app
+// In production this route should really never be hit and should instead be
+// handled by nginx.
+router.route('/admin/*')
+  .get(function (req, res, next) {
+    res.sendFile('index.html', { root: `${ req.app.get('assets-path') }/admin` });
+  });
+
 module.exports = router

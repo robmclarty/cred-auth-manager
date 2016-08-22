@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { register, showFlash } from '../../actions';
 import { STATUS_SUCCESS } from '../../constants/FlashTypes';
-
-import Register from '../../components/auth/Register';
+import RegisterForm from '../../components/auth/RegisterForm';
+import Page from '../../components/Page'
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
@@ -22,6 +22,12 @@ const mapDispatchToProps = dispatch => ({
 const RegisterContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Register);
+)(RegisterForm);
 
-export default RegisterContainer;
+const RegisterPage = () => (
+  <Page name="Create New Account">
+    <RegisterContainer />
+  </Page>
+)
+
+export default RegisterPage;

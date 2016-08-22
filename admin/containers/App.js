@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
-import Header from '../containers/HeaderContainer';
-import Flash from '../containers/FlashContainer';
+import { connect } from 'react-redux';
+import Header from './HeaderContainer';
+import Flash from './FlashContainer';
 
 const currentYear = new Date().getFullYear();
 
@@ -23,4 +24,8 @@ App.propTypes = {
   children: PropTypes.object
 };
 
-export default App;
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps)(App);

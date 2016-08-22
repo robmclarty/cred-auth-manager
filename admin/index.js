@@ -10,11 +10,12 @@ import appReducer from './reducers'
 import { autoLogin, resetFlash } from './actions'
 
 // Containers
-import requireAuth from './containers/AuthenticatedContainer'
-import App from './containers/AppContainer'
-import Login from './containers/auth/LoginContainer'
-import Register from './containers/auth/RegisterContainer'
-import NotFound from './components/NotFound'
+import requireAuth from './containers/requireAuth'
+import App from './containers/App'
+import LoginPage from './containers/auth/LoginPage'
+import RegisterPage from './containers/auth/RegisterPage'
+import UserListPage from './containers/users/UserListPage'
+import NotFoundPage from './containers/NotFoundPage'
 
 // Detect and use chrome redux extension if available.
 const devTools = window.devToolsExtension ?
@@ -37,7 +38,7 @@ const store = createStore(appReducer, middlewares)
 const history = syncHistoryWithStore(browserHistory, store)
 
 // Try to login from tokens in localstorage.
-store.dispatch(autoLogin())
+store.dispatch(autoLogin()) // TODO: switch this to cred-redux
 
 const resetFlashOnEnter = () => store.dispatch(resetFlash())
 
@@ -45,10 +46,11 @@ render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/admin" component={App}>
-        <IndexRoute component={Login} />
-        <Route path="/admin/login" component={Login} onEnter={resetFlashOnEnter} />
-        <Route path="/admin/register" component={Register} onEnter={resetFlashOnEnter} />
-        <Route path="/admin/*" component={NotFound} />
+        <IndexRoute component={LoginPage} />
+        <Route path="/admin/login" component={LoginPage} />
+        <Route path="/admin/register" component={RegisterPage} />
+        <Route path="/admin/users" component={requireAuth(UserListPage)} />
+        <Route path="/admin/*" component={NotFoundPage} />
       </Route>
     </Router>
   </Provider>,
