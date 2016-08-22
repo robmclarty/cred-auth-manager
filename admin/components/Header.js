@@ -13,8 +13,6 @@ const Header = ({
   const loggedInNav = (
     <nav className="site-nav">
       {username}
-      <button onClick={onClickChat}>Users</button>
-      <button onClick={onClickFriends}>Resources</button>
       <button onClick={onClickLogout}>Logout</button>
     </nav>
   );
@@ -30,8 +28,8 @@ const Header = ({
     <header className="global-header">
       <h1 className="site-name">
         <Link to="/admin/">
-          <img src="/images/logo.png" width="100" height="79" />
-          <span><b>Cred Auth Manager</b></span>
+          <img src="/images/lock-combination.svg" width="30" height="30" />
+          <span>Cred Auth Manager</span>
         </Link>
       </h1>
 

@@ -15,7 +15,7 @@ function setProductionEnv(done) {
 
 function watch() {
   // gulp.watch('styles/**/*', gulp.parallel('build:styles'))
-  // gulp.watch('client/**/*', gulp.parallel('build:client', 'build:html'))
+  gulp.watch('admin/**/*', gulp.parallel('build:admin', 'build:html'))
   gulp.watch('assets/**/*', gulp.parallel('build:assets'))
   gulp.watch('server/**/*', gulp.series('server'))
 }

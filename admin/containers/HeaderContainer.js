@@ -23,13 +23,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onClickChat: () => dispatch(push('/rebelchat/chat')),
-  onClickFriends: () => dispatch(push('/rebelchat/friends')),
-  onClickLogin: () => dispatch(push('/rebelchat/login')),
+  onClickLogin: () => dispatch(push('/admin/login')),
   onClickLogout: () => dispatch(logout()),
-  onClickSignup: () => dispatch(push('/rebelchat/register')),
-  onChangeFilter: filter => dispatch(changeFilter(filter))
-  //onSelectResource: (type) => dispatch(fetchLocations(type))
+  onClickSignup: () => dispatch(push('/admin/register')),
 });
 
 const HeaderContainer = connect(
