@@ -10,7 +10,7 @@ import appReducer from './reducers'
 import { autoLogin, resetFlash } from './actions'
 
 // Containers
-import requireAuth from './containers/requireAuth'
+import requireAuth from './helpers/requireAuth'
 import App from './containers/App'
 import LoginPage from './containers/LoginPage'
 import RegisterPage from './containers/RegisterPage'

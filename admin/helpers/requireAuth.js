@@ -30,6 +30,7 @@ const requireAuth = function (Component) {
     render: function () {
       const isAuthenticated = this.props.auth.isAuthenticated;
 
+      // TODO: If *not* authenticated, add a message to the Flash saying so.
       return isAuthenticated ?
         <Component {...this.props} /> :
         null;
@@ -41,7 +42,7 @@ const requireAuth = function (Component) {
   });
 
   const mapDispatchToProps = dispatch => ({
-    redirectToLogin: () => dispatch(push(`/login`))
+    redirectToLogin: () => dispatch(push(`/admin/login`))
   });
 
   return connect(
