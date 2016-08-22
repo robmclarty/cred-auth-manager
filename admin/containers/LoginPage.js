@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { login } from '../actions';
-import LoginForm from '../components/LoginForm';
+import LoginFormComponent from '../components/LoginForm';
 import Page from '../components/Page'
 
 const mapStateToProps = state => ({
@@ -13,14 +13,14 @@ const mapDispatchToProps = dispatch => ({
   onSubmit: creds => dispatch(login(creds)).then(dispatch(push(`/admin/users`)))
 });
 
-const LoginContainer = connect(
+const LoginForm = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LoginForm);
+)(LoginFormComponent);
 
 const LoginPage = () => (
   <Page name="Login">
-    <LoginContainer />
+    <LoginForm />
   </Page>
 )
 

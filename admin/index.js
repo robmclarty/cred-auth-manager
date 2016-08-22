@@ -49,7 +49,7 @@ render(
         <IndexRoute component={LoginPage} />
         <Route path="/admin/login" component={LoginPage} />
         <Route path="/admin/register" component={RegisterPage} />
-        <Route path="/admin/users" component={requireAuth(UserListPage)} />
+        <Route path="/admin/users" component={UserListPage} />
         <Route path="/admin/*" component={NotFoundPage} />
       </Route>
     </Router>

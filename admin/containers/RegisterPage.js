@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { register, showFlash } from '../actions';
 import { STATUS_SUCCESS } from '../constants/FlashTypes';
-import RegisterForm from '../components/RegisterForm';
+import RegisterFormComponent from '../components/RegisterForm';
 import Page from '../components/Page'
 
 const mapStateToProps = state => ({
@@ -19,14 +19,14 @@ const mapDispatchToProps = dispatch => ({
     .then(dispatch(push(`/admin/login`)))
 });
 
-const RegisterContainer = connect(
+const RegisterForm = connect(
   mapStateToProps,
   mapDispatchToProps
-)(RegisterForm);
+)(RegisterFormComponent);
 
 const RegisterPage = () => (
   <Page name="Create New Account">
-    <RegisterContainer />
+    <RegisterForm />
   </Page>
 )
 

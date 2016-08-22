@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {
-  addUser,
-  updateUser,
-  removeUser,
-  gotoUserPage,
-  nextUserPage,
-  prevUserPage
-} from '../actions'
+// import {
+//   addUser,
+//   updateUser,
+//   removeUser,
+//   gotoUserPage,
+//   nextUserPage,
+//   prevUserPage
+// } from '../actions'
 import Page from '../components/Page'
-import UserList from '../components/UserList'
+import UserListComponent from '../components/UserList'
 
 const fakeUser = () => {
   const newId = Date.now()
@@ -21,38 +21,38 @@ const fakeUser = () => {
 }
 
 const mapStateToProps = state => {
-  const users = state.users.pageList
-  const { page, total, per, order, by, filter } = state.users
+  // const users = state.users.pageList
+  // const { page, total, per, order, by, filter } = state.users
 
   return {
-    users,
-    isPending: state.users.isFetching,
-    page,
-    total,
-    per,
-    order,
-    by,
-    filter
+    users: [],
+    isPending: false, //state.users.isFetching,
+    page: 1,
+    total: 1,
+    per: 10,
+    order: 'asc',
+    by: 'username',
+    filter: ''
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   onClickUser: (id, e) => console.log('clicked user', id, e),
   onClickToggleSort: (by, e) => console.log('clicked toggle sort', by, e),
-  onClickNextPage: () => dispatch(nextUserPage()),
-  onClickPrevPage: () => dispatch(prevUserPage()),
-  onAddUser: () => dispatch(addUser(fakeUser())),
-  onFetchUsers: () => dispatch(fetchUsers())
+  onClickNextPage: () => console.log('clicked next'), //dispatch(nextUserPage()),
+  onClickPrevPage: () => console.log('clicked prev'), //dispatch(prevUserPage()),
+  onAddUser: () => console.log('clicked add user'), //dispatch(addUser(fakeUser())),
+  onFetchUsers: () => console.log('clicked fetch users'), //dispatch(fetchUsers())
 })
 
-const UserListContainer = connect(
+const UserList = connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserList)
+)(UserListComponent)
 
 const UserListPage = () => (
   <Page name="Users">
-    <UserListContainer />
+    <UserList />
   </Page>
 )
 

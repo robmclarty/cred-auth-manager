@@ -38,8 +38,7 @@ const startup = (dispatch, state) => {
       status: STATUS_PENDING,
       messages: ['Loading resources...']
     })))
-    .then(dispatch(fetchProfile(userId)))
-    .then(dispatch(fetchRelationships(userId)))
+    //.then(dispatch(fetchUsers()))
     .then(dispatch(hideFlash()))
 };
 
@@ -152,7 +151,7 @@ export const logout = () => (dispatch, callApi) => {
   return callApi({ url: tokensUrl, method: 'DELETE', useRefreshToken: true })
     .then(removeLocalTokens)
     .then(dispatch(logoutSuccess()))
-    .then(dispatch(push('/rebelchat')))
+    .then(dispatch(push('/admin')))
     .catch(err => dispatch(logoutFail(err)));
 };
 
