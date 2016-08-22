@@ -7,9 +7,9 @@ import {
   gotoUserPage,
   nextUserPage,
   prevUserPage
-} from '../../actions'
-import Page from '../../components/Page'
-import UserList from '../../components/users/UserList'
+} from '../actions'
+import Page from '../components/Page'
+import UserList from '../components/UserList'
 
 const fakeUser = () => {
   const newId = Date.now()

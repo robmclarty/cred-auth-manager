@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { register, showFlash } from '../../actions';
-import { STATUS_SUCCESS } from '../../constants/FlashTypes';
-import RegisterForm from '../../components/auth/RegisterForm';
-import Page from '../../components/Page'
+import { register, showFlash } from '../actions';
+import { STATUS_SUCCESS } from '../constants/FlashTypes';
+import RegisterForm from '../components/RegisterForm';
+import Page from '../components/Page'
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
@@ -16,7 +16,7 @@ const mapDispatchToProps = dispatch => ({
       status: STATUS_SUCCESS,
       messages: ['Registration Complete']
     })))
-    .then(dispatch(push(`/rebelchat/login`)))
+    .then(dispatch(push(`/admin/login`)))
 });
 
 const RegisterContainer = connect(

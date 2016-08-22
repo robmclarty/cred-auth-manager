@@ -12,9 +12,9 @@ import { autoLogin, resetFlash } from './actions'
 // Containers
 import requireAuth from './containers/requireAuth'
 import App from './containers/App'
-import LoginPage from './containers/auth/LoginPage'
-import RegisterPage from './containers/auth/RegisterPage'
-import UserListPage from './containers/users/UserListPage'
+import LoginPage from './containers/LoginPage'
+import RegisterPage from './containers/RegisterPage'
+import UserListPage from './containers/UserListPage'
 import NotFoundPage from './containers/NotFoundPage'
 
 // Detect and use chrome redux extension if available.
