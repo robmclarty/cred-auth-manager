@@ -1,5 +1,6 @@
 import {
   SHOW_FLASH,
+  SHOW_FLASH_LOADING,
   HIDE_FLASH,
   ADD_FLASH_MESSAGE,
   RESET_FLASH,
@@ -10,7 +11,8 @@ import { STATUS_PENDING } from '../constants/FlashTypes'
 const initialState = {
   isVisible: false,
   status: STATUS_PENDING,
-  messages: []
+  messages: [],
+  pendingResources: []
 }
 
 const flash = (state = initialState, action) => {
@@ -22,10 +24,38 @@ const flash = (state = initialState, action) => {
         status: action.status,
         messages: [...action.messages]
       }
-    case HIDE_FLASH:
+    case SHOW_FLASH_LOADING:
+      // NOTE: This *replaces* pendingResources rather than adding to them.
       return {
         ...state,
-        isVisible: false
+        isVisible: true,
+        status: action.status,
+        pendingResources: action.pendingResources,
+        messages: [action.message || 'Loading resources...']
+      }
+    case HIDE_FLASH:
+      // If a resourceName was provided, remove it from the pendingResources
+      // array, and if that was the last thing in the array, hide the flash.
+      // Otherwise, keep the flash active.
+      if (action.resourceName) {
+        const pendingResources = state.pendingResources.filter(name => {
+          return name !== action.resourceName
+        })
+        const isVisible = pendingResources.length >= 1
+
+        return {
+          ...state,
+          isVisible,
+          pendingResources,
+          messages: []
+        }
+      }
+
+      // If no resourceName was provided, simply hide the flash.
+      return {
+        ...state,
+        isVisible: false,
+        messages: []
       }
     case ADD_FLASH_MESSAGE:
       return {

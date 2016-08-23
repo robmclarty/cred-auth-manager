@@ -44,6 +44,7 @@ import config from '../../config/admin';
 // Prefer localstorage before trying bulkier solutions.
 localforage.config({
   name: config.appName,
+  storeName: 'auth',
   driver: [
     localforage.LOCALSTORAGE,
     localforage.INDEXEDDB,
@@ -79,9 +80,7 @@ const request = (url, options) => fetch(url, options)
 
 // Decode base64 token and return the 2nd part (separated by '.') which is the
 // JWT payload object.
-export const decodedPayload = token => {
-  return JSON.parse(atob(token.split('.')[1]));
-};
+export const decodePayload = token => JSON.parse(atob(token.split('.')[1]))
 
 // Return true if the token's `exp` attribute is less than the current time
 // plus 10 minutes (enough time to use the token successfully).
@@ -91,13 +90,11 @@ const withinExpirationWindow = payload => {
   return payload.exp <= nowInSeconds + tokenExpirationWindow;
 };
 
-export const tokenIsExpired = token => {
-  return withinExpirationWindow(decodedPayload(token));
-};
+export const tokenIsExpired = token => withinExpirationWindow(decodePayload(token))
 
 // Store tokens in local-storage and return the tokens on success, otherwise
 // return a rejected promise. To be used with the login fetch-promise block.
-export const updateLocalTokens = tokens => {
+export const updateTokens = tokens => {
   const { accessToken, refreshToken } = tokens;
   const promises = [
     localforage.setItem('accessToken', accessToken),
@@ -108,7 +105,7 @@ export const updateLocalTokens = tokens => {
 };
 
 // Delete tokens from local storage.
-export const removeLocalTokens = () => {
+export const destroyTokens = () => {
   const promises = [
     localforage.removeItem('accessToken'),
     localforage.removeItem('refreshToken')
@@ -118,13 +115,13 @@ export const removeLocalTokens = () => {
 };
 
 // Return tokens from local stroage.
-export const getLocalTokens = () => {
+export const getTokens = () => {
   const promises = [
     localforage.getItem('accessToken'),
     localforage.getItem('refreshToken')
   ];
 
-  return Promise.all(promises).then((tokens) => {
+  return Promise.all(promises).then(tokens => {
     const accessToken = tokens[0];
     const refreshToken = tokens[1];
 
@@ -138,10 +135,10 @@ export const getLocalTokens = () => {
 
 // If tokens already exist from the Redux state, use those; otherwise try to
 // get them from local storage.
-const getTokens = tokens => {
+const loadTokens = tokens => {
   return tokens.accessToken && tokens.refreshToken ?
     Promise.resolve(tokens) :
-    getLocalTokens();
+    getTokens();
 };
 
 // Get fresh access token using a currently valid refresh token.
@@ -173,7 +170,7 @@ export const refreshTokensIfExpired = tokens => {
 // If they have expired, return refreshed versions, or an error (can no longer
 // refresh them).
 export const freshTokens = state => {
-  return getTokens(state.auth.tokens)
+  return loadTokens(state.auth.tokens)
     .then(refreshTokensIfExpired)
     .then(tokens => Promise.resolve(tokens))
     .catch(err => Promise.reject(err));

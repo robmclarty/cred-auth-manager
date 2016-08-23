@@ -15,6 +15,7 @@ import {
 
 const initialState = {
   isFetching: false,
+  logoutPending: false,
   isAuthenticated: false,
   tokens: {
     accessToken: '',
@@ -58,11 +59,12 @@ const authReducer = (state = initialState, action) => {
   case LOGOUT_PENDING:
     return {
       ...state,
-      isFetching: true
+      logoutPending: true
     };
   case LOGOUT_SUCCESS:
     return {
       ...state,
+      logoutPending: false,
       isFetching: false,
       isAuthenticated: false,
       tokens: {
@@ -75,7 +77,7 @@ const authReducer = (state = initialState, action) => {
   case LOGOUT_FAIL:
     return {
       ...state,
-      isFetching: false,
+      logoutPending: false,
       lastUpdated: action.receivedAt
     };
   default:

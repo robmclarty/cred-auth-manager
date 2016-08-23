@@ -13,6 +13,7 @@ import { autoLogin, resetFlash } from './actions'
 import requireAuth from './helpers/requireAuth'
 import App from './containers/App'
 import LoginPage from './containers/LoginPage'
+import LogoutPage from './containers/LogoutPage'
 import RegisterPage from './containers/RegisterPage'
 import UserListPage from './containers/UserListPage'
 import NotFoundPage from './containers/NotFoundPage'
@@ -48,8 +49,9 @@ render(
       <Route path="/admin" component={App}>
         <IndexRoute component={LoginPage} />
         <Route path="/admin/login" component={LoginPage} />
+        <Route path="/admin/logout" component={LogoutPage} />
         <Route path="/admin/register" component={RegisterPage} />
-        <Route path="/admin/users" component={UserListPage} />
+        <Route path="/admin/users" component={requireAuth(UserListPage)} />
         <Route path="/admin/*" component={NotFoundPage} />
       </Route>
     </Router>

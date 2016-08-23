@@ -16,16 +16,16 @@ import {
   STATUS_SUCCESS
 } from '../constants/FlashTypes';
 import {
-  updateLocalTokens,
-  removeLocalTokens,
+  updateTokens,
+  destroyTokens,
   freshTokens,
-  decodedPayload
+  decodePayload
 } from '../middleware/jwt-api';
 import {
   showFlash,
+  showFlashLoading,
   hideFlash,
-  fetchRelationships,
-  fetchProfile
+  fetchUsers
 } from './';
 
 const tokensUrl = `${ config.authRoot }/tokens`;
@@ -33,13 +33,8 @@ const tokensUrl = `${ config.authRoot }/tokens`;
 const startup = (dispatch, state) => {
   const userId = state.auth.tokenPayload.userId
 
-  return Promise.resolve()
-    .then(dispatch(showFlash({
-      status: STATUS_PENDING,
-      messages: ['Loading resources...']
-    })))
-    //.then(dispatch(fetchUsers()))
-    .then(dispatch(hideFlash()))
+  dispatch(showFlashLoading({ pendingResources: ['users'] }))
+  dispatch(fetchUsers())
 };
 
 
@@ -70,7 +65,7 @@ export const registerSuccess = () => ({
   type: registerSuccess,
   accessToken,
   refreshToken,
-  tokenPayload: decodedPayload(accessToken),
+  tokenPayload: decodePayload(accessToken),
   receivedAt: Date.now()
 })
 
@@ -102,7 +97,7 @@ export const login = creds => (dispatch, callApi, getState) => {
     requireAuth: false
   })
     .then(json => json.tokens)
-    .then(updateLocalTokens)
+    .then(updateTokens)
     .then(tokens => dispatch(loginSuccess(tokens)))
     .then(() => startup(dispatch, getState()))
     .catch(err => dispatch(loginFail(err)))
@@ -114,7 +109,7 @@ export const autoLogin = () => (dispatch, callApi, getState) => {
   dispatch(loginPending());
 
   return freshTokens(getState())
-    .then(updateLocalTokens)
+    .then(updateTokens)
     .then(tokens => dispatch(loginSuccess(tokens)))
     .then(() => startup(dispatch, getState()))
     .catch(err => dispatch(loginFail(err)))
@@ -131,7 +126,7 @@ const loginSuccess = tokens => {
     type: LOGIN_SUCCESS,
     accessToken,
     refreshToken,
-    tokenPayload: decodedPayload(accessToken),
+    tokenPayload: decodePayload(accessToken),
     receivedAt: Date.now()
   };
 };
@@ -149,7 +144,7 @@ export const logout = () => (dispatch, callApi) => {
   dispatch(logoutPending());
 
   return callApi({ url: tokensUrl, method: 'DELETE', useRefreshToken: true })
-    .then(removeLocalTokens)
+    .then(destroyTokens)
     .then(dispatch(logoutSuccess()))
     .then(dispatch(push('/admin')))
     .catch(err => dispatch(logoutFail(err)));
