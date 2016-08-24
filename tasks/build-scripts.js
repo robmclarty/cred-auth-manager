@@ -11,11 +11,13 @@ const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 
 const vendors = [
+  'chart.js',
   //'cred-redux',
   'moment',
   'node-fetch',
   'paginated-redux',
   'react',
+  'react-chartjs-2',
   'react-dom',
   'react-redux',
   'react-router',
