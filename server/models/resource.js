@@ -15,7 +15,9 @@ const toJSON = resource => ({
   name: resource.name,
   url: resource.url,
   actions: resource.actions,
-  isActive: resource.isActive
+  isActive: resource.isActive,
+  createdAt: resource.createdAt,
+  updatedAt: resource.updatedAt
 })
 
 const ResourceSchema = function (sequelize, DataTypes) {

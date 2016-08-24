@@ -14,6 +14,8 @@ const mapDispatchToProps = dispatch => ({
   onClickLogin: () => dispatch(push('/admin/login')),
   onClickLogout: () => dispatch(logout()),
   onClickSignup: () => dispatch(push('/admin/register')),
+  onClickUsers: () => dispatch(push('/admin/users')),
+  onClickResources: () => dispatch(push('/admin/resources'))
 });
 
 const HeaderContainer = connect(

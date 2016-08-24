@@ -14,7 +14,9 @@ const { Resource, User } = require('./index')
 const toJSON = permission => ({
   id: permission.id,
   name: permission.resource.name,
-  actions: permission.actions
+  actions: permission.actions,
+  createdAt: permission.createdAt,
+  updatedAt: permission.updatedAt
 })
 
 const PermissionSchema = function (sequelize, DataTypes) {

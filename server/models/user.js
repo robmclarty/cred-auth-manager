@@ -37,6 +37,7 @@ const filterProps = (isAdmin, props) => {
   return filteredProps
 }
 
+// TODO: Maybe include this as part of cred rather than defining it here.
 // Format an array of permissions for use in a JWT access token, returning an
 // object whose keys are the names of a resource which references an array of
 // permissible actions. Optionally include an `id` attribute along with
@@ -203,6 +204,9 @@ const UserSchema = function (sequelize, DataTypes) {
     instanceMethods: {
       verifyPassword: function (password) {
         return verifyPassword(this.password, password)
+      },
+      loginUpdate: function () {
+        return this.update({ loginAt: Date.now() })
       },
       // getActions: function (name) {
       //   return getActions(name, this.permissions)

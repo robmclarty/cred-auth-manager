@@ -47,8 +47,9 @@ cred.use('basic', req => {
 
       if (!isMatch) throw 'Unauthorized: username or password do not match.'
 
-      return user.tokenPayload()
+      return user.loginUpdate()
     })
+    .then(user => user.tokenPayload())
 })
 
 module.exports = cred

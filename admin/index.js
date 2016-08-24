@@ -12,11 +12,13 @@ import { autoLogin, resetFlash } from './actions'
 // Containers
 import requireAuth from './helpers/requireAuth'
 import App from './containers/App'
+import DashboardPage from './containers/DashboardPage'
 import LoginPage from './containers/LoginPage'
 import LogoutPage from './containers/LogoutPage'
 import RegisterPage from './containers/RegisterPage'
-import UserListPage from './containers/UserListPage'
 import NotFoundPage from './containers/NotFoundPage'
+import UserListPage from './containers/UserListPage'
+import ResourceListPage from './containers/ResourceListPage'
 
 // Detect and use chrome redux extension if available.
 const devTools = window.devToolsExtension ?
@@ -47,11 +49,13 @@ render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/admin" component={App}>
-        <IndexRoute component={LoginPage} />
+        <IndexRoute component={DashboardPage} />
+        <Route path="/admin" component={DashboardPage} />
         <Route path="/admin/login" component={LoginPage} />
         <Route path="/admin/logout" component={LogoutPage} />
         <Route path="/admin/register" component={RegisterPage} />
         <Route path="/admin/users" component={requireAuth(UserListPage)} />
+        <Route path="/admin/resources" component={requireAuth(ResourceListPage)} />
         <Route path="/admin/*" component={NotFoundPage} />
       </Route>
     </Router>

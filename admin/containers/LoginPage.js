@@ -10,7 +10,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: creds => dispatch(login(creds)).then(dispatch(push(`/admin/users`)))
+  onSubmit: creds => dispatch(login(creds))
 });
 
 const LoginForm = connect(

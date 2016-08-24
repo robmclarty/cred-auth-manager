@@ -25,7 +25,8 @@ import {
   showFlash,
   showFlashLoading,
   hideFlash,
-  fetchUsers
+  fetchUsers,
+  fetchResources
 } from './';
 
 const tokensUrl = `${ config.authRoot }/tokens`;
@@ -33,8 +34,9 @@ const tokensUrl = `${ config.authRoot }/tokens`;
 const startup = (dispatch, state) => {
   const userId = state.auth.tokenPayload.userId
 
-  dispatch(showFlashLoading({ pendingResources: ['users'] }))
+  dispatch(showFlashLoading({ pendingResources: ['users', 'resources'] }))
   dispatch(fetchUsers())
+  dispatch(fetchResources())
 };
 
 
@@ -100,6 +102,7 @@ export const login = creds => (dispatch, callApi, getState) => {
     .then(updateTokens)
     .then(tokens => dispatch(loginSuccess(tokens)))
     .then(() => startup(dispatch, getState()))
+    .then(() => dispatch(push(`/admin`)))
     .catch(err => dispatch(loginFail(err)))
 };
 
