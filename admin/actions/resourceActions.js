@@ -151,3 +151,8 @@ export const nextResourcePage = () => ({
 export const prevResourcePage = () => ({
   type: PREV_RESOURCE_PAGE
 })
+
+export const sortResources = by => ({
+  type: SORT_RESOURCES,
+  by
+})

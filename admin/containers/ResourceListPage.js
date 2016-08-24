@@ -6,7 +6,8 @@ import {
   removeResource,
   gotoResourcePage,
   nextResourcePage,
-  prevResourcePage
+  prevResourcePage,
+  sortResources
 } from '../actions'
 import Page from '../components/Page'
 import ResourceListComponent from '../components/ResourceList'
@@ -29,7 +30,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onClickResource: (id, e) => console.log('clicked resource', id, e),
-  onClickToggleSort: (by, e) => console.log('clicked toggle sort', by, e),
+  onClickToggleSort: (by, e) => dispatch(sortResources(by)),
   onClickNextPage: () => dispatch(nextResourcePage()),
   onClickPrevPage: () => dispatch(prevResourcePage()),
   onAddResource: () => dispatch(addResource({})),

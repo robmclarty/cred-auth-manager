@@ -4,6 +4,7 @@ import {
   addUser,
   updateUser,
   removeUser,
+  sortUsers,
   gotoUserPage,
   nextUserPage,
   prevUserPage
@@ -38,7 +39,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onClickUser: (id, e) => console.log('clicked user', id, e),
-  onClickToggleSort: (by, e) => console.log('clicked toggle sort', by, e),
+  onClickToggleSort: (by, e) => dispatch(sortUsers(by)),
   onClickNextPage: () => dispatch(nextUserPage()),
   onClickPrevPage: () => dispatch(prevUserPage()),
   onAddUser: () => dispatch(addUser(fakeUser())),

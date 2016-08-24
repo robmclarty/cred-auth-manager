@@ -129,20 +129,23 @@ const Dashboard = ({
     display: 'inline-block',
     width: 60
   }
+  const cellStyle = {
+    verticalAlign: 'top'
+  }
 
   return (
     <div className="dashboard">
       <table>
         <tbody>
           <tr>
-            <td>
+            <td style={cellStyle}>
               <div className="users-total" style={usersTotalStyle}>
                 <h4>Total Users</h4>
                 <div style={totalUsersStyle}>{users.length}</div>
                 {usersTotalChart(users)}
               </div>
             </td>
-            <td colSpan="2">
+            <td colSpan="2" style={cellStyle}>
               <div className="users-signup">
                 <h4>Usage</h4>
                 {userSignupsChart(users)}
@@ -150,7 +153,7 @@ const Dashboard = ({
             </td>
           </tr>
           <tr>
-            <td>
+            <td style={cellStyle}>
               <div className="users-admin">
                 <h4>Active Admins</h4>
                 <ul>
@@ -160,7 +163,7 @@ const Dashboard = ({
                 </ul>
               </div>
             </td>
-            <td>
+            <td style={cellStyle}>
               <div className="users-login">
                 <h4>Recently Logged In</h4>
                 <ul>
@@ -173,7 +176,7 @@ const Dashboard = ({
                 </ul>
               </div>
             </td>
-            <td>
+            <td style={cellStyle}>
               <div className="resources">
                 <h4>Active Resources</h4>
                 <ul>

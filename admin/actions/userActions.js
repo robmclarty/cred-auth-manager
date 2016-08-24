@@ -151,3 +151,8 @@ export const nextUserPage = () => ({
 export const prevUserPage = () => ({
   type: PREV_USER_PAGE
 })
+
+export const sortUsers = by => ({
+  type: SORT_USERS,
+  by
+})
