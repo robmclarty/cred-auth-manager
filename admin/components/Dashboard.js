@@ -163,7 +163,7 @@ const Dashboard = ({
                 </ul>
               </div>
             </td>
-            <td style={cellStyle}>
+            <td valign="top">
               <div className="users-login">
                 <h4>Recently Logged In</h4>
                 <ul>
@@ -176,7 +176,7 @@ const Dashboard = ({
                 </ul>
               </div>
             </td>
-            <td style={cellStyle}>
+            <td valign="top">
               <div className="resources">
                 <h4>Active Resources</h4>
                 <ul>

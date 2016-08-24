@@ -1,5 +1,7 @@
 # Cred Auth Manager
 
+![screenshot](screenshot.png)
+
 A centralized auth management system for handling user accounts and setting
 their permissions to be used across multiple independent resource APIs by
 exchanging JSON Web Tokens for valid cred(entials).
