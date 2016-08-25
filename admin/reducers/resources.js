@@ -15,13 +15,6 @@ import {
 import paginated from 'paginated-redux'
 import fetchable from '../transducers/fetchable'
 
-// Return resource matching id from state.
-export const getResource = (state, id) => {
-  return state.resources.list.find(resource => {
-    return resource && resource.id === String(id)
-  })
-}
-
 const resources = (state = [], action) => {
   switch (action.type) {
   case STORE_RESOURCES:

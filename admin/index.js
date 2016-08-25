@@ -18,7 +18,9 @@ import LogoutPage from './containers/LogoutPage'
 import RegisterPage from './containers/RegisterPage'
 import NotFoundPage from './containers/NotFoundPage'
 import UserListPage from './containers/UserListPage'
+import UserPage from './containers/UserPage'
 import ResourceListPage from './containers/ResourceListPage'
+import ResourcePage from './containers/ResourcePage'
 
 // Detect and use chrome redux extension if available.
 const devTools = window.devToolsExtension ?
@@ -51,11 +53,17 @@ render(
       <Route path="/admin" component={App}>
         <IndexRoute component={DashboardPage} />
         <Route path="/admin" component={DashboardPage} />
+
+        <Route path="/admin/register" component={RegisterPage} />
         <Route path="/admin/login" component={LoginPage} />
         <Route path="/admin/logout" component={LogoutPage} />
-        <Route path="/admin/register" component={RegisterPage} />
+
         <Route path="/admin/users" component={requireAuth(UserListPage)} />
+        <Route path="/admin/users/:id" component={requireAuth(UserPage)} />
+
         <Route path="/admin/resources" component={requireAuth(ResourceListPage)} />
+        <Route path="/admin/resources/:id" component={requireAuth(ResourcePage)} />
+
         <Route path="/admin/*" component={NotFoundPage} />
       </Route>
     </Router>

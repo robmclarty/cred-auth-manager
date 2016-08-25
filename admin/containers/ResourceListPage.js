@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux';
 import {
   addResource,
   updateResource,
@@ -29,8 +30,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  onClickResource: (id, e) => console.log('clicked resource', id, e),
-  onClickToggleSort: (by, e) => dispatch(sortResources(by)),
+  onClickResource: id => dispatch(push(`/admin/resources/${ id }`)),
+  onClickToggleSort: by => dispatch(sortResources(by)),
   onClickNextPage: () => dispatch(nextResourcePage()),
   onClickPrevPage: () => dispatch(prevResourcePage()),
   onAddResource: () => dispatch(addResource({})),

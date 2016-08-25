@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux';
 import {
   addUser,
   updateUser,
@@ -38,8 +39,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  onClickUser: (id, e) => console.log('clicked user', id, e),
-  onClickToggleSort: (by, e) => dispatch(sortUsers(by)),
+  onClickUser: id => dispatch(push(`/admin/users/${ id }`)),
+  onClickToggleSort: by => dispatch(sortUsers(by)),
   onClickNextPage: () => dispatch(nextUserPage()),
   onClickPrevPage: () => dispatch(prevUserPage()),
   onAddUser: () => dispatch(addUser(fakeUser())),

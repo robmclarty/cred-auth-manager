@@ -38,21 +38,21 @@ const ResourceList = ({
                 <th>
                   <button
                       className={nameButtonClass}
-                      onClick={e => onClickToggleSort('name', e)}>
+                      onClick={e => onClickToggleSort('name')}>
                     Name
                   </button>
                 </th>
                 <th>
                   <button
                       className={urlButtonClass}
-                      onClick={e => onClickToggleSort('url', e)}>
+                      onClick={e => onClickToggleSort('url')}>
                     Url
                   </button>
                 </th>
                 <th>
                   <button
                       className={updatedButtonClass}
-                      onClick={e => onClickToggleSort('updatedAt', e)}>
+                      onClick={e => onClickToggleSort('updatedAt')}>
                     Updated At
                   </button>
                 </th>
@@ -66,9 +66,9 @@ const ResourceList = ({
                 return (
                   <tr
                       key={resource.id}
-                      onClick={e => onClickResource(resource.id, e)}>
+                      onClick={e => onClickResource(resource.id)}>
                     <td><b>{resource.name}</b></td>
-                    <td><a href="{resource.url}">{resource.url}</a></td>
+                    <td>{resource.url}</td>
                     <td>{updatedMoment}</td>
                   </tr>
                 );

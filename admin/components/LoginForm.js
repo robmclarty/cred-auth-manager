@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
-const Login = React.createClass({
-  displayName: 'Login',
+const LoginForm = React.createClass({
+  displayName: 'LoginForm',
 
   propTypes: {
     onSubmit: PropTypes.func.isRequired
@@ -49,4 +49,4 @@ const Login = React.createClass({
   }
 });
 
-export default Login;
+export default LoginForm;

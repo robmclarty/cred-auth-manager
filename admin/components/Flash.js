@@ -4,9 +4,6 @@ const Flash = ({
   status,
   messages,
   isVisible,
-  isFetchingAssignments,
-  isFetchingLocations,
-  isFetchingUsers,
   onClickClose
 }) => {
   if (!isVisible) return false;
@@ -34,8 +31,6 @@ Flash.propTypes = {
   status: PropTypes.string,
   messages: PropTypes.array,
   isVisible: PropTypes.bool,
-  isFetchingMessages: PropTypes.bool,
-  isFetchingUsers: PropTypes.bool,
   onClickClose: PropTypes.func
 };
 

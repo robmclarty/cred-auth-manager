@@ -19,7 +19,7 @@ const Register = React.createClass({
 
   render: function () {
     return (
-      <form onSubmit={this.onSubmit} className="login-form">
+      <form onSubmit={this.onSubmit} className="register-form">
         <div className="field">
             <label htmlFor="username">Username</label>
             <br />

@@ -15,13 +15,6 @@ import {
 import paginated from 'paginated-redux'
 import fetchable from '../transducers/fetchable'
 
-// Return user matching id from state.
-export const getUser = (state, id) => {
-  return state.users.list.find(user => {
-    return user && user.id === String(id)
-  })
-}
-
 const users = (state = [], action) => {
   switch (action.type) {
   case STORE_USERS:

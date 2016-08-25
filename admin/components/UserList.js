@@ -38,28 +38,28 @@ const UserList = ({
                 <th>
                   <button
                       className={usernameButtonClass}
-                      onClick={e => onClickToggleSort('username', e)}>
+                      onClick={e => onClickToggleSort('username')}>
                     Username
                   </button>
                 </th>
                 <th>
                   <button
                       className={emailButtonClass}
-                      onClick={e => onClickToggleSort('email', e)}>
+                      onClick={e => onClickToggleSort('email')}>
                     Email
                   </button>
                 </th>
                 <th>
                   <button
                       className={statusButtonClass}
-                      onClick={e => onClickToggleSort('status', e)}>
+                      onClick={e => onClickToggleSort('status')}>
                     Status
                   </button>
                 </th>
                 <th>
                   <button
                       className={lastLoginButtonClass}
-                      onClick={e => onClickToggleSort('lastLogin', e)}>
+                      onClick={e => onClickToggleSort('lastLogin')}>
                     Last Login
                   </button>
                 </th>
@@ -74,7 +74,7 @@ const UserList = ({
                 return (
                   <tr
                       key={user.id}
-                      onClick={e => onClickUser(user.id, e)}>
+                      onClick={e => onClickUser(user.id)}>
                     <td><b>{user.username}</b></td>
                     <td>{user.email}</td>
                     <td>{status}</td>
