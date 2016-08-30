@@ -27,7 +27,7 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onSubmit: data => dispatch(updateUser(data))
+  onSubmit: props => dispatch(updateUser(props))
 })
 
 const UserPage = connect(

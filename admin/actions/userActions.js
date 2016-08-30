@@ -17,6 +17,7 @@ import {
   PREV_USER_PAGE,
   SORT_USERS
 } from '../constants/ActionTypes'
+import { STATUS_SUCCESS, STATUS_FAIL } from '../constants/FlashTypes'
 import { hideFlash } from './'
 import config from '../../config/admin'
 
@@ -83,14 +84,30 @@ const addUserFail = error => ({
 
 // Update User
 // -----------
-export const updateUser = user => (dispatch, callApi) => {
-  const userUrl = `${ usersUrl }/${ user.id }`
+export const updateUser = props => (dispatch, callApi) => {
+  const userUrl = `${ usersUrl }/${ props.id }`
+
+  console.log('props: ', props)
 
   dispatch(updateUserPending())
 
-  return callApi({ url: userUrl, method: 'PUT' })
+  return callApi({
+    url: userUrl,
+    method: 'PUT',
+    body: props
+  })
     .then(res => dispatch(updateUserSuccess(res.user)))
-    .catch(err => dispatch(updateUserFail(err)))
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['User updated.']
+    })))
+    .catch(err => {
+      dispatch(updateUserFail(err))
+      dispatch(showFlash({
+        status: STATUS_FAIL,
+        messages: [err]
+      }))
+    })
 }
 
 const updateUserPending = () => ({

@@ -19,7 +19,12 @@ const UserForm = React.createClass({
     e.preventDefault();
 
     this.props.onSubmit({
-
+      id: this.props.user.id,
+      username: this.refs.username.value,
+      password: this.refs.password.value,
+      email: this.refs.email.value,
+      isActive: this.refs.isActive.checked,
+      isAdmin: this.refs.isAdmin.checked
     });
   },
 
@@ -27,15 +32,14 @@ const UserForm = React.createClass({
     const {
       user,
       resources,
-      isAuthenticated,
-      onSubmit
+      isAuthenticated
     } = this.props
 
     // If missing props, don't render anything.
     if (!user || !resources || !isAuthenticated) return false
 
     return (
-      <form onSubmit={onSubmit} className="user-form">
+      <form onSubmit={this.onSubmit} className="user-form">
         <div className="field">
             <label htmlFor="username">Username</label>
             <br />
@@ -117,7 +121,7 @@ const UserForm = React.createClass({
           </div>
           <button
               type="submit"
-              onClick={onSubmit}>
+              onClick={this.onSubmit}>
             Update
           </button>
       </form>

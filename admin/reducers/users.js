@@ -22,13 +22,13 @@ const users = (state = [], action) => {
   case ADD_USER:
     return [...state, action.user]
   case UPDATE_USER: {
-    const index = state.findIndex(user => (user.id === action.user.id))
+    //const index = state.findIndex(user => (user.id === action.user.id))
 
-    return [
-      ...state.slice(0, index),
-      action.user,
-      ...state.slice(index + 1)
-    ]
+    // return [
+    //   ...state.slice(0, index),
+    //   action.user,
+    //   ...state.slice(index + 1)
+    // ]
   }
   case REMOVE_USER:
     return state.filter(user => (user.id !== action.id))

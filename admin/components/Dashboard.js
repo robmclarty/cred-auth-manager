@@ -158,30 +158,36 @@ const Dashboard = ({
                 <h4>Active Admins</h4>
                 <ul>
                   {adminUsers(users).map(user => (
-                    <li key={user.id}><a href="">{user.username}</a></li>
+                    <li key={user.id}>
+                      <Link to={`/admin/users/${ user.id }`}>{user.username}</Link>
+                    </li>
                   ))}
                 </ul>
               </div>
             </td>
-            <td valign="top">
+            <td>
               <div className="users-login">
                 <h4>Recently Logged In</h4>
                 <ul>
                   {last10Logins(users).map(user => (
                     <li key={user.id}>
-                      <span style={recentNameStyle}><a href="">{user.username}</a></span>
+                      <span style={recentNameStyle}>
+                        <Link to={`/admin/users/${ user.id }`}>{user.username}</Link>
+                      </span>
                       <span>{user.loginAt.slice(0, 10)}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </td>
-            <td valign="top">
+            <td>
               <div className="resources">
                 <h4>Active Resources</h4>
                 <ul>
                   {activeResources(resources).map(resource => (
-                    <li key={resource.id}><a href="">{resource.name}</a></li>
+                    <li key={resource.id}>
+                      <Link to={`/admin/resources/${ resource.id }`}>{resource.name}</Link>
+                    </li>
                   ))}
                 </ul>
               </div>
