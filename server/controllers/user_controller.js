@@ -35,6 +35,8 @@ const postUsers = (req, res, next) => {
   const auth = req.cred.payload
   const props = User.filterProps(auth.isAdmin, req.body)
 
+  console.log('controller props: ', props)
+
   User.create(props)
     .then(user => res.json({
       success: true,

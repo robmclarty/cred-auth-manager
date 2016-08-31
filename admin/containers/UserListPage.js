@@ -2,23 +2,19 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
 import {
-  removeUser,
   sortUsers,
   gotoUserPage,
   nextUserPage,
   prevUserPage
 } from '../actions'
 import Page from '../components/Page'
-import UserListComponent from '../components/UserList'
+import UserList from '../components/UserList'
 
-const fakeUser = () => {
-  const newId = Date.now()
-
-  return {
-    id: newId,
-    name: `New User ${ newId }`
-  }
-}
+const UserListPageComponent = props => (
+  <Page name="Users">
+    <UserList {...props} />
+  </Page>
+)
 
 const mapStateToProps = state => {
   const users = state.users.pageList
@@ -38,23 +34,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onClickUser: id => dispatch(push(`/admin/users/${ id }`)),
+  onClickAddUser: () => dispatch(push(`/admin/users/new`)),
   onClickToggleSort: by => dispatch(sortUsers(by)),
   onClickNextPage: () => dispatch(nextUserPage()),
-  onClickPrevPage: () => dispatch(prevUserPage()),
-  onClickAddUser: () => dispatch(push(`/admin/users/new`)),
-  onClickRemoveUser: id => dispatch(removeUser(id)),
-  onFetchUsers: () => dispatch(fetchUsers())
+  onClickPrevPage: () => dispatch(prevUserPage())
 })
 
-const UserList = connect(
+const UserListPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserListComponent)
-
-const UserListPage = () => (
-  <Page name="Users">
-    <UserList />
-  </Page>
-)
+)(UserListPageComponent)
 
 export default UserListPage

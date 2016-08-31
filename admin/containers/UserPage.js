@@ -1,7 +1,7 @@
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { updateUser, addUser } from '../actions';
-import UserForm from '../components/UserForm';
+import React, { PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { updateUser, addUser, removeUser } from '../actions'
+import UserForm from '../components/UserForm'
 import Page from '../components/Page'
 
 // Use this for "new" users so as not to trigger the falsy user check in the
@@ -14,7 +14,8 @@ const UserPageComponent = ({
   user,
   resources,
   isAuthenticated,
-  onSubmit
+  onSubmit,
+  onClickRemoveUser
 }) => (
   <Page name={user.isEmpty ? 'Add User' : 'Modify User'}>
     <UserForm
@@ -23,6 +24,19 @@ const UserPageComponent = ({
         isAuthenticated={isAuthenticated}
         onSubmit={onSubmit}
     />
+
+    {!user.isEmpty &&
+      <aside className="page-controls">
+        <button
+            className="list-remove-button"
+            onClick={e => {
+              e.preventDefault()
+              onClickRemoveUser(user.id)
+            }}>
+          remove user
+        </button>
+      </aside>
+    }
   </Page>
 )
 
@@ -46,13 +60,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const isNew = ownProps.params.id === 'new'
 
   return {
-    onSubmit: props => dispatch(isNew ? addUser(props) : updateUser(props))
+    onSubmit: props => dispatch(isNew ? addUser(props) : updateUser(props)),
+    onClickRemoveUser: id => dispatch(removeUser(id))
   }
 }
 
 const UserPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserPageComponent);
+)(UserPageComponent)
 
-export default UserPage;
+export default UserPage

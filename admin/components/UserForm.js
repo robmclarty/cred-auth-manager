@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Link } from 'react-router'
 import PermissionInput from './PermissionInput'
 
 const onChange = () => {
@@ -133,6 +134,8 @@ const UserForm = React.createClass({
               onClick={this.onSubmit}>
             Save
           </button>
+          <span>or</span>
+          <Link to="/admin/users">cancel</Link>
       </form>
     );
   }

@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux';
 import {
   STORE_USERS,
   FETCH_USERS_PENDING,
@@ -67,6 +68,7 @@ export const addUser = props => (dispatch, callApi) => {
     body: props
   })
     .then(res => dispatch(addUserSuccess(res.user)))
+    .then(() => dispatch(push(`/admin/users`)))
     .then(() => dispatch(showFlash({
       status: STATUS_SUCCESS,
       messages: ['User created.']
@@ -109,6 +111,7 @@ export const updateUser = props => (dispatch, callApi) => {
     body: props
   })
     .then(res => dispatch(updateUserSuccess(res.user)))
+    .then(() => dispatch(push(`/admin/users`)))
     .then(() => dispatch(showFlash({
       status: STATUS_SUCCESS,
       messages: ['User updated.']

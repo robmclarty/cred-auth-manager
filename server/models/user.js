@@ -116,11 +116,15 @@ const toJSON = user => ({
 
 // If the password has changed, hash it before saving, otherwise just continue.
 const beforeSave = user => {
-  if (!user.changed('password')) return
-
   return hashPassword(user.password)
     .then(hash => { user.password = hash })
     .catch(err => console.log('Error hashing password', err))
+}
+
+const beforeUpdate = user => {
+  if (!user.changed('password')) return
+
+  return beforeSave(user)
 }
 
 const UserSchema = function (sequelize, DataTypes) {
@@ -155,9 +159,6 @@ const UserSchema = function (sequelize, DataTypes) {
         notEmpty: {
           msg: 'Password cannot be blank.'
         }
-      },
-      set: function (val) {
-        if (!val) return this.setDataValue('password', '')
       }
     },
     email: {
@@ -233,10 +234,12 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     hooks: {
       beforeCreate: beforeSave,
-      beforeUpdate: beforeSave,
+      beforeUpdate: beforeUpdate,
       beforeValidate: function (user, options, cb) {
-        // Force password not to be null in order to use custom error message.
-        user.password = user.password || ''
+        // If the user has a password property, force it not to be null in order
+        // to use custom error message.
+        if (user.hasOwnProperty('password')) user.password = user.password || ''
+
         cb(null, user)
       }
     },

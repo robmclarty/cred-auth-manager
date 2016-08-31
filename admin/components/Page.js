@@ -6,13 +6,12 @@ const Page = ({ name, children }) => (
       <h1>{name}</h1>
     }
 
-    {children}
+    <div>{children}</div>
   </section>
 )
 
 Page.propTypes = {
-  name: PropTypes.string,
-  children: PropTypes.object
+  name: PropTypes.string
 }
 
 export default Page

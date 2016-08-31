@@ -69,7 +69,6 @@ const UserList = ({
                 Last Login
               </button>
             </th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -86,13 +85,6 @@ const UserList = ({
                 <td>{user.email}</td>
                 <td>{status}</td>
                 <td>{lastLoginMoment}</td>
-                <td>
-                  <button
-                      className="list-remove-button"
-                      onClick={e => onClickRemoveUser(user.id)}>
-                    remove
-                  </button>
-                </td>
               </tr>
             );
           })}
