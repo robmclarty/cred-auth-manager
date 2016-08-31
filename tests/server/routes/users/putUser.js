@@ -125,4 +125,8 @@ describe('PUT /users/:id', () => {
         expect(res.body.user).to.be.undefined
       })
   })
+
+  it('should update permissions if they are included in body')
+  it('should ignore permissions if they are missing from body')
+  it('should not allow users without authorization to modify permissions')
 })

@@ -113,4 +113,8 @@ describe('POST /users', () => {
         expect(res.body.user).to.be.undefined
       })
   })
+
+  it('should add permissions if they are included in body')
+  it('should ignore permissions if they are missing from body')
+  it('should not allow users without authorization to add permissions')
 })

@@ -24,7 +24,7 @@ const sequelizeError = (err, req, res, next) => {
     return res.status(status).send({
       success: false,
       message: err.message,
-      errors: err.errors.map(error => error.message)
+      errors: err.errors ? err.errors.map(error => error.message) : [err.message]
     })
   }
 

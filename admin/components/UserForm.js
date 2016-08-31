@@ -2,10 +2,6 @@ import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
 import PermissionInput from './PermissionInput'
 
-const onChange = () => {
-  console.log('changed...')
-}
-
 const UserForm = React.createClass({
   displayName: 'UserForm',
 
@@ -14,6 +10,54 @@ const UserForm = React.createClass({
     resources: PropTypes.array,
     isAuthenticated: PropTypes.bool,
     onSubmit: PropTypes.func
+  },
+
+  getDefaultProps: function () {
+    return {
+      user: {},
+      resources: [],
+      isAuthenticated: false
+    }
+  },
+
+  getDefaultState: function () {
+    return {
+      permissions: {}
+    }
+  },
+
+  componentDidMount: function () {
+    this.setState({ permissions: this.props.user.permissions || {} })
+  },
+
+  // componentWillReceiveProps: function (nextProps) {
+  //   console.log('next props: ', nextProps)
+  //   this.setState({ permissions: nextProps.user.permissions || {} })
+  // },
+
+  onChange: function (e) {
+    console.log('before: ', this.state.permissions)
+    const resourceName = e.target.getAttribute('data-resource-name')
+    const action = e.target.getAttribute('data-action')
+    const permissions = this.state.permissions
+
+    // If the existing permissions don't already include this action, then add it.
+    if (!permissions[resourceName] ||
+        !permissions[resourceName].actions.includes(action)) {
+      const newActions = permissions[resourceName] && permissions[resourceName].actions ?
+        [...permissions[resourceName].actions, action] :
+        [action]
+      const newPermissions = {
+        ...permissions,
+        [resourceName]: {
+          actions: newActions
+        }
+      }
+
+      this.setState({ permissions: newPermissions })
+
+      console.log(newPermissions)
+    }
   },
 
   onSubmit: function (e) {
@@ -120,7 +164,7 @@ const UserForm = React.createClass({
                           resourceName={resource.name}
                           permissions={user.permissions || {}}
                           action={action}
-                          onChange={onChange}
+                          onChange={e => this.onChange(e)}
                           key={`permission:${ actionIndex }`}
                       />
                     ))}

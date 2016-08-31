@@ -30,12 +30,60 @@ const findResourceByName = resourceName => Resource.findOne({
     return resource
   })
 
+const updatePermission = (user, resource, actions) => {
+  const validActions = resource.validActions(actions)
+
+  // If the user already has existing permission for this resource, update
+  // the existing permission with the new actions (the valid ones).
+  if (user.permissions && user.permissions[resource.name]) {
+    return Permission.findById(user.permissions[resource.name].id)
+      .then(permission => {
+        if (!permission) throw createError({
+          status: UNPROCESSABLE,
+          message: `User '${ user.id }' has no matching permission for resource '${ resource.name }'`
+        })
+
+        return permission.update({
+          actions: validActions
+        })
+      })
+  }
+
+  // ...otherwise, create a new permission.
+  return Permission.create({
+    userId: user.id,
+    resourceId: resource.id,
+    actions: validActions
+  })
+}
+
+const updatePermissions = (user, resources, permissions) => {
+  return Promise.all(resources.reduce((updatedPermissions, resource) => {
+    if (permissions[resource.name] && permissions[resource.name].actions)
+      return [
+        ...updatedPermissions,
+        updatePermission(user, resource, permissions[resource.name].actions)
+      ]
+  }, []))
+}
+
+// Find the matching permission and destroy it.
+const removePermission = (user, resourceName) => {
+  return Permission.findById(user.permissions[resourceName].id)
+    .then(permission => {
+      if (!permission) throw createError({
+        status: UNPROCESSABLE,
+        message: `User '${ user.id }' has no matching permission for resource '${ resourceName }'`
+      })
+
+      return permission.destroy()
+    })
+}
+
 // POST /users
 const postUsers = (req, res, next) => {
   const auth = req.cred.payload
   const props = User.filterProps(auth.isAdmin, req.body)
-
-  console.log('controller props: ', props)
 
   User.create(props)
     .then(user => res.json({
@@ -172,30 +220,8 @@ const postPermissions = (req, res, next) => {
     .then(userAndResource => {
       const user = userAndResource[0].toJSON()
       const resource = userAndResource[1]
-      const validActions = resource.validActions(actions)
 
-      // If the user already has existing permission for this resource, update
-      // the existing permission with the new actions (the valid ones).
-      if (user.permissions && user.permissions[resourceName]) {
-        return Permission.findById(user.permissions[resourceName].id)
-          .then(permission => {
-            if (!permission) throw createError({
-              status: UNPROCESSABLE,
-              message: `User '${ userId }' has no matching permission for resource '${ resourcename }'`
-            })
-
-            return permission.update({
-              actions: validActions
-            })
-          })
-      }
-
-      // ...otherwise, create a new permission.
-      return Permission.create({
-        userId: user.id,
-        resourceId: resource.id,
-        actions: validActions
-      })
+      return updatePermission(user, resource, actions)
     })
     .then(permission => res.json({
       success: true,
@@ -210,29 +236,16 @@ const deletePermissions = (req, res, next) => {
   const userId = req.params.id
   const resourceName = req.params.resource_name
 
-  Promise.all([
-    findUserById(userId),
-    findResourceByName(resourceName)
-  ])
-    .then(userAndResource => {
-      const user = userAndResource[0].toJSON()
-      const resource = userAndResource[1]
+  findUserById(userId)
+    .then(rawUser => {
+      const user = rawUser.toJSON()
 
       // If user does not have a permission for resource, fail silently (if the
       // request was to remove it and it's already non-existent, then that's
       // basically a "successful" removal).
       if (!user.permissions || !user.permissions[resourceName]) return
 
-      // Find the matching permission and destroy it.
-      return Permission.findById(user.permissions[resourceName].id)
-        .then(permission => {
-          if (!permission) throw createError({
-            status: UNPROCESSABLE,
-            message: `User '${ userId }' has no matching permission for resource '${ resourcename }'`
-          })
-
-          return permission.destroy()
-        })
+      return removePermission(user, resourceName)
     })
     .then(permission => res.json({
       success: true,
