@@ -1,16 +1,13 @@
 import React, { PropTypes } from 'react'
 
 const Page = ({ name, children }) => (
-  <div className="page">
+  <section className="page">
     {name &&
       <h1>{name}</h1>
     }
 
     {children}
-
-    <br />
-    <br />
-  </div>
+  </section>
 )
 
 Page.propTypes = {

@@ -119,10 +119,8 @@ const beforeSave = user => {
   if (!user.changed('password')) return
 
   return hashPassword(user.password)
-    .then(hash => {
-      user.password = hash
-    })
-    .catch(err => console.log("Error hashing password", err))
+    .then(hash => { user.password = hash })
+    .catch(err => console.log('Error hashing password', err))
 }
 
 const UserSchema = function (sequelize, DataTypes) {
@@ -138,12 +136,15 @@ const UserSchema = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      defaultValue: DataTypes.UUIDv4,
       validate: {
-        notEmpty: true,
-        isUrlSafe
+        notEmpty: {
+          msg: 'Username cannot be blank.'
+        },
+        isUrlSafe: isUrlSafe('Username')
       },
       set: function (val) {
+        if (!val) return this.setDataValue('username', '')
+
         this.setDataValue('username', base64url.escape(validator.trim(val)))
       }
     },
@@ -151,7 +152,12 @@ const UserSchema = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: {
+          msg: 'Password cannot be blank.'
+        }
+      },
+      set: function (val) {
+        if (!val) return this.setDataValue('password', '')
       }
     },
     email: {
@@ -159,10 +165,16 @@ const UserSchema = function (sequelize, DataTypes) {
       allowNull: false,
       unique: true,
       validate: {
-        isEmail: true,
-        notEmpty: true
+        notEmpty: {
+          msg: 'Email cannot be blank.'
+        },
+        isEmail: {
+          msg: 'Must use a valid email address.'
+        }
       },
       set: function (val) {
+        if (!val) return this.setDataValue('email', '')
+
         let email = validator.trim(val)
         email = validator.normalizeEmail(email, {
           lowercase: true,
@@ -212,11 +224,6 @@ const UserSchema = function (sequelize, DataTypes) {
       loginUpdate: function () {
         return this.update({ loginAt: Date.now() })
       },
-      // getActions: function (name) {
-      //   return getActions(name, this.permissions)
-      // }
-      // removePermission: name => this.set('permissions', removePermissionFrom(this.permissions, name)),
-      // addPermission: name => this.set('permissions', addPermissionTo(this.permissions, name)),
       tokenPayload: function () {
         return tokenPayload(userWithJSONPermissions(this.get()))
       },
@@ -226,7 +233,12 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     hooks: {
       beforeCreate: beforeSave,
-      beforeUpdate: beforeSave
+      beforeUpdate: beforeSave,
+      beforeValidate: function (user, options, cb) {
+        // Force password not to be null in order to use custom error message.
+        user.password = user.password || ''
+        cb(null, user)
+      }
     },
     scopes: {
       active: { where: { isActive: true } },

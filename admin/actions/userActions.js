@@ -58,12 +58,26 @@ const fetchUsersFail = err => ({
 
 // Add User
 // --------
-export const addUser = user => (dispatch, callApi) => {
-  dispatch(addUserPending());
+export const addUser = props => (dispatch, callApi) => {
+  dispatch(addUserPending())
 
-  return callApi({ url: usersUrl, method: 'POST' })
+  return callApi({
+    url: usersUrl,
+    method: 'POST',
+    body: props
+  })
     .then(res => dispatch(addUserSuccess(res.user)))
-    .catch(err => dispatch(addUserFail(err)));
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['User created.']
+    })))
+    .catch(err => {
+      dispatch(addUserFail(err))
+      dispatch(showFlash({
+        status: STATUS_FAIL,
+        messages: err.errors
+      }))
+    })
 }
 
 const addUserPending = () => ({

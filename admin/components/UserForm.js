@@ -18,14 +18,23 @@ const UserForm = React.createClass({
   onSubmit: function (e) {
     e.preventDefault();
 
-    this.props.onSubmit({
-      id: this.props.user.id,
+    const userProps = {
       username: this.refs.username.value,
       password: this.refs.password.value,
       email: this.refs.email.value,
       isActive: this.refs.isActive.checked,
       isAdmin: this.refs.isAdmin.checked
-    });
+    }
+
+    // If this is updating an existing user with an id, add it, otherwise if
+    // this is a new user with no id, leave it out.
+    if (this.props.user.id) Object.assign(userProps, {
+      id: this.props.user.id
+    })
+
+    console.log('props: ', userProps)
+
+    this.props.onSubmit(userProps);
   },
 
   render: function () {
@@ -108,7 +117,7 @@ const UserForm = React.createClass({
                     {resource.actions.map((action, actionIndex) => (
                       <PermissionInput
                           resourceName={resource.name}
-                          permissions={user.permissions}
+                          permissions={user.permissions || {}}
                           action={action}
                           onChange={onChange}
                           key={`permission:${ actionIndex }`}
@@ -122,7 +131,7 @@ const UserForm = React.createClass({
           <button
               type="submit"
               onClick={this.onSubmit}>
-            Update
+            Save
           </button>
       </form>
     );

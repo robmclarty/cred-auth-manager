@@ -2,20 +2,20 @@
 
 const validator = require('validator')
 
-const isUrlSafe = value => {
+const isUrlSafe = name => value => {
   if (!validator.matches(value, /^[A-Za-z0-9\-_]+$/))
-    throw new Error('Must be URL safe (use hyphens instead of spaces, like "my-cool-username")')
+    throw new Error(`${ name } must be URL safe (use hyphens instead of spaces, like "my-cool-name")`)
 }
 
-const isArray = arr => {
+const isArray = name => arr => {
   if (!Array.isArray(arr))
-    throw new Error('Actions must be an array')
+    throw new Error(`${ name } must be an array`)
 }
 
-const isArrayOfStrings = arr => {
+const isArrayOfStrings = name => arr => {
   arr.forEach(item => {
     if (typeof item !== 'string')
-      throw new Error('Actions must be string values')
+      throw new Error(`${ name } must be string values`)
   })
 }
 

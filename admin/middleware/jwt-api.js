@@ -70,13 +70,11 @@ const request = (url, options) => fetch(url, options)
     const res = responses[0]
     const json = responses[1]
 
-    if (!res.ok) throw json.message
-    return Promise.resolve(json)
+    if (!res.ok) throw json
+
+    return json
   })
-  .catch(err => {
-    console.log('Error: ', err);
-    return Promise.reject(err)
-  })
+  //.catch(err => Promise.reject(err))
 
 // Decode base64 token and return the 2nd part (separated by '.') which is the
 // JWT payload object.

@@ -2,8 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
 import {
-  addUser,
-  updateUser,
   removeUser,
   sortUsers,
   gotoUserPage,
@@ -43,7 +41,8 @@ const mapDispatchToProps = dispatch => ({
   onClickToggleSort: by => dispatch(sortUsers(by)),
   onClickNextPage: () => dispatch(nextUserPage()),
   onClickPrevPage: () => dispatch(prevUserPage()),
-  onAddUser: () => dispatch(addUser(fakeUser())),
+  onClickAddUser: () => dispatch(push(`/admin/users/new`)),
+  onClickRemoveUser: id => dispatch(removeUser(id)),
   onFetchUsers: () => dispatch(fetchUsers())
 })
 

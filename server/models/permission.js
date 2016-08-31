@@ -46,8 +46,8 @@ const PermissionSchema = function (sequelize, DataTypes) {
       defaultValue: [],
       allowNull: true,
       validate: {
-        isArray,
-        isArrayOfStrings
+        isArray: isArray('Actions'),
+        isArrayOfStrings: isArrayOfStrings('Actions')
       },
       set: function (val) {
         this.setDataValue('actions', val.map(action => {

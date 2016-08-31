@@ -12,6 +12,8 @@ const UserList = ({
   by,
   filter,
   onClickUser,
+  onClickAddUser,
+  onClickRemoveUser,
   onClickToggleSort,
   onClickPrevPage,
   onClickNextPage
@@ -21,72 +23,82 @@ const UserList = ({
   const statusButtonClass = by === 'status' ? order : '';
   const lastLoginButtonClass = by === 'lastLogin' ? order : '';
 
-  return (
-    <section className="list-container">
-      {!isPending &&
-        <div>
-          <PaginationControls
-              page={page}
-              total={total}
-              onClickNextPage={onClickNextPage}
-              onClickPrevPage={onClickPrevPage}
-          />
+  return isPending ? false : (
+    <div className="list-container">
+      <button
+          className="new-user-button"
+          onClick={e => onClickAddUser()}>
+        New User
+      </button>
 
-          <table className="resource-list">
-            <thead>
-              <tr>
-                <th>
+      <PaginationControls
+          page={page}
+          total={total}
+          onClickNextPage={onClickNextPage}
+          onClickPrevPage={onClickPrevPage}
+      />
+
+      <table className="resource-list">
+        <thead>
+          <tr>
+            <th>
+              <button
+                  className={usernameButtonClass}
+                  onClick={e => onClickToggleSort('username')}>
+                Username
+              </button>
+            </th>
+            <th>
+              <button
+                  className={emailButtonClass}
+                  onClick={e => onClickToggleSort('email')}>
+                Email
+              </button>
+            </th>
+            <th>
+              <button
+                  className={statusButtonClass}
+                  onClick={e => onClickToggleSort('status')}>
+                Status
+              </button>
+            </th>
+            <th>
+              <button
+                  className={lastLoginButtonClass}
+                  onClick={e => onClickToggleSort('lastLogin')}>
+                Last Login
+              </button>
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => {
+            const status = user.isActive ? 'active' : 'disabled';
+            const lastLoginDate = new Date(user.loginAt);
+            const lastLoginMoment = moment(lastLoginDate).calendar();
+
+            return (
+              <tr
+                  key={user.id}
+                  onClick={e => onClickUser(user.id)}>
+                <td><b>{user.username}</b></td>
+                <td>{user.email}</td>
+                <td>{status}</td>
+                <td>{lastLoginMoment}</td>
+                <td>
                   <button
-                      className={usernameButtonClass}
-                      onClick={e => onClickToggleSort('username')}>
-                    Username
+                      className="list-remove-button"
+                      onClick={e => onClickRemoveUser(user.id)}>
+                    remove
                   </button>
-                </th>
-                <th>
-                  <button
-                      className={emailButtonClass}
-                      onClick={e => onClickToggleSort('email')}>
-                    Email
-                  </button>
-                </th>
-                <th>
-                  <button
-                      className={statusButtonClass}
-                      onClick={e => onClickToggleSort('status')}>
-                    Status
-                  </button>
-                </th>
-                <th>
-                  <button
-                      className={lastLoginButtonClass}
-                      onClick={e => onClickToggleSort('lastLogin')}>
-                    Last Login
-                  </button>
-                </th>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => {
-                const status = user.isActive ? 'active' : 'disabled';
-                const lastLoginDate = new Date(user.loginAt);
-                const lastLoginMoment = moment(lastLoginDate).calendar();
-
-                return (
-                  <tr
-                      key={user.id}
-                      onClick={e => onClickUser(user.id)}>
-                    <td><b>{user.username}</b></td>
-                    <td>{user.email}</td>
-                    <td>{status}</td>
-                    <td>{lastLoginMoment}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      }
-    </section>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

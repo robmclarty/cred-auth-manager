@@ -24,7 +24,7 @@ const sequelizeError = (err, req, res, next) => {
     return res.status(status).send({
       success: false,
       message: err.message,
-      errors: err.errors
+      errors: err.errors.map(error => error.message)
     })
   }
 
@@ -37,7 +37,7 @@ const unauthorized = (err, req, res, next) => {
   res.status(UNAUTHORIZED).send({
     success: false,
     message: err.message || 'Unauthorized',
-    error: err
+    errors: [err]
   })
 }
 
@@ -47,7 +47,7 @@ const forbidden = (err, req, res, next) => {
   res.status(FORBIDDEN).send({
     success: false,
     message: err.message || 'Forbidden',
-    error: err
+    errors: [err]
   })
 }
 
@@ -57,7 +57,7 @@ const conflict = (err, req, res, next) => {
   res.status(CONFLICT).send({
     success: false,
     message: err.message || 'Conflict',
-    error: err
+    errors: [err]
   })
 }
 
@@ -67,7 +67,7 @@ const badRequest = (err, req, res, next) => {
   res.status(BAD_REQUEST).send({
     success: false,
     message: err.message || 'Bad Request',
-    error: err
+    errors: [err]
   })
 }
 
@@ -77,7 +77,7 @@ const unprocessable = (err, req, res, next) => {
   res.status(UNPROCESSABLE).send({
     success: false,
     message: err.message || 'Unprocessable entity',
-    error: err
+    errors: [err]
   })
 }
 
@@ -98,7 +98,7 @@ const genericError = (err, req, res, next) => {
   res.status(GENERIC_ERROR).send({
     success: false,
     message: err.message || 'Internal server error',
-    error: err
+    errors: [err]
   })
 }
 

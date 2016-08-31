@@ -35,7 +35,7 @@ const ResourceSchema = function (sequelize, DataTypes) {
       unique: true,
       validate: {
         notEmpty: true,
-        isUrlSafe
+        isUrlSafe: isUrlSafe('Name')
       },
       set: function (val) {
         this.setDataValue('name', base64url.escape(validator.trim(val)))
@@ -62,8 +62,8 @@ const ResourceSchema = function (sequelize, DataTypes) {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
       validate: {
-        isArray,
-        isArrayOfStrings
+        isArray: isArray('Actions'),
+        isArrayOfStrings: isArrayOfStrings('Actions')
       },
       set: function (val) {
         this.setDataValue('actions', val.map(action => {
