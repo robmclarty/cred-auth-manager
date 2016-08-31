@@ -17,7 +17,7 @@ import {
   PREV_USER_PAGE,
   SORT_USERS
 } from '../constants/ActionTypes'
-import { STATUS_SUCCESS, STATUS_FAIL } from '../constants/FlashTypes'
+import { STATUS_SUCCESS, STATUS_ERROR } from '../constants/FlashTypes'
 import { showFlash, hideFlash } from './'
 import config from '../../config/admin'
 
@@ -74,7 +74,7 @@ export const addUser = props => (dispatch, callApi) => {
     .catch(err => {
       dispatch(addUserFail(err))
       dispatch(showFlash({
-        status: STATUS_FAIL,
+        status: STATUS_ERROR,
         messages: err.errors
       }))
     })
@@ -116,7 +116,7 @@ export const updateUser = props => (dispatch, callApi) => {
     .catch(err => {
       dispatch(updateUserFail(err))
       dispatch(showFlash({
-        status: STATUS_FAIL,
+        status: STATUS_ERROR,
         messages: [err]
       }))
     })

@@ -13,9 +13,10 @@ const Flash = ({
       <span className={`flash-icon ${ status }`}>{status}</span>
       <span className="flash-text">
         <ul className="flash-list">
-          {messages && messages.map((message, i) => (
-            <li key={i}>{message}</li>
-          ))}
+          {messages && messages.map((msg, i) => {
+            if (typeof msg !== 'string') return
+            return (<li key={i}>{msg}</li>)
+          })}
         </ul>
       </span>
       <button

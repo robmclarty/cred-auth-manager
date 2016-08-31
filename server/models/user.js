@@ -176,12 +176,12 @@ const UserSchema = function (sequelize, DataTypes) {
         if (!val) return this.setDataValue('email', '')
 
         let email = validator.trim(val)
+        email = validator.escape(email)
         email = validator.normalizeEmail(email, {
           lowercase: true,
           remove_dots: false,
           remove_extension: true
         })
-        email = validator.escape(email)
 
         this.setDataValue('email', email)
       }
