@@ -3,14 +3,14 @@ import {
   FETCH_USERS_PENDING,
   FETCH_USERS_SUCCESS,
   FETCH_USERS_FAIL,
+  ADD_USER,
   ADD_USER_PENDING,
-  ADD_USER_SUCCESS,
   ADD_USER_FAIL,
+  UPDATE_USER,
   UPDATE_USER_PENDING,
-  UPDATE_USER_SUCCESS,
   UPDATE_USER_FAIL,
+  REMOVE_USER,
   REMOVE_USER_PENDING,
-  REMOVE_USER_SUCCESS,
   REMOVE_USER_FAIL,
   GOTO_USER_PAGE,
   NEXT_USER_PAGE,
@@ -18,7 +18,7 @@ import {
   SORT_USERS
 } from '../constants/ActionTypes'
 import { STATUS_SUCCESS, STATUS_FAIL } from '../constants/FlashTypes'
-import { hideFlash } from './'
+import { showFlash, hideFlash } from './'
 import config from '../../config/admin'
 
 const usersUrl = `${ config.authRoot }/users`
@@ -71,7 +71,7 @@ const addUserPending = () => ({
 })
 
 const addUserSuccess = user => ({
-  type: ADD_USER_SUCCESS,
+  type: ADD_USER,
   user,
   receivedAt: Date.now()
 })
@@ -86,8 +86,6 @@ const addUserFail = error => ({
 // -----------
 export const updateUser = props => (dispatch, callApi) => {
   const userUrl = `${ usersUrl }/${ props.id }`
-
-  console.log('props: ', props)
 
   dispatch(updateUserPending())
 
@@ -115,7 +113,7 @@ const updateUserPending = () => ({
 })
 
 const updateUserSuccess = user => ({
-  type: UPDATE_USER_SUCCESS,
+  type: UPDATE_USER,
   user,
   receivedAt: Date.now()
 })
@@ -143,7 +141,7 @@ const removeUserPending = () => ({
 })
 
 const removeUserSuccess = user => ({
-  type: REMOVE_USER_SUCCESS,
+  type: REMOVE_USER,
   user,
   receivedAt: Date.now()
 })

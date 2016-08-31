@@ -22,6 +22,7 @@ const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
 const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.
+// Also, ignore password field if it is blank (keep existing in that case).
 const filterProps = (isAdmin, props) => {
   const filteredProps = Object.assign({}, props)
 
@@ -33,6 +34,9 @@ const filterProps = (isAdmin, props) => {
 
   if (props.hasOwnProperty('isAdmin') && !isAdmin)
     delete filteredProps.isAdmin
+
+  if (props.hasOwnProperty('password') && !props.password)
+    delete filteredProps.password
 
   return filteredProps
 }

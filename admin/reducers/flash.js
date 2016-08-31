@@ -63,7 +63,7 @@ const flash = (state = initialState, action) => {
         messages: [...state.messages, action.message]
       }
     case RESET_FLASH:
-      return initialState
+      return state.pendingResources.length > 0 ? state : initialState
     case CHANGE_FLASH_STATUS:
       return {
         ...state,

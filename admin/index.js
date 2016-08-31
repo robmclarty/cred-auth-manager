@@ -45,24 +45,24 @@ const history = syncHistoryWithStore(browserHistory, store)
 // Try to login from tokens in localstorage.
 store.dispatch(autoLogin()) // TODO: switch this to cred-redux
 
-const resetFlashOnEnter = () => store.dispatch(resetFlash())
+const clearFlash = () => store.dispatch(resetFlash())
 
 render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/admin" component={App}>
         <IndexRoute component={DashboardPage} />
-        <Route path="/admin" component={DashboardPage} />
+        <Route path="/admin" component={DashboardPage} onEnter={clearFlash()} />
 
-        <Route path="/admin/register" component={RegisterPage} />
-        <Route path="/admin/login" component={LoginPage} />
-        <Route path="/admin/logout" component={LogoutPage} />
+        <Route path="/admin/register" component={RegisterPage} onEnter={clearFlash} />
+        <Route path="/admin/login" component={LoginPage} onEnter={clearFlash} />
+        <Route path="/admin/logout" component={LogoutPage} onEnter={clearFlash} />
 
-        <Route path="/admin/users" component={requireAuth(UserListPage)} />
-        <Route path="/admin/users/:id" component={requireAuth(UserPage)} />
+        <Route path="/admin/users" component={requireAuth(UserListPage)} onEnter={clearFlash} />
+        <Route path="/admin/users/:id" component={requireAuth(UserPage)} onEnter={clearFlash} />
 
-        <Route path="/admin/resources" component={requireAuth(ResourceListPage)} />
-        <Route path="/admin/resources/:id" component={requireAuth(ResourcePage)} />
+        <Route path="/admin/resources" component={requireAuth(ResourceListPage)} onEnter={clearFlash} />
+        <Route path="/admin/resources/:id" component={requireAuth(ResourcePage)} onEnter={clearFlash} />
 
         <Route path="/admin/*" component={NotFoundPage} />
       </Route>
