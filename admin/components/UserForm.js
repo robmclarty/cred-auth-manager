@@ -92,7 +92,7 @@ const UserForm = React.createClass({
     } = this.props
 
     // If missing props, don't render anything.
-    if (!user || !resources || !isAuthenticated) return false
+    if (!user || user.isEmpty || !resources || !isAuthenticated) return false
 
     return (
       <form onSubmit={this.onSubmit} className="user-form">
