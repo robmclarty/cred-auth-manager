@@ -51,7 +51,7 @@ const limiter = new RateLimit({
 })
 
 // Pass remote address through proxy so that limiter knows about it.
-//app.enable("trust proxy")
+app.enable("trust proxy")
 
 // Apply limiter globally.
 // Alternatively, we could create different limiters and apply them on specific
@@ -59,7 +59,7 @@ const limiter = new RateLimit({
 //app.use(limiter)
 
 // Disable X-Powered-By header.
-//app.disable('x-powered-by')
+app.disable('x-powered-by')
 
 // Logs
 // ----

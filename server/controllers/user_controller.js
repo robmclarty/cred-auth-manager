@@ -57,14 +57,25 @@ const updatePermission = (user, resource, actions) => {
   })
 }
 
-const updatePermissions = (user, resources, permissions) => {
-  return Promise.all(resources.reduce((updatedPermissions, resource) => {
-    if (permissions[resource.name] && permissions[resource.name].actions)
-      return [
-        ...updatedPermissions,
-        updatePermission(user, resource, permissions[resource.name].actions)
-      ]
-  }, []))
+// Update all `permissions` for user (either by modifying existing permissions
+// or creating new ones). Cycle through each resource in `permissions` and
+// update the permission for that resource for `user`. Finally, if successful,
+// return a newly loaded version of the user which should include the newly
+// created/modified permissions associations.
+const updatePermissions = (user, permissions) => {
+  if (!permissions || permissions.length === 0) return user
+
+  return Resource.findAll()
+    .then(resources => resources.reduce((updatedPermissions, resource) => {
+      if (permissions[resource.name] && permissions[resource.name].actions) {
+        return [
+          ...updatedPermissions,
+          updatePermission(user, resource, permissions[resource.name].actions)
+        ]
+      }
+    }, []))
+    .then(updatePermissionPromises => Promise.all(updatePermissionPromises))
+    .then(permissions => User.findById(user.id))
 }
 
 // Find the matching permission and destroy it.
@@ -83,6 +94,7 @@ const removePermission = (user, resourceName) => {
 // POST /users
 const postUsers = (req, res, next) => {
   const auth = req.cred.payload
+  const permissions = req.body.permissions
   const props = User.filterProps(auth.isAdmin, req.body)
 
   User.create(props)
@@ -155,12 +167,7 @@ const putUser = (req, res, next) => {
 
   findUserById(userId)
     .then(user => user.update(props))
-    // TODO: then update permissions (if they were included in request)
-    // NOTE: need to be able to return *full* user, including new permissions
-    // .then(user => {
-    //   console.log('user: ', user)
-    //   return user
-    // })
+    .then(user => updatePermissions(user, permissions))
     .then(user => res.json({
       success: true,
       message: 'User updated',

@@ -12,6 +12,7 @@ const emptyUser = {
 
 const UserPageComponent = ({
   user,
+  isPending,
   resources,
   isAuthenticated,
   onSubmit,
@@ -20,6 +21,7 @@ const UserPageComponent = ({
   <Page name={user.isEmpty ? 'Add User' : 'Modify User'}>
     <UserForm
         user={user}
+        isPending={isPending}
         resources={resources}
         isAuthenticated={isAuthenticated}
         onSubmit={onSubmit}
@@ -49,6 +51,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     user: user || emptyUser,
+    isPending: state.users.isFetching,
     resources: state.resources.list,
     isAuthenticated: state.auth.isAuthenticated
   }

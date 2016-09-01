@@ -7,6 +7,7 @@ const UserForm = React.createClass({
 
   propTypes: {
     user: PropTypes.object,
+    isPending: PropTypes.bool,
     resources: PropTypes.array,
     isAuthenticated: PropTypes.bool,
     onSubmit: PropTypes.func
@@ -15,6 +16,7 @@ const UserForm = React.createClass({
   getDefaultProps: function () {
     return {
       user: {},
+      isPending: true,
       resources: [],
       isAuthenticated: false
     }
@@ -38,6 +40,8 @@ const UserForm = React.createClass({
     const permissions = this.state.permissions
 
     // If the existing permissions don't already include this action, then add it.
+    // TODO: Try to refactor this to be simpler. Maybe send permission array
+    // instead of this special object structure.
     if (!permissions[resourceName] ||
         !permissions[resourceName].actions.includes(action)) {
       const newActions = permissions[resourceName] && permissions[resourceName].actions ?
@@ -87,12 +91,13 @@ const UserForm = React.createClass({
   render: function () {
     const {
       user,
+      isPending,
       resources,
       isAuthenticated
     } = this.props
 
-    // If missing props, don't render anything.
-    if (!user || user.isEmpty || !resources || !isAuthenticated) return false
+    // If missing props or waiting for user to load, don't render anything.
+    if (isPending || !user || !resources || !isAuthenticated) return false
 
     return (
       <form onSubmit={this.onSubmit} className="user-form">
