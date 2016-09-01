@@ -67,15 +67,24 @@ const updatePermissions = (user, permissions) => {
 
   return Resource.findAll()
     .then(resources => resources.reduce((updatedPermissions, resource) => {
-      if (permissions[resource.name] && permissions[resource.name].actions) {
+      if (permissions &&
+          permissions[resource.name] &&
+          permissions[resource.name].actions) {
         return [
           ...updatedPermissions,
           updatePermission(user, resource, permissions[resource.name].actions)
         ]
       }
+
+      return updatedPermissions
     }, []))
     .then(updatePermissionPromises => Promise.all(updatePermissionPromises))
-    .then(permissions => User.findById(user.id))
+    .then(permissions => User.findById(user.id, {
+      include: [{
+        model: Permission,
+        include: [Resource]
+      }]
+    }))
 }
 
 // Find the matching permission and destroy it.
@@ -98,8 +107,7 @@ const postUsers = (req, res, next) => {
   const props = User.filterProps(auth.isAdmin, req.body)
 
   User.create(props)
-    // TODO: then update permissions (if they were included in request)
-    // NOTE: need to be able to return *full* user, including new permissions
+    .then(user => updatePermissions(user, permissions))
     .then(user => res.json({
       success: true,
       message: 'User created',
