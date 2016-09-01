@@ -86,6 +86,8 @@ const postUsers = (req, res, next) => {
   const props = User.filterProps(auth.isAdmin, req.body)
 
   User.create(props)
+    // TODO: then update permissions (if they were included in request)
+    // NOTE: need to be able to return *full* user, including new permissions
     .then(user => res.json({
       success: true,
       message: 'User created',
@@ -148,10 +150,17 @@ const getUser = (req, res, next) => {
 const putUser = (req, res, next) => {
   const auth = req.cred.payload
   const userId = req.params.id
+  const permissions = req.body.permissions
   const props = User.filterProps(auth.isAdmin, req.body)
 
   findUserById(userId)
     .then(user => user.update(props))
+    // TODO: then update permissions (if they were included in request)
+    // NOTE: need to be able to return *full* user, including new permissions
+    // .then(user => {
+    //   console.log('user: ', user)
+    //   return user
+    // })
     .then(user => res.json({
       success: true,
       message: 'User updated',

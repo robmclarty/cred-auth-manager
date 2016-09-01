@@ -126,6 +126,7 @@ describe('PUT /users/:id', () => {
       })
   })
 
+  it('should ignore invalid attributes on the user object sent in the request')
   it('should update permissions if they are included in body')
   it('should ignore permissions if they are missing from body')
   it('should not allow users without authorization to modify permissions')

@@ -22,21 +22,17 @@ const UserForm = React.createClass({
 
   getDefaultState: function () {
     return {
+      permissionsChanged: false,
       permissions: {}
     }
   },
 
   componentDidMount: function () {
+    // TODO: are props guaranteed to be available here?
     this.setState({ permissions: this.props.user.permissions || {} })
   },
 
-  // componentWillReceiveProps: function (nextProps) {
-  //   console.log('next props: ', nextProps)
-  //   this.setState({ permissions: nextProps.user.permissions || {} })
-  // },
-
   onChange: function (e) {
-    console.log('before: ', this.state.permissions)
     const resourceName = e.target.getAttribute('data-resource-name')
     const action = e.target.getAttribute('data-action')
     const permissions = this.state.permissions
@@ -54,9 +50,10 @@ const UserForm = React.createClass({
         }
       }
 
-      this.setState({ permissions: newPermissions })
-
-      console.log(newPermissions)
+      this.setState({
+        permissionsChanged: true,
+        permissions: newPermissions
+      })
     }
   },
 
@@ -70,6 +67,11 @@ const UserForm = React.createClass({
       isActive: this.refs.isActive.checked,
       isAdmin: this.refs.isAdmin.checked
     }
+
+    // If permissions were changed, include them from the component state.
+    if (this.state.permissionsChanged) Object.assign(userProps, {
+      permissions: this.state.permissions
+    })
 
     // If this is updating an existing user with an id, add it, otherwise if
     // this is a new user with no id, leave it out.

@@ -27,9 +27,6 @@ app.use(cors({
   credentials: false
 }))
 
-// Disable X-Powered-By header.
-app.disable('x-powered-by')
-
 // Serve static files from /build in development (on the production server,
 // this would be handled by a web server/proxy like nginx).
 if (process.env.NODE_ENV === ('development' || 'test')) {
@@ -54,12 +51,15 @@ const limiter = new RateLimit({
 })
 
 // Pass remote address through proxy so that limiter knows about it.
-app.enable("trust proxy")
+//app.enable("trust proxy")
 
 // Apply limiter globally.
 // Alternatively, we could create different limiters and apply them on specific
 // routes like `app.use('/my-route', limiter)`.
-app.use(limiter)
+//app.use(limiter)
+
+// Disable X-Powered-By header.
+//app.disable('x-powered-by')
 
 // Logs
 // ----
@@ -98,24 +98,24 @@ const resourceRoutes = require('./routes/resource_routes')
 //   })
 // ])
 
-app.use(statusMonitor({
-  path: '/status',
-  socketPort: 41338,
-  spans: [
-    {
-      interval: 1, // every second
-      retention: 60 // keep 60 datapoints in memory
-    },
-    {
-      interval: 5, // every 5 seconds
-      retention: 60
-    },
-    {
-      interval: 15, // every 15 seconds
-      retention: 60
-    }
-  ]
-}))
+// app.use(statusMonitor({
+//   path: '/status',
+//   socketPort: 41338,
+//   spans: [
+//     {
+//       interval: 1, // every second
+//       retention: 60 // keep 60 datapoints in memory
+//     },
+//     {
+//       interval: 5, // every 5 seconds
+//       retention: 60
+//     },
+//     {
+//       interval: 15, // every 15 seconds
+//       retention: 60
+//     }
+//   ]
+// }))
 
 // Unauthenticated routes
 app.use('/', [

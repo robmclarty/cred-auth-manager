@@ -23,6 +23,8 @@ const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.
 // Also, ignore password field if it is blank (keep existing in that case).
+// Also, don't allow `permission` directly on the user model itself (these are
+// handled in their own separate model).
 const filterProps = (isAdmin, props) => {
   const filteredProps = Object.assign({}, props)
 
@@ -37,6 +39,9 @@ const filterProps = (isAdmin, props) => {
 
   if (props.hasOwnProperty('password') && !props.password)
     delete filteredProps.password
+
+  if (props.hasOwnProperty('permissions'))
+    delete filteredProps.permissions
 
   return filteredProps
 }
@@ -83,7 +88,7 @@ const tokenPermissions = (permissions = [], includeId = false) => {
 // Run toJSON() on each permission so the data is in the expected format for the
 // custom user toJSON() function.
 const userWithJSONPermissions = user => {
-  if (!user.permissions) return user
+  if (!user.permissions || user.permissions.length === 0) return user
 
   const permissions = user.permissions.map(permission => {
     return permission.toJSON()
@@ -237,7 +242,7 @@ const UserSchema = function (sequelize, DataTypes) {
       beforeUpdate: beforeUpdate,
       beforeValidate: function (user, options, cb) {
         // If the user has a password property, force it not to be null in order
-        // to use custom error message.
+        // to use custom error message for being "empty".
         if (user.hasOwnProperty('password')) user.password = user.password || ''
 
         cb(null, user)
