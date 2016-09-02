@@ -1,6 +1,6 @@
 {
   "name": "cred-auth-manager",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "description": "A JSON resource API, with front-end admin web UI, using the Cred JWT library for authentication and authorization.",
   "main": "server/index.js",
   "scripts": {
