@@ -8,7 +8,6 @@ const {
   isArrayOfStrings
 } = require('../helpers/validation_helper')
 const { addActions, removeActions } = require('../helpers/action_helper')
-const { Resource, User } = require('./index')
 
 // Return a JSON object in the format expected by tokenPermissions().
 const toJSON = permission => ({

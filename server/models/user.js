@@ -4,7 +4,7 @@ const argon2 = require('argon2')
 const validator = require('validator')
 const base64url = require('base64-url')
 const { isUrlSafe } = require('../helpers/validation_helper')
-const { Permission, Resource } = require('./')
+const Sequelize = require('sequelize')
 
 const SALT_LENGTH = 32
 
@@ -45,6 +45,82 @@ const filterProps = (isAdmin, props) => {
 
   return filteredProps
 }
+
+// If the user already has existing permission for this resource, update
+// the existing permission with the new actions (the valid ones).
+// ...otherwise, create a new permission.
+const updatePermission = (user, resource, actions) => {
+  const { Permission } = user.sequelize.models
+  const validActions = resource.validActions(actions)
+
+  return Permission.findOne({
+    where: Sequelize.and(
+      { userId: user.id },
+      { resourceId: resource.id }
+    )
+  })
+    .then(permission => {
+      if (!permission) {
+        return Permission.create({
+          userId: user.id,
+          resourceId: resource.id,
+          actions: validActions
+        })
+      }
+
+      return permission.update({
+        actions: validActions
+      })
+    })
+}
+
+// Update all `permissions` for user (either by modifying existing permissions
+// or creating new ones). Cycle through each resource in `permissions` and
+// update the permission for that resource for `user`. Finally, if successful,
+// return a newly loaded version of the user which should include the newly
+// created/modified permissions associations.
+const updatePermissions = (user, permissions) => {
+  const { Permission, Resource, User } = user.sequelize.models
+
+  if (!permissions || permissions.length === 0) return user
+
+  return Resource.findAll()
+    .then(resources => resources.reduce((updatedPermissions, resource) => {
+      if (permissions &&
+          permissions[resource.name] &&
+          permissions[resource.name].actions) {
+        return [
+          ...updatedPermissions,
+          updatePermission(user, resource, permissions[resource.name].actions)
+        ]
+      }
+
+      return updatedPermissions
+    }, []))
+    .then(updatePermissionPromises => Promise.all(updatePermissionPromises))
+    .then(permissions => User.findById(user.id, {
+      include: [{
+        model: Permission,
+        include: [Resource]
+      }]
+    }))
+}
+
+// Find the matching permission and destroy it.
+const removePermission = (user, resourceName) => {
+  const { Permission } = user.sequelize.models
+
+  return Permission.findById(user.permissions[resourceName].id)
+    .then(permission => {
+      if (!permission) throw createError({
+        status: UNPROCESSABLE,
+        message: `User '${ user.id }' has no matching permission for resource '${ resourceName }'`
+      })
+
+      return permission.destroy()
+    })
+}
+
 
 // TODO: Maybe include this as part of cred rather than defining it here.
 // Format an array of permissions for use in a JWT access token, returning an
@@ -229,6 +305,15 @@ const UserSchema = function (sequelize, DataTypes) {
       },
       loginUpdate: function () {
         return this.update({ loginAt: Date.now() })
+      },
+      updatePermission: function (resource, actions) {
+        return updatePermission(this, resource, actions)
+      },
+      updatePermissions: function (permissions) {
+        return updatePermissions(this, permissions)
+      },
+      removePermission: function (resourceName) {
+        return removePermission(this, resourceName)
       },
       tokenPayload: function () {
         return tokenPayload(userWithJSONPermissions(this.get()))

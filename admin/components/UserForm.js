@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
-import PermissionInput from './PermissionInput'
+
+const checkboxName = (resourceName, action) => `${ resourceName }:${ action }`
 
 const UserForm = React.createClass({
   displayName: 'UserForm',
@@ -22,43 +23,14 @@ const UserForm = React.createClass({
     }
   },
 
-  getDefaultState: function () {
+  getInitialState: function () {
     return {
-      permissionsChanged: false,
-      permissions: {}
+      permissionsChanged: false
     }
   },
 
-  componentDidMount: function () {
-    // TODO: are props guaranteed to be available here?
-    this.setState({ permissions: this.props.user.permissions || {} })
-  },
-
-  onChange: function (e) {
-    const resourceName = e.target.getAttribute('data-resource-name')
-    const action = e.target.getAttribute('data-action')
-    const permissions = this.state.permissions
-
-    // If the existing permissions don't already include this action, then add it.
-    // TODO: Try to refactor this to be simpler. Maybe send permission array
-    // instead of this special object structure.
-    if (!permissions[resourceName] ||
-        !permissions[resourceName].actions.includes(action)) {
-      const newActions = permissions[resourceName] && permissions[resourceName].actions ?
-        [...permissions[resourceName].actions, action] :
-        [action]
-      const newPermissions = {
-        ...permissions,
-        [resourceName]: {
-          actions: newActions
-        }
-      }
-
-      this.setState({
-        permissionsChanged: true,
-        permissions: newPermissions
-      })
-    }
+  onChangePermission: function (e) {
+    this.setState({ permissionsChanged: true })
   },
 
   onSubmit: function (e) {
@@ -72,18 +44,27 @@ const UserForm = React.createClass({
       isAdmin: this.refs.isAdmin.checked
     }
 
-    // If permissions were changed, include them from the component state.
-    if (this.state.permissionsChanged) Object.assign(userProps, {
-      permissions: this.state.permissions
-    })
+    // If any permissions were changed, go through all the permissions in the
+    // form and only add those that are checked.
+    if (this.state.permissionsChanged) {
+      userProps.permissions = {}
+
+      this.props.resources.forEach(resource => {
+        const actions = resource.actions.reduce((checkedActions, action) => {
+          return this.refs[checkboxName(resource.name, action)].checked ?
+            [...checkedActions, action] :
+            checkedActions
+        }, [])
+
+        if (actions) userProps.permissions[resource.name] = { actions }
+      })
+    }
 
     // If this is updating an existing user with an id, add it, otherwise if
     // this is a new user with no id, leave it out.
     if (this.props.user.id) Object.assign(userProps, {
       id: this.props.user.id
     })
-
-    console.log('props: ', userProps)
 
     this.props.onSubmit(userProps);
   },
@@ -166,15 +147,29 @@ const UserForm = React.createClass({
                   <b>{resource.name}</b>
                   <br />
                   <ul className="action-list">
-                    {resource.actions.map((action, actionIndex) => (
-                      <PermissionInput
-                          resourceName={resource.name}
-                          permissions={user.permissions || {}}
-                          action={action}
-                          onChange={e => this.onChange(e)}
-                          key={`permission:${ actionIndex }`}
-                      />
-                    ))}
+                    {resource.actions.map((action, actionIndex) => {
+                      const hasAction = user.permissions &&
+                        user.permissions[resource.name] &&
+                        user.permissions[resource.name].actions &&
+                        user.permissions[resource.name].actions.includes(action)
+                      const key = checkboxName(resource.name, action)
+
+                      return (
+                        <li className="action-item" key={key}>
+                          <input
+                              ref={key}
+                              type="checkbox"
+                              defaultChecked={hasAction}
+                              className="action-checkbox"
+                              id={key}
+                              data-resource-name={resource.name}
+                              data-action={action}
+                              onChange={e => this.onChangePermission(e)}
+                          />
+                          <label htmlFor={action}>{action}&nbsp;</label>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </li>
               ))}
