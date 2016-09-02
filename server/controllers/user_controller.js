@@ -190,7 +190,7 @@ const postPermissions = (req, res, next) => {
     findResourceByName(resourceName)
   ])
     .then(userAndResource => {
-      const user = userAndResource[0].toJSON()
+      const user = userAndResource[0]
       const resource = userAndResource[1]
 
       return user.updatePermission(resource, actions)
@@ -204,20 +204,20 @@ const postPermissions = (req, res, next) => {
 }
 
 // DELETE /users/:id/permissions/:resource_name
+// If user does not have a permission for resource, fail silently (if the
+// request was to remove it and it's already non-existent, then that's basically
+// a "successful" removal).
 const deletePermissions = (req, res, next) => {
   const userId = req.params.id
   const resourceName = req.params.resource_name
 
   findUserById(userId)
-    .then(rawUser => {
-      const user = rawUser.toJSON()
+    .then(user => {
+      const userJson = user.toJSON()
 
-      // If user does not have a permission for resource, fail silently (if the
-      // request was to remove it and it's already non-existent, then that's
-      // basically a "successful" removal).
-      if (!user.permissions || !user.permissions[resourceName]) return
+      if (!userJson.permissions || !userJson.permissions[resourceName]) return
 
-      return user.removePermission(resourceName)
+      return user.deletePermission(resourceName)
     })
     .then(permission => res.json({
       success: true,

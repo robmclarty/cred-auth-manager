@@ -319,7 +319,6 @@ describe('PUT /users/:id', () => {
     return login('read-user', 'password')
       .then(tokens => putUser(tokens.accessToken, readUserId, updates).expect(OK))
       .then(res => {
-        console.log(res.body.user.permissions)
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true
         expect(res.body.user).to.be.an('object')

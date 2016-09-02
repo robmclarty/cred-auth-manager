@@ -14,7 +14,7 @@ const {
 describe('DELETE /users/:id/permissions/:resource_name', () => {
   it('should allow admins to delete permissions for other users', () => {
     return login('admin', 'password')
-      .then(tokens => deletePermissions(tokens.accessToken, readUserId, resourceName).expect(OK))
+      .then(tokens => deletePermissions(tokens.accessToken, readUserId, resourceName))
       .then(res => {
         expect(res).not.to.be.null
         expect(res.body.success).to.be.true

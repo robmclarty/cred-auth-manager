@@ -108,15 +108,13 @@ const updatePermissions = (user, permissions) => {
 }
 
 // Find the matching permission and destroy it.
-const removePermission = (user, resourceName) => {
+const deletePermission = (user, resourceName) => {
   const { Permission } = user.sequelize.models
+  const userPermissions = user.toJSON().permissions
 
-  return Permission.findById(user.permissions[resourceName].id)
+  return Permission.findById(userPermissions[resourceName].id)
     .then(permission => {
-      if (!permission) throw createError({
-        status: UNPROCESSABLE,
-        message: `User '${ user.id }' has no matching permission for resource '${ resourceName }'`
-      })
+      if (!permission) throw `User '${ user.id }' has no matching permission for resource '${ resourceName }'`
 
       return permission.destroy()
     })
@@ -313,8 +311,8 @@ const UserSchema = function (sequelize, DataTypes) {
       updatePermissions: function (permissions) {
         return updatePermissions(this, permissions)
       },
-      removePermission: function (resourceName) {
-        return removePermission(this, resourceName)
+      deletePermission: function (resourceName) {
+        return deletePermission(this, resourceName)
       },
       tokenPayload: function () {
         return tokenPayload(userWithJSONPermissions(this.get()))
