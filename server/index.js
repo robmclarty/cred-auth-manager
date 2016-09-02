@@ -15,6 +15,7 @@ const app = express()
 
 // Store re-usable values.
 app.set('assets-path', config.assetsPath)
+app.set('app-name', config.appName)
 
 // Only accept application/json requests.
 app.use(bodyParser.json())

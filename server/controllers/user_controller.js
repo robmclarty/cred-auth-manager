@@ -3,6 +3,16 @@
 const { createError, BAD_REQUEST, UNPROCESSABLE, NOT_FOUND } = require('../helpers/error_helper')
 const { User, Resource, Permission } = require('../models')
 
+const isAuthorizedToWritePermissions = (auth, appName) => {
+  const appPermission = auth.permissions[appName]
+
+  return auth.isAdmin || (
+    appPermission &&
+    Array.isArray(appPermission.actions) &&
+    appPermission.actions.includes('permissions:write')
+  )
+}
+
 const findUserById = userId => User.findById(userId, {
   include: [{
     model: Permission,
@@ -33,11 +43,15 @@ const findResourceByName = resourceName => Resource.findOne({
 // POST /users
 const postUsers = (req, res, next) => {
   const auth = req.cred.payload
+  const canUpdatePermissions = isAuthorizedToWritePermissions(auth, req.app.get('app-name'))
   const permissions = req.body.permissions
   const props = User.filterProps(auth.isAdmin, req.body)
 
   User.create(props)
-    .then(user => user.updatePermissions(permissions))
+    .then(user => canUpdatePermissions ?
+      user.updatePermissions(permissions) :
+      user
+    )
     .then(user => res.json({
       success: true,
       message: 'User created',
@@ -99,13 +113,17 @@ const getUser = (req, res, next) => {
 // and strip any html tags from String fields to mitigate XSS attacks.
 const putUser = (req, res, next) => {
   const auth = req.cred.payload
+  const canUpdatePermissions = isAuthorizedToWritePermissions(auth, req.app.get('app-name'))
   const userId = req.params.id
   const permissions = req.body.permissions
   const props = User.filterProps(auth.isAdmin, req.body)
 
   findUserById(userId)
     .then(user => user.update(props))
-    .then(user => user.updatePermissions(permissions))
+    .then(user => canUpdatePermissions ?
+      user.updatePermissions(permissions) :
+      user
+    )
     .then(user => res.json({
       success: true,
       message: 'User updated',

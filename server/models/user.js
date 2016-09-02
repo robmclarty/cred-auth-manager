@@ -88,7 +88,8 @@ const updatePermissions = (user, permissions) => {
     .then(resources => resources.reduce((updatedPermissions, resource) => {
       if (permissions &&
           permissions[resource.name] &&
-          permissions[resource.name].actions) {
+          permissions[resource.name].actions &&
+          Array.isArray(permissions[resource.name].actions)) {
         return [
           ...updatedPermissions,
           updatePermission(user, resource, permissions[resource.name].actions)
