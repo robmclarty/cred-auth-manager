@@ -43,6 +43,10 @@ const paginatedUsers = paginated(users, {
   PREV_PAGE: PREV_USER_PAGE,
   FILTER: FILTER_USERS,
   SORT: SORT_USERS
+}, {
+  defaultSortOrder: 'asc',
+  defaultSortBy: 'username',
+  defaultPer: 20
 })
 
 const fetchableUsers = fetchable(paginatedUsers, {
