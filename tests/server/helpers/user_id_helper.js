@@ -10,5 +10,6 @@ module.exports = {
   emptyPermsUserId: 6,
   otherPermsUserId: 7,
   updateUserId: 8,
+  writeUserNoPermsId: 9,
   invalidUserId: 9999999
 }

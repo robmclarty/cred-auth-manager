@@ -77,5 +77,19 @@
         "action3"
       ]
     }
+  },
+  {
+    "model": "Permission",
+    "data": {
+      "user": {
+        "username": "write-user-no-perms"
+      },
+      "resource": {
+        "name": "cred-auth-manager"
+      },
+      "actions": [
+        "users:write"
+      ]
+    }
   }
 ]

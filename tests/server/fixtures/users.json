@@ -78,5 +78,15 @@
       "isAdmin": false,
       "isActive": true
     }
+  },
+  {
+    "model": "User",
+    "data": {
+      "username": "write-user-no-perms",
+      "password": "password",
+      "email": "write-user-no-perms@email.com",
+      "isAdmin": false,
+      "isActive": true
+    }
   }
 ]
