@@ -1,0 +1,78 @@
+.field {
+  position: relative;
+  margin-bottom: 2em;
+}
+
+.buttons-container {
+  width: 100%;
+  position: relative;
+  padding-top: 3em;
+  margin-bottom: 1em;
+  padding-bottom: 2em;
+
+  .left {
+    float: left;
+  }
+  .right {
+    float: right;
+  }
+  button {
+    margin-right: 0.25em;
+  }
+}
+
+.permission-list {
+}
+.permission-item {
+  border-top: 1px solid darken($beige, 10%);
+
+  &:last-child {
+    border-bottom: 1px solid darken($beige, 10%);
+  }
+
+  h4 {
+    color: $black;
+  }
+}
+.action-list {
+  margin-bottom: 1em;
+}
+.action-item {
+  & > label {
+    display: inline-block;
+    margin-left: 0.5em;
+  }
+}
+
+button.delete {
+  background-color: $red;
+  border-bottom: 2px solid $red;
+}
+
+button.cancel {
+  background-color: $yellow;
+  border-bottom: 2px solid $yellow;
+}
+
+.submit-group {
+  .spacer {
+    margin: 0 .5em;
+  }
+}
+
+.update-form {
+  max-width: 100%;
+
+  input[type="text"],
+  input[type="password"] {
+    width: 20em;
+    position: absolute;
+    top: 0;
+    left: 100px;
+  }
+  input.toggle {
+    position: absolute;
+    top: 0;
+    left: 100px;
+  }
+}

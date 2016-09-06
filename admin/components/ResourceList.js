@@ -18,8 +18,7 @@ const ResourceList = ({
 }) => {
   const nameButtonClass = by === 'name' ? order : '';
   const urlButtonClass = by === 'url' ? order : '';
-  const actionsButtonClass = by === 'actions' ? order : '';
-  const updatedButtonClass = by === 'lastLogin' ? order : '';
+  const updatedButtonClass = by === 'updatedAt' ? order : '';
 
   return (
     <section className="list-container">

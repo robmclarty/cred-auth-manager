@@ -14,7 +14,6 @@ const Header = ({
     <nav className="site-nav">
       <button onClick={onClickUsers}>Users</button>
       <button onClick={onClickResources}>Resources</button>
-      {username}
       <button onClick={onClickLogout}>Logout</button>
     </nav>
   );
@@ -30,7 +29,7 @@ const Header = ({
     <header className="global-header">
       <h1 className="site-name">
         <Link to="/admin/">
-          <img src="/images/lock-combination.svg" width="30" height="30" />
+          <span className="ion-lock-combination logo"></span>
           <span>Cred Auth Manager</span>
         </Link>
       </h1>

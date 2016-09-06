@@ -13,16 +13,12 @@ const adminUsers = users => users.filter(user => user.isAdmin && user.isActive)
 
 const activeResources = resources => resources.filter(resource => resource.isActive)
 
-const rotateArray = count => {
-
-}
-
 const userSignupsChart = users => {
   const now = moment(Date.now())
   const months = moment.monthsShort()
   const currentMonthNum = moment().month()
   const currentMonth = months[currentMonthNum]
-  const stats = {}
+  const data = {}
 
   // Rotate months
   const rotatedMonths = [
@@ -31,7 +27,7 @@ const userSignupsChart = users => {
   ]
 
   rotatedMonths.forEach(month => {
-    return stats[month] = {
+    return data[month] = {
       logins: 0,
       signups: 0
     }
@@ -44,22 +40,12 @@ const userSignupsChart = users => {
     const loginMoment = moment(user.loginAt)
 
     if (now.diff(createdMoment, 'months') <= 12)
-      stats[months[createdMoment.month()]].signups += 1
+      data[months[createdMoment.month()]].signups += 1
 
     if (now.diff(loginMoment, 'months') <= 12)
-      stats[months[loginMoment.month()]].logins += 1
+      data[months[loginMoment.month()]].logins += 1
   })
 
-  console.log('stats: ', stats)
-  console.log(Object.keys(stats))
-
-  // const data = users.reduce((dataset, user) => {
-  //   console.log(user)
-  //   if (user.isActive) dataset[0] += 1
-  //   if (!user.isActive) dataset[1] += 1
-  //
-  //   return dataset
-  // }, [0, 0])
   const chartData = {
     labels: rotatedMonths,
     datasets: [
@@ -82,7 +68,7 @@ const userSignupsChart = users => {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: Object.keys(stats).map(key => stats[key].signups)
+        data: Object.keys(data).map(key => data[key].signups)
       },
       {
         label: 'Logins',
@@ -103,7 +89,7 @@ const userSignupsChart = users => {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: Object.keys(stats).map(key => stats[key].logins)
+        data: Object.keys(data).map(key => data[key].logins)
       }
     ]
   }
@@ -130,7 +116,8 @@ const usersTotalChart  = users => {
       backgroundColor: [
         'rgba(54, 162, 235, 1)',
         'rgba(255,99,132,1)'
-      ]
+      ],
+      borderColor: 'rgba(255, 255, 255, 0)'
     }]
   }
   const chartOptions = {

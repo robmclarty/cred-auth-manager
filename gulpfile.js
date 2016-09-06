@@ -14,7 +14,7 @@ function setProductionEnv(done) {
 }
 
 function watch() {
-  // gulp.watch('styles/**/*', gulp.parallel('build:styles'))
+  gulp.watch('styles/**/*', gulp.parallel('build:styles'))
   gulp.watch('admin/**/*', gulp.parallel('build:admin', 'build:html'))
   gulp.watch('assets/**/*', gulp.parallel('build:assets'))
   gulp.watch('server/**/*', gulp.series('server'))
@@ -29,8 +29,7 @@ const buildProduction = gulp.series(
   gulp.parallel(
     'build:vendors',
     'build:admin',
-    // 'build:styles',
-    // 'build:styles:templates',
+    'build:styles',
     'build:assets',
     'build:html'
   )
@@ -45,8 +44,7 @@ const buildDevelopment = gulp.series(
   gulp.parallel(
     'build:vendors',
     'build:admin',
-    // 'build:styles',
-    // 'build:styles:templates',
+    'build:styles',
     'build:assets',
     'build:html'
   )

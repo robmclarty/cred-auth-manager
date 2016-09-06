@@ -1,0 +1,78 @@
+.global-header {
+
+}
+
+.site-name {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  line-height: 1em;
+
+  & > a {
+    //font-family: $font-bold;
+    line-height: 1em;
+    height: 100%;
+    padding: 0 1em;
+    font-size: 1.2em;
+    font-weight: normal;
+    text-decoration: none;
+    color: $grey;
+
+    &:hover {
+      color: $black;
+      background: rgba(0, 0, 0, .04);
+    }
+
+    span {
+      font-family: $font-extrabold;
+      line-height: 3em;
+    }
+
+    .logo {
+      width: 25px;
+      height: 25px;
+      margin-right: 0.4em;
+    }
+  }
+}
+
+.site-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  flex: auto;
+  height: 100%;
+  font-size: 1em;
+  line-height: 1em;
+  padding: 0 1em;
+
+  & > button,
+  & > a {
+    background: transparent;
+    color: $grey;
+    margin: 0;
+    padding: 0 1em;
+    height: 100%;
+    font-family: $font-regular;
+    line-height: 3.25em;
+    text-transform: none;
+    text-decoration: none;
+    border-radius: 0;
+    border: 0;
+
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+    &:hover {
+      color: $black;
+      background: rgba(0, 0, 0, .04);
+    }
+  }
+}

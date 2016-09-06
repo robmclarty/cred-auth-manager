@@ -51,7 +51,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
   return {
     onSubmit: props => dispatch(isNew ? addResource(props) : updateResource(props)),
-    onClickRemove: id => dispatch(removeResource(id))
+    onClickRemove: id => {
+      if (confirm('Are you sure?')) dispatch(removeResource(id))
+    }
   }
 }
 

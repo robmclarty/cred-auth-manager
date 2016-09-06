@@ -49,7 +49,6 @@ const ResourceForm = React.createClass({
       <form onSubmit={this.onSubmit} className="resource-form">
         <div className="field">
           <label htmlFor="name">Name</label>
-          <br />
           <input
               type="text"
               ref="name"
@@ -60,7 +59,6 @@ const ResourceForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="url">Url</label>
-          <br />
           <input
               type="text"
               ref="url"
@@ -71,7 +69,6 @@ const ResourceForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="isActive">Active</label>
-          <br />
           <input
               type="checkbox"
               className="toggle"
@@ -83,7 +80,6 @@ const ResourceForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="actions">Actions</label>
-          <br />
           <input
               type="text"
               ref="actions"
@@ -92,13 +88,15 @@ const ResourceForm = React.createClass({
               defaultValue={stringifiedActions}
           />
         </div>
-        <button
-            type="submit"
-            onClick={this.onSubmit}>
-          Save
-        </button>
-        <span>or</span>
-        <Link to="/admin/resources">cancel</Link>
+        <div className="submit-group">
+          <button
+              type="submit"
+              onClick={this.onSubmit}>
+            Save
+          </button>
+          <span className="spacer">or</span>
+          <Link to="/admin/resources">cancel</Link>
+        </div>
       </form>
     )
   }

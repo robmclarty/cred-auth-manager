@@ -6,7 +6,7 @@ import Flash from './FlashContainer';
 const currentYear = new Date().getFullYear();
 
 const App = ({ isAuthenticated, currentPath, children }) => (
-  <div className="app-container rebelchat">
+  <div className="app-container">
     <Header currentPath={currentPath} />
 
     <main>

@@ -79,7 +79,6 @@ const UserForm = React.createClass({
       <form onSubmit={this.onSubmit} className="user-form">
         <div className="field">
           <label htmlFor="username">Username</label>
-          <br />
           <input
               type="text"
               ref="username"
@@ -90,7 +89,6 @@ const UserForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="password">Password</label>
-          <br />
           <input
               type="password"
               ref="password"
@@ -101,7 +99,6 @@ const UserForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="email">Email</label>
-          <br />
           <input
               type="text"
               ref="email"
@@ -112,7 +109,6 @@ const UserForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="isActive">Active</label>
-          <br />
           <input
               type="checkbox"
               className="toggle"
@@ -124,7 +120,6 @@ const UserForm = React.createClass({
         </div>
         <div className="field">
           <label htmlFor="isAdmin">Admin</label>
-          <br />
           <input
               type="checkbox"
               className="toggle"
@@ -135,12 +130,13 @@ const UserForm = React.createClass({
           />
         </div>
         <div className="field">
-          <label htmlFor="permissions">Permissions</label>
-          <ul className="permissions">
+          <label htmlFor="permission-list">Permissions</label>
+          <ul className="permission-list">
             {resources.map((resource, resourceIndex) => (
-              <li key={`resource:${ resourceIndex }`}>
-                <b>{resource.name}</b>
-                <br />
+              <li
+                  key={`resource:${ resourceIndex }`}
+                  className="permission-item">
+                <h4>{resource.name}</h4>
                 <ul className="action-list">
                   {resource.actions.map((action, actionIndex) => {
                     const hasAction = user.permissions &&
@@ -170,13 +166,15 @@ const UserForm = React.createClass({
             ))}
           </ul>
         </div>
-        <button
-            type="submit"
-            onClick={this.onSubmit}>
-          Save
-        </button>
-        <span>or</span>
-        <Link to="/admin/users">cancel</Link>
+        <div className="submit-group">
+          <button
+              type="submit"
+              onClick={this.onSubmit}>
+            Save
+          </button>
+          <span className="spacer">or</span>
+          <Link to="/admin/users">cancel</Link>
+        </div>
       </form>
     )
   }

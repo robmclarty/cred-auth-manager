@@ -1,0 +1,39 @@
+.pagination {
+  position: relative;
+  margin-top: 2em;
+  padding-top: .5em;
+  text-align: center;
+}
+
+.pagination-prev,
+.pagination-next {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  color: $grey;
+
+  &:hover {
+    background: transparent;
+    color: $yellow;
+  }
+}
+.pagination-prev {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.pagination-next {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.pagination-arrow-left {
+  margin-right: 1em;
+}
+.pagination-arrow-right {
+  margin-left: 1em;
+}
+
+.pagination-info {
+
+}

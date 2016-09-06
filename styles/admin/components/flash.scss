@@ -1,0 +1,152 @@
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.messenger {
+  position: relative;
+  padding: 1.3em 4em 1.3em 1.2em;
+  margin: 2em 4em;
+  min-height: 4em;
+  color: white;
+  border: 1px solid $black;
+  border-radius: 4px;
+
+  .message-icon {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    width: 30px;
+    height: 30px;
+    font-family: $font-icons;
+    display: inline-block;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    &:before {
+      display: flex;
+      width: 30px;
+      height: 30px;
+      font-size: 30px;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center center;
+    }
+  }
+
+  .message-text {
+    display: block;
+    margin-left: 40px;
+    font-size: 1em;
+
+    .message-list {
+      margin: -10px 0;
+
+      & > li {
+        margin: 10px 0;
+      }
+    }
+  }
+
+  .messenger-close-button {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    color: $black;
+    border: 0;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  &.open {
+    display: block;
+  }
+
+  &.info,
+  &.pending {
+    color: $info-text;
+    background-color: $info-bg;
+    border-color: $info-border;
+
+    .message-icon:before {
+      content: "\f149";
+    }
+    .messenger-close-button {
+      color: $info-text;
+      opacity: .5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  &.pending {
+    .message-icon:before {
+      content: "\f29d";
+      animation-name: spin;
+      animation-duration: 3000ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+  }
+
+  &.success {
+    color: $success-text;
+    background-color: $success-bg;
+    border-color: $success-border;
+
+    .message-icon:before {
+      content: "\f120";
+    }
+    .messenger-close-button {
+      color: lighten($success-text, 20%);
+
+      &:hover {
+        color: $success-text;
+      }
+    }
+  }
+
+  &.error {
+    color: $error-text;
+    background-color: $error-bg;
+    border-color: $error-border;
+
+    .message-icon:before {
+      content: "\f207";
+    }
+    .messenger-close-button {
+      color: lighten($error-text, 20%);
+
+      &:hover {
+        color: $error-text;
+      }
+    }
+  }
+
+  &.warning {
+    color: $warning-text;
+    background-color: $warning-bg;
+    border-color: $warning-border;
+
+    .message-icon:before {
+      content: "\f100";
+    }
+    .messenger-close-button {
+      color: lighten($warning-text, 20%);
+
+      &:hover {
+        color: $warning-text;
+      }
+    }
+  }
+}

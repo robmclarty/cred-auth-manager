@@ -15,12 +15,6 @@ import ResourceList from '../components/ResourceList'
 
 const ResourceListPageComponent = props => (
   <Page name="Resources">
-    <button
-        className="new-user-button"
-        onClick={e => props.onClickAddResource()}>
-      New Resource
-    </button>
-
     <ResourceList
       resources={props.resources}
       isPending={props.isPending}
@@ -35,6 +29,14 @@ const ResourceListPageComponent = props => (
       onClickNextPage={props.onClickNextPage}
       onClickPrevPage={props.onClickPrevPage}
     />
+
+    <aside className="page-controls">
+      <button
+          className="new-user-button"
+          onClick={e => props.onClickAddResource()}>
+        New Resource
+      </button>
+    </aside>
   </Page>
 )
 

@@ -12,12 +12,6 @@ import UserList from '../components/UserList'
 
 const UserListPageComponent = props => (
   <Page name="Users">
-    <button
-        className="new-user-button"
-        onClick={e => props.onClickAddUser()}>
-      New User
-    </button>
-
     <UserList
       users={props.users}
       isPending={props.isPending}
@@ -32,6 +26,14 @@ const UserListPageComponent = props => (
       onClickNextPage={props.onClickNextPage}
       onClickPrevPage={props.onClickPrevPage}
     />
+
+    <aside className="page-controls">
+      <button
+          className="new-user-button"
+          onClick={e => props.onClickAddUser()}>
+        New User
+      </button>
+    </aside>
   </Page>
 )
 

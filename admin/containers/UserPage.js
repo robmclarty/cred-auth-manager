@@ -62,7 +62,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
   return {
     onSubmit: props => dispatch(isNew ? addUser(props) : updateUser(props)),
-    onClickRemove: id => dispatch(removeUser(id))
+    onClickRemove: id => {
+      if (confirm('Are you sure?')) dispatch(removeUser(id))
+    }
   }
 }
 
