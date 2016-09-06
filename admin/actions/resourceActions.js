@@ -77,7 +77,7 @@ export const addResource = props => (dispatch, callApi) => {
       dispatch(addResourceFail(res))
       dispatch(showFlash({
         status: STATUS_ERROR,
-        messages: res.errors || res
+        messages: res.errors
       }))
     })
 }
@@ -116,11 +116,11 @@ export const updateResource = props => (dispatch, callApi) => {
       status: STATUS_SUCCESS,
       messages: ['Resource updated.']
     })))
-    .catch(err => {
-      dispatch(updateResourceFail(err))
+    .catch(res => {
+      dispatch(updateResourceFail(res))
       dispatch(showFlash({
         status: STATUS_ERROR,
-        messages: [err]
+        messages: res.errors
       }))
     })
 }
@@ -154,11 +154,11 @@ export const removeResource = id => (dispatch, callApi) => {
       status: STATUS_SUCCESS,
       messages: ['Resource removed.']
     })))
-    .catch(err => {
-      dispatch(removeResourceFail(err))
+    .catch(res => {
+      dispatch(removeResourceFail(res))
       dispatch(showFlash({
         status: STATUS_ERROR,
-        messages: [err]
+        messages: res.errors
       }))
     })
 }

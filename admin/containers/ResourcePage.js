@@ -10,9 +10,7 @@ const ResourcePageComponent = ({
   isAuthenticated,
   onSubmit,
   onClickRemove
-}) => {
-  console.log('resource: ', resource)
-  return (
+}) => (
   <Page name={!resource ? 'Add Resource' : 'Modify Resource'}>
     <ResourceForm
         resource={resource}
@@ -20,11 +18,8 @@ const ResourcePageComponent = ({
         isAuthenticated={isAuthenticated}
         onSubmit={onSubmit}
     />
-
-
   </Page>
 )
-}
 
 // {resource &&
 //   <aside className="page-controls">

@@ -34,7 +34,9 @@ const ResourceSchema = function (sequelize, DataTypes) {
       allowNull: false,
       unique: true,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          msg: 'Name cannot be blank.'
+        },
         isUrlSafe: isUrlSafe('Name')
       },
       set: function (val) {
@@ -45,14 +47,20 @@ const ResourceSchema = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
-        isUrl: function (val) {
-          return validator.isUrl(val, {
-            require_tld: false,
-            require_protocol: true,
-            allow_underscores: true
-          })
+        notEmpty: {
+          msg: 'URL cannot be blank.'
+        },
+        isUrl: {
+          msg: 'Must be valid URL.'
         }
+        // isUrl: function (val) {
+        //   console.log('made it')
+        //   return validator.isUrl(val, {
+        //     require_tld: false,
+        //     require_protocol: true,
+        //     allow_underscores: true
+        //   })
+        // }
       },
       set: function (val) {
         this.setDataValue('url', validator.trim(val))

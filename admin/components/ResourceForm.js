@@ -43,6 +43,8 @@ const ResourceForm = React.createClass({
 
     if (isPending || !resource || !isAuthenticated) return false
 
+    const stringifiedActions = resource.actions ? resource.actions.join(' ') : ''
+
     return (
       <form onSubmit={this.onSubmit} className="resource-form">
         <div className="field">
@@ -87,7 +89,7 @@ const ResourceForm = React.createClass({
               ref="actions"
               id="actions"
               name="actions"
-              defaultValue={resource.actions.join(' ')}
+              defaultValue={stringifiedActions}
           />
         </div>
         <button
