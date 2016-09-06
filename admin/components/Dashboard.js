@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
+import moment from 'moment'
 import Chart from 'chart.js'
 import { Doughnut, Line } from 'react-chartjs-2'
 
@@ -12,7 +13,46 @@ const adminUsers = users => users.filter(user => user.isAdmin && user.isActive)
 
 const activeResources = resources => resources.filter(resource => resource.isActive)
 
+const rotateArray = count => {
+
+}
+
 const userSignupsChart = users => {
+  const now = moment(Date.now())
+  const months = moment.monthsShort()
+  const currentMonthNum = moment().month()
+  const currentMonth = months[currentMonthNum]
+  const stats = {}
+
+  // Rotate months
+  const rotatedMonths = [
+    ...months.slice(currentMonthNum + 1),
+    ...months.slice(0, currentMonthNum + 1)
+  ]
+
+  rotatedMonths.forEach(month => {
+    return stats[month] = {
+      logins: 0,
+      signups: 0
+    }
+  })
+
+  // REFACTOR: This will likely need to be changed at scale as all users would
+  // take too long to processes... perhaps turn into separate DB queries.
+  users.forEach(user => {
+    const createdMoment = moment(user.createdAt)
+    const loginMoment = moment(user.loginAt)
+
+    if (now.diff(createdMoment, 'months') <= 12)
+      stats[months[createdMoment.month()]].signups += 1
+
+    if (now.diff(loginMoment, 'months') <= 12)
+      stats[months[loginMoment.month()]].logins += 1
+  })
+
+  console.log('stats: ', stats)
+  console.log(Object.keys(stats))
+
   // const data = users.reduce((dataset, user) => {
   //   console.log(user)
   //   if (user.isActive) dataset[0] += 1
@@ -21,10 +61,10 @@ const userSignupsChart = users => {
   //   return dataset
   // }, [0, 0])
   const chartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: rotatedMonths,
     datasets: [
       {
-        label: 'My First dataset',
+        label: 'Signups',
         fill: true,
         lineTension: 0.3,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -42,10 +82,10 @@ const userSignupsChart = users => {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: [65, 59, 80, 81, 56, 55, 70]
+        data: Object.keys(stats).map(key => stats[key].signups)
       },
       {
-        label: 'My First dataset',
+        label: 'Logins',
         fill: true,
         lineTension: 0.3,
         backgroundColor: 'rgba(75,192,192,0.4)',
@@ -63,7 +103,7 @@ const userSignupsChart = users => {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: [100, 140, 80, 30, 111, 65, 94]
+        data: Object.keys(stats).map(key => stats[key].logins)
       }
     ]
   }
@@ -79,10 +119,14 @@ const userSignupsChart = users => {
 }
 
 const usersTotalChart  = users => {
+  const activeUsers = users.reduce((count, user) => {
+    return user.isActive
+  }, 0)
+  const inactiveUsers = users.length - activeUsers
   const chartData = {
     labels: ["Active", "Inactive"],
     datasets: [{
-      data: [15, 2],
+      data: [activeUsers, inactiveUsers],
       backgroundColor: [
         'rgba(54, 162, 235, 1)',
         'rgba(255,99,132,1)'
@@ -103,20 +147,13 @@ const Dashboard = ({
   users,
   resources
 }) => {
-  if (!isAuthenticated) return (
-    <div className="dashboard">
-      <p>Welcome to the Cred Auth Manager admin interface.</p>
-      <Link to="/admin/login">Login</Link>
-    </div>
-  )
-
-  const usersTotalStyle = {
+  const usersTotalContainerStyle = {
     display: 'block',
     position: 'relative',
     width: 200,
     height: 300
   }
-  const totalUsersStyle = {
+  const usersTotalNumberStyle = {
     display: 'block',
     position: 'absolute',
     fontSize: 60,
@@ -125,13 +162,16 @@ const Dashboard = ({
     left: '50%',
     transform: 'translate(-50%, 0)'
   }
-  const recentNameStyle = {
-    display: 'inline-block',
-    width: 60
-  }
   const cellStyle = {
     verticalAlign: 'top'
   }
+
+  if (!isAuthenticated) return (
+    <div className="dashboard">
+      <p>Welcome to the Cred Auth Manager admin interface.</p>
+      <Link to="/admin/login">Login</Link>
+    </div>
+  )
 
   return (
     <div className="dashboard">
@@ -139,19 +179,21 @@ const Dashboard = ({
         <tbody>
           <tr>
             <td style={cellStyle}>
-              <div className="users-total" style={usersTotalStyle}>
+              <div className="users-total" style={usersTotalContainerStyle}>
                 <h4>Total Users</h4>
-                <div style={totalUsersStyle}>{users.length}</div>
+                <div style={usersTotalNumberStyle}>{users.length}</div>
                 {usersTotalChart(users)}
               </div>
             </td>
+
             <td colSpan="2" style={cellStyle}>
               <div className="users-signup">
-                <h4>Usage</h4>
+                <h4>Usage (recent year)</h4>
                 {userSignupsChart(users)}
               </div>
             </td>
           </tr>
+
           <tr>
             <td style={cellStyle}>
               <div className="users-admin">
@@ -165,22 +207,24 @@ const Dashboard = ({
                 </ul>
               </div>
             </td>
+
             <td>
               <div className="users-login">
                 <h4>Recently Logged In</h4>
-                <ul>
-                  {last10Logins(users).map(user => (
-                    <li key={user.id}>
-                      <span style={recentNameStyle}>
-                        <Link to={`/admin/users/${ user.id }`}>{user.username}</Link>
-                      </span>
-                      <span>{user.loginAt.slice(0, 10)}</span>
-                    </li>
-                  ))}
-                </ul>
+                <table>
+                  <tbody>
+                    {last10Logins(users).map(user => (
+                      <tr key={user.id}>
+                        <td><Link to={`/admin/users/${ user.id }`}>{user.username}</Link></td>
+                        <td>{user.loginAt.slice(0, 10)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </td>
-            <td>
+
+            <td style={cellStyle}>
               <div className="resources">
                 <h4>Active Resources</h4>
                 <ul>
