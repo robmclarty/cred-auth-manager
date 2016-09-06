@@ -12,7 +12,6 @@ const UserList = ({
   by,
   filter,
   onClickUser,
-  onClickAddUser,
   onClickRemoveUser,
   onClickToggleSort,
   onClickPrevPage,
@@ -25,12 +24,6 @@ const UserList = ({
 
   return isPending ? false : (
     <div className="list-container">
-      <button
-          className="new-user-button"
-          onClick={e => onClickAddUser()}>
-        New User
-      </button>
-
       <PaginationControls
           page={page}
           total={total}
@@ -103,6 +96,7 @@ UserList.propTypes = {
   by: PropTypes.string,
   filter: PropTypes.string,
   onClickUser: PropTypes.func,
+  onClickRemoveUser: PropTypes.func,
   onClickToggleSort: PropTypes.func,
   onClickPrevPage: PropTypes.func,
   onClickNextPage: PropTypes.func

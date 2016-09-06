@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push } from 'react-router-redux'
 import {
   STORE_USERS,
   FETCH_USERS_PENDING,
@@ -150,7 +150,17 @@ export const removeUser = user => (dispatch, callApi) => {
 
   return callApi({ url: userUrl, method: 'DELETE' })
     .then(res => dispatch(removeUserSuccess(res.user)))
-    .catch(err => dispatch(removeUserFail(err)))
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['User removed.']
+    })))
+    .catch(err => {
+      dispatch(removeUserFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: [err]
+      }))
+    })
 }
 
 const removeUserPending = () => ({

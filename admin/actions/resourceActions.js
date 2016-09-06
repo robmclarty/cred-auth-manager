@@ -1,23 +1,25 @@
+import { push } from 'react-router-redux'
 import {
   STORE_RESOURCES,
   FETCH_RESOURCES_PENDING,
   FETCH_RESOURCES_SUCCESS,
   FETCH_RESOURCES_FAIL,
+  ADD_RESOURCE,
   ADD_RESOURCE_PENDING,
-  ADD_RESOURCE_SUCCESS,
   ADD_RESOURCE_FAIL,
+  UPDATE_RESOURCE,
   UPDATE_RESOURCE_PENDING,
-  UPDATE_RESOURCE_SUCCESS,
   UPDATE_RESOURCE_FAIL,
+  REMOVE_RESOURCE,
   REMOVE_RESOURCE_PENDING,
-  REMOVE_RESOURCE_SUCCESS,
   REMOVE_RESOURCE_FAIL,
   GOTO_RESOURCE_PAGE,
   NEXT_RESOURCE_PAGE,
   PREV_RESOURCE_PAGE,
   SORT_RESOURCES
 } from '../constants/ActionTypes'
-import { hideFlash } from './'
+import { STATUS_SUCCESS, STATUS_ERROR } from '../constants/FlashTypes'
+import { showFlash, hideFlash } from './'
 import config from '../../config/admin'
 
 const resourcesUrl = `${ config.authRoot }/resources`
@@ -57,12 +59,27 @@ const fetchResourcesFail = err => ({
 
 // Add Resource
 // ------------
-export const addResource = resource => (dispatch, callApi) => {
+export const addResource = props => (dispatch, callApi) => {
   dispatch(addResourcePending());
 
-  return callApi({ url: resourcesUrl, method: 'POST' })
+  return callApi({
+    url: resourcesUrl,
+    method: 'POST',
+    body: props
+  })
     .then(res => dispatch(addResourceSuccess(res.resource)))
-    .catch(err => dispatch(addResourceFail(err)));
+    .then(() => dispatch(push(`/admin/resources`)))
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['Resource created.']
+    })))
+    .catch(res => {
+      dispatch(addResourceFail(res))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: res.errors || res
+      }))
+    })
 }
 
 const addResourcePending = () => ({
@@ -70,7 +87,7 @@ const addResourcePending = () => ({
 })
 
 const addResourceSuccess = resource => ({
-  type: ADD_RESOURCE_SUCCESS,
+  type: ADD_RESOURCE,
   resource,
   receivedAt: Date.now()
 })
@@ -83,14 +100,29 @@ const addResourceFail = error => ({
 
 // Update Resource
 // ---------------
-export const updateResource = resource => (dispatch, callApi) => {
-  const resourceUrl = `${ resourcesUrl }/${ resource.id }`
+export const updateResource = props => (dispatch, callApi) => {
+  const resourceUrl = `${ resourcesUrl }/${ props.id }`
 
   dispatch(updateResourcePending())
 
-  return callApi({ url: resourceUrl, method: 'PUT' })
+  return callApi({
+    url: resourceUrl,
+    method: 'PUT',
+    body: props
+  })
     .then(res => dispatch(updateResourceSuccess(res.resource)))
-    .catch(err => dispatch(updateResourceFail(err)))
+    .then(() => dispatch(push(`/admin/resources`)))
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['Resource updated.']
+    })))
+    .catch(err => {
+      dispatch(updateResourceFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: [err]
+      }))
+    })
 }
 
 const updateResourcePending = () => ({
@@ -98,7 +130,7 @@ const updateResourcePending = () => ({
 })
 
 const updateResourceSuccess = resource => ({
-  type: UPDATE_RESOURCE_SUCCESS,
+  type: UPDATE_RESOURCE,
   resource,
   receivedAt: Date.now()
 })
@@ -111,14 +143,24 @@ const updateResourceFail = error => ({
 
 // Remove Resource
 // ---------------
-export const removeResource = resource => (dispatch, callApi) => {
-  const resourceUrl = `${ resourcesUrl }/${ resource.id }`
+export const removeResource = id => (dispatch, callApi) => {
+  const resourceUrl = `${ resourcesUrl }/${ id }`
 
   dispatch(removeResourcePending())
 
   return callApi({ url: resourceUrl, method: 'DELETE' })
     .then(res => dispatch(removeResourceSuccess(res.resource)))
-    .catch(err => dispatch(removeResourceFail(err)))
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['Resource removed.']
+    })))
+    .catch(err => {
+      dispatch(removeResourceFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: [err]
+      }))
+    })
 }
 
 const removeResourcePending = () => ({
@@ -126,7 +168,7 @@ const removeResourcePending = () => ({
 })
 
 const removeResourceSuccess = resource => ({
-  type: REMOVE_RESOURCE_SUCCESS,
+  type: REMOVE_RESOURCE,
   resource,
   receivedAt: Date.now()
 })

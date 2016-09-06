@@ -12,7 +12,26 @@ import UserList from '../components/UserList'
 
 const UserListPageComponent = props => (
   <Page name="Users">
-    <UserList {...props} />
+    <button
+        className="new-user-button"
+        onClick={e => props.onClickAddUser()}>
+      New User
+    </button>
+
+    <UserList
+      users={props.users}
+      isPending={props.isPending}
+      page={props.page}
+      total={props.total}
+      per={props.per}
+      order={props.order}
+      by={props.by}
+      filter={props.filter}
+      onClickUser={props.onClickUser}
+      onClickToggleSort={props.onClickToggleSort}
+      onClickNextPage={props.onClickNextPage}
+      onClickPrevPage={props.onClickPrevPage}
+    />
   </Page>
 )
 

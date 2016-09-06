@@ -1,82 +1,102 @@
 import React, { PropTypes } from 'react'
+import { Link } from 'react-router'
 
 const ResourceForm = React.createClass({
   displayName: 'ResourceForm',
 
   propTypes: {
     resource: PropTypes.object,
+    isPending: PropTypes.bool,
     isAuthenticated: PropTypes.bool,
     onSubmit: PropTypes.func
+  },
+
+  getDefaultProps: function () {
+    return {
+      resource: {},
+      isPending: true,
+      isAuthenticated: false
+    }
   },
 
   onSubmit: function (e) {
     e.preventDefault();
 
-    this.props.onSubmit({
+    const resourceProps = {
+      name: this.refs.name.value,
+      url: this.refs.url.value,
+      isActive: this.refs.isActive.checked,
+      actions: this.refs.actions.value.split(' ')
+    }
 
-    });
+    // If this is updating an existing resource with an id, add it, otherwise if
+    // this is a new resource with no id, leave it out.
+    if (this.props.resource.id) Object.assign(resourceProps, {
+      id: this.props.resource.id
+    })
+
+    this.props.onSubmit(resourceProps);
   },
 
   render: function () {
-    const {
-      resource,
-      isAuthenticated,
-      onSubmit
-    } = this.props
+    const { resource, isPending, isAuthenticated } = this.props
 
-    if (!resource) return false
+    if (isPending || !resource || !isAuthenticated) return false
 
     return (
-      <form onSubmit={onSubmit} className="resource-form">
+      <form onSubmit={this.onSubmit} className="resource-form">
         <div className="field">
-            <label htmlFor="name">Name</label>
-            <br />
-            <input
-                type="text"
-                ref="name"
-                id="name"
-                name="name"
-                defaultValue={resource.name}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="url">Url</label>
-            <br />
-            <input
-                type="text"
-                ref="url"
-                id="url"
-                name="url"
-                defaultValue={resource.url}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="isActive">Active</label>
-            <br />
-            <input
-                type="checkbox"
-                className="toggle"
-                ref="isActive"
-                id="isActive"
-                name="isActive"
-                defaultChecked={resource.isActive}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="password">Actions</label>
-            <ul>
-              {resource.actions.map(action => (
-                <li key={action}>
-                  {action}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <button
-              type="submit"
-              onClick={onSubmit}>
-            Update
-          </button>
+          <label htmlFor="name">Name</label>
+          <br />
+          <input
+              type="text"
+              ref="name"
+              id="name"
+              name="name"
+              defaultValue={resource.name}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="url">Url</label>
+          <br />
+          <input
+              type="text"
+              ref="url"
+              id="url"
+              name="url"
+              defaultValue={resource.url}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="isActive">Active</label>
+          <br />
+          <input
+              type="checkbox"
+              className="toggle"
+              ref="isActive"
+              id="isActive"
+              name="isActive"
+              defaultChecked={resource.isActive}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="actions">Actions</label>
+          <br />
+          <input
+              type="text"
+              ref="actions"
+              id="actions"
+              name="actions"
+              defaultValue={resource.actions.join(' ')}
+          />
+        </div>
+        <button
+            type="submit"
+            onClick={this.onSubmit}>
+          Save
+        </button>
+        <span>or</span>
+        <Link to="/admin/resources">cancel</Link>
       </form>
     )
   }

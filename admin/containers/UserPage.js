@@ -4,21 +4,17 @@ import { updateUser, addUser, removeUser } from '../actions'
 import UserForm from '../components/UserForm'
 import Page from '../components/Page'
 
-// Use this for "new" users so as not to trigger the falsy user check in the
-// `UserForm` component if the user object is completely blank.
-const emptyUser = {
-  isEmpty: true
-}
-
 const UserPageComponent = ({
   user,
   isPending,
   resources,
   isAuthenticated,
   onSubmit,
-  onClickRemoveUser
-}) => (
-  <Page name={user.isEmpty ? 'Add User' : 'Modify User'}>
+  onClickRemove
+}) => {
+  console.log('user: ', user)
+  return (
+  <Page name={user.id ? 'Modify User' : 'Add User'}>
     <UserForm
         user={user}
         isPending={isPending}
@@ -27,20 +23,21 @@ const UserPageComponent = ({
         onSubmit={onSubmit}
     />
 
-    {!user.isEmpty &&
+  {user.id &&
       <aside className="page-controls">
         <button
-            className="list-remove-button"
+            className="remove-button"
             onClick={e => {
               e.preventDefault()
-              onClickRemoveUser(user.id)
+              onClickRemove(user.id)
             }}>
-          remove user
+          remove
         </button>
       </aside>
     }
   </Page>
 )
+}
 
 // Use a purposely invalid id if its value is "new" in order to trigger the user
 // form in "add user" mode as opposed to "update user" mode.
@@ -50,7 +47,7 @@ const mapStateToProps = (state, ownProps) => {
   const user = state.users.list.find(user => user.id === userId)
 
   return {
-    user: user || emptyUser,
+    user: user || {},
     isPending: state.users.isFetching,
     resources: state.resources.list,
     isAuthenticated: state.auth.isAuthenticated
@@ -64,7 +61,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
   return {
     onSubmit: props => dispatch(isNew ? addUser(props) : updateUser(props)),
-    onClickRemoveUser: id => dispatch(removeUser(id))
+    onClickRemove: id => dispatch(removeUser(id))
   }
 }
 

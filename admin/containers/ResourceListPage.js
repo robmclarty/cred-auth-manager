@@ -11,7 +11,32 @@ import {
   sortResources
 } from '../actions'
 import Page from '../components/Page'
-import ResourceListComponent from '../components/ResourceList'
+import ResourceList from '../components/ResourceList'
+
+const ResourceListPageComponent = props => (
+  <Page name="Resources">
+    <button
+        className="new-user-button"
+        onClick={e => props.onClickAddResource()}>
+      New Resource
+    </button>
+
+    <ResourceList
+      resources={props.resources}
+      isPending={props.isPending}
+      page={props.page}
+      total={props.total}
+      per={props.per}
+      order={props.order}
+      by={props.by}
+      filter={props.filter}
+      onClickResource={props.onClickResource}
+      onClickToggleSort={props.onClickToggleSort}
+      onClickNextPage={props.onClickNextPage}
+      onClickPrevPage={props.onClickPrevPage}
+    />
+  </Page>
+)
 
 const mapStateToProps = state => {
   const resources = state.resources.pageList
@@ -31,22 +56,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onClickResource: id => dispatch(push(`/admin/resources/${ id }`)),
+  onClickAddResource: () => dispatch(push(`/admin/resources/new`)),
   onClickToggleSort: by => dispatch(sortResources(by)),
   onClickNextPage: () => dispatch(nextResourcePage()),
-  onClickPrevPage: () => dispatch(prevResourcePage()),
-  onAddResource: () => dispatch(addResource({})),
-  onFetchResources: () => dispatch(fetchResources())
+  onClickPrevPage: () => dispatch(prevResourcePage())
 })
 
-const ResourceList = connect(
+const ResourceListPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(ResourceListComponent)
-
-const ResourceListPage = () => (
-  <Page name="Resources">
-    <ResourceList />
-  </Page>
-)
+)(ResourceListPageComponent)
 
 export default ResourceListPage

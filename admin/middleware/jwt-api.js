@@ -161,7 +161,7 @@ export const refreshTokensIfExpired = tokens => {
   return request(tokensUrl, options)
     .then(res => res.json())
     .then(json => Promise.resolve({ accessToken: json.accessToken, refreshToken }))
-    .catch(err => Promise.reject(`Problem refreshing access-token: ${ err }`));
+    .catch(err => Promise.reject(`Problem refreshing access-token: ${ JSON.stringify(err) }`));
 };
 
 // Return the current tokens from either the Redux store, or local storage.
