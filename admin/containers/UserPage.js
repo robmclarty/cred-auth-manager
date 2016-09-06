@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 import { updateUser, addUser, removeUser } from '../actions'
 import UserForm from '../components/UserForm'
 import Page from '../components/Page'
@@ -23,7 +24,7 @@ const UserPageComponent = ({
         onSubmit={onSubmit}
     />
 
-  {user.id &&
+    {user.id &&
       <aside className="page-controls">
         <button
             className="remove-button"

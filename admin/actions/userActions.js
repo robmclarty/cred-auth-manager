@@ -143,13 +143,14 @@ const updateUserFail = error => ({
 
 // Remove User
 // -----------
-export const removeUser = user => (dispatch, callApi) => {
-  const userUrl = `${ usersUrl }/${ user.id }`
+export const removeUser = id => (dispatch, callApi) => {
+  const userUrl = `${ usersUrl }/${ id }`
 
   dispatch(removeUserPending())
 
   return callApi({ url: userUrl, method: 'DELETE' })
-    .then(res => dispatch(removeUserSuccess(res.user)))
+    .then(res => dispatch(removeUserSuccess(id)))
+    .then(() => dispatch(push(`/admin/users`))) // TODO: try NOT having `push` in the action creator
     .then(() => dispatch(showFlash({
       status: STATUS_SUCCESS,
       messages: ['User removed.']
@@ -167,9 +168,9 @@ const removeUserPending = () => ({
   type: REMOVE_USER_PENDING
 })
 
-const removeUserSuccess = user => ({
+const removeUserSuccess = id => ({
   type: REMOVE_USER,
-  user,
+  id,
   receivedAt: Date.now()
 })
 

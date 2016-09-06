@@ -11,35 +11,33 @@ const ResourcePageComponent = ({
   onSubmit,
   onClickRemove
 }) => (
-  <Page name={!resource ? 'Add Resource' : 'Modify Resource'}>
+  <Page name={!resource.id ? 'Add Resource' : 'Modify Resource'}>
     <ResourceForm
         resource={resource}
         isPending={isPending}
         isAuthenticated={isAuthenticated}
         onSubmit={onSubmit}
     />
+
+    {resource.id &&
+      <aside className="page-controls">
+        <button
+            className="remove-button"
+            onClick={e => {
+              e.preventDefault()
+              onClickRemove(resource.id)
+            }}>
+          remove
+        </button>
+      </aside>
+    }
   </Page>
 )
-
-// {resource &&
-//   <aside className="page-controls">
-//     <button
-//         className="remove-button"
-//         onClick={e => {
-//           e.preventDefault()
-//           onClickRemove(resource.id)
-//         }}>
-//       remove
-//     </button>
-//   </aside>
-// }
 
 const mapStateToProps = (state, ownProps) => {
   const paramId = ownProps.params.id
   const resourceId = paramId === 'new' ? -1 : Number(paramId)
   const resource = state.resources.list.find(resource => resource.id === resourceId)
-
-  //console.log('resource: ', resource)
 
   return {
     resource: resource || {},

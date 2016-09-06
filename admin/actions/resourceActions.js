@@ -149,7 +149,8 @@ export const removeResource = id => (dispatch, callApi) => {
   dispatch(removeResourcePending())
 
   return callApi({ url: resourceUrl, method: 'DELETE' })
-    .then(res => dispatch(removeResourceSuccess(res.resource)))
+    .then(res => dispatch(removeResourceSuccess(id)))
+    .then(() => dispatch(push(`/admin/resources`))) // TODO: try NOT having `push` in the action creator
     .then(() => dispatch(showFlash({
       status: STATUS_SUCCESS,
       messages: ['Resource removed.']
@@ -167,9 +168,9 @@ const removeResourcePending = () => ({
   type: REMOVE_RESOURCE_PENDING
 })
 
-const removeResourceSuccess = resource => ({
+const removeResourceSuccess = id => ({
   type: REMOVE_RESOURCE,
-  resource,
+  id,
   receivedAt: Date.now()
 })
 

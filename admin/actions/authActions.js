@@ -52,10 +52,6 @@ export const register = creds => (dispatch, callApi) => {
     requireAuth: false
   })
     .then(json => json.user)
-    .then(user => {
-      console.log('registered user: ', user)
-
-    })
     .catch(err => dispatch(registerFail(err)))
 }
 
@@ -102,7 +98,7 @@ export const login = creds => (dispatch, callApi, getState) => {
     .then(updateTokens)
     .then(tokens => dispatch(loginSuccess(tokens)))
     .then(() => startup(dispatch, getState()))
-    .then(() => dispatch(push(`/admin`)))
+    .then(() => dispatch(push(`/admin`))) // TODO: try NOT having `push` in the action creator
     .catch(err => dispatch(loginFail(err)))
 };
 
@@ -149,7 +145,7 @@ export const logout = () => (dispatch, callApi) => {
   return callApi({ url: tokensUrl, method: 'DELETE', useRefreshToken: true })
     .then(destroyTokens)
     .then(dispatch(logoutSuccess()))
-    .then(dispatch(push('/admin')))
+    .then(dispatch(push('/admin'))) // TODO: try NOT having `push` in the action creator
     .catch(err => dispatch(logoutFail(err)));
 };
 
