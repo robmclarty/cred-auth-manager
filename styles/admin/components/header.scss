@@ -8,7 +8,7 @@
   flex: none;
   height: 100%;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 2em;
   font-size: 1em;
   line-height: 1em;
 
@@ -20,12 +20,16 @@
     font-size: 1.2em;
     font-weight: normal;
     text-decoration: none;
-    color: $grey;
+    color: $col-primary;
+    //opacity: 1;
+    text-transform: uppercase;
 
-    &:hover {
-      color: $black;
-      background: rgba(0, 0, 0, .04);
-    }
+    // &:hover {
+    //   color: $col-primary;
+    //   opacity: 1;
+    //
+    //   //background: rgba(0, 0, 0, .04);
+    // }
 
     span {
       font-family: $font-extrabold;
@@ -48,12 +52,12 @@
   height: 100%;
   font-size: 1em;
   line-height: 1em;
-  padding: 0 1em;
+  padding: 0 2em 0 0;
 
   & > button,
   & > a {
     background: transparent;
-    color: $grey;
+    color: $col-secondary;
     margin: 0;
     padding: 0 1em;
     height: 100%;
@@ -71,7 +75,7 @@
       margin-right: 0;
     }
     &:hover {
-      color: $black;
+      color: $col-primary;
       background: rgba(0, 0, 0, .04);
     }
   }

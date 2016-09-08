@@ -22,7 +22,6 @@ const Register = React.createClass({
       <form onSubmit={this.onSubmit} className="register-form">
         <div className="field">
             <label htmlFor="username">Username</label>
-            <br />
             <input
                 type="text"
                 ref="username"
@@ -32,7 +31,6 @@ const Register = React.createClass({
           </div>
           <div className="field">
             <label htmlFor="email">Email</label>
-            <br />
             <input
                 type="email"
                 ref="email"
@@ -42,7 +40,6 @@ const Register = React.createClass({
           </div>
           <div className="field">
             <label htmlFor="password">Password</label>
-            <br />
             <input
                 type="password"
                 ref="password"

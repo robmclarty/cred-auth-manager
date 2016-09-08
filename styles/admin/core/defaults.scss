@@ -33,8 +33,8 @@ body {
   font-family: $font-regular;
   font-size: 16px;
   line-height: 1.2em;
-  background-color: $beige;
-  color: $grey;
+  background-color: $col-bg;
+  color: $col-secondary;
 }
 
 h1,
@@ -43,12 +43,13 @@ h3,
 h4 {
   margin: 0;
   padding: 0;
-  color: $red;
+  color: $col-titles;
   font-weight: normal;
 }
 h1 {
   font-size: 4em;
   line-height: 1em;
+  margin-bottom: .75em;
 }
 h2 {
   font-size: 3em;
@@ -66,7 +67,7 @@ h4 {
 }
 
 a {
-  color: $yellow;
+  color: $col-interactive;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -95,7 +96,7 @@ p {
 }
 
 button {
-  padding: 0.6em 1em;
+  padding: 0.6em 1.5em;
   outline: none;
 }
 
@@ -113,20 +114,22 @@ ul {
 form {
   width: 100%;
   max-width: 30em;
-  margin: 2em 0;
+  margin: 0;
 }
 
 input,
 textarea {
   width: 100%;
   padding: 0.5em 1.2em 0.5em 0.7em;
-  border: 1px solid darken($beige, 20%);
-  background: lighten($beige, 10%);
-  color: $black;
+  border: 1px solid $col-tertiary;
+  //background: lighten($col-bg, 3%);
+  background: $col-bg;
+  color: $col-primary;
 
   &:focus {
     outline: none;
-    border-color: $yellow;
+    border-color: $col-interactive;
+    background: $col-bg-hover;
   }
 }
 input[type="checkbox"] {
@@ -135,6 +138,6 @@ input[type="checkbox"] {
 
 label {
   display: block;
-  color: $grey;
+  color: $col-secondary;
   margin-bottom: 0.5em;
 }

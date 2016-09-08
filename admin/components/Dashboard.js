@@ -100,7 +100,7 @@ const userSignupsChart = users => {
   }
 
   return (
-    <Line data={chartData} options={chartOptions} width={800} height={260} />
+    <Line data={chartData} options={chartOptions} width={600} height={220} />
   )
 }
 
@@ -114,8 +114,8 @@ const usersTotalChart  = users => {
     datasets: [{
       data: [activeUsers, inactiveUsers],
       backgroundColor: [
-        'rgba(54, 162, 235, 1)',
-        'rgba(255,99,132,1)'
+        'rgba(75, 192, 192, 1)',
+        'rgba(155, 155, 143, .3)'
       ],
       borderColor: 'rgba(255, 255, 255, 0)'
     }]
@@ -134,25 +134,6 @@ const Dashboard = ({
   users,
   resources
 }) => {
-  const usersTotalContainerStyle = {
-    display: 'block',
-    position: 'relative',
-    width: 200,
-    height: 300
-  }
-  const usersTotalNumberStyle = {
-    display: 'block',
-    position: 'absolute',
-    fontSize: 60,
-    fontWeight: 'bold',
-    top: 120,
-    left: '50%',
-    transform: 'translate(-50%, 0)'
-  }
-  const cellStyle = {
-    verticalAlign: 'top'
-  }
-
   if (!isAuthenticated) return (
     <div className="dashboard">
       <p>Welcome to the Cred Auth Manager admin interface.</p>
@@ -162,18 +143,18 @@ const Dashboard = ({
 
   return (
     <div className="dashboard">
-      <table>
+      <table className="dashboard-table">
         <tbody>
           <tr>
-            <td style={cellStyle}>
-              <div className="users-total" style={usersTotalContainerStyle}>
+            <td>
+              <div className="users-total">
                 <h4>Total Users</h4>
-                <div style={usersTotalNumberStyle}>{users.length}</div>
+                <div className="users-total-number">{users.length}</div>
                 {usersTotalChart(users)}
               </div>
             </td>
 
-            <td colSpan="2" style={cellStyle}>
+            <td colSpan="2">
               <div className="users-signup">
                 <h4>Usage (recent year)</h4>
                 {userSignupsChart(users)}
@@ -182,7 +163,7 @@ const Dashboard = ({
           </tr>
 
           <tr>
-            <td style={cellStyle}>
+            <td>
               <div className="users-admin">
                 <h4>Active Admins</h4>
                 <ul>
@@ -198,7 +179,7 @@ const Dashboard = ({
             <td>
               <div className="users-login">
                 <h4>Recently Logged In</h4>
-                <table>
+                <table className="recently-logged-in-table">
                   <tbody>
                     {last10Logins(users).map(user => (
                       <tr key={user.id}>
@@ -211,7 +192,7 @@ const Dashboard = ({
               </div>
             </td>
 
-            <td style={cellStyle}>
+            <td>
               <div className="resources">
                 <h4>Active Resources</h4>
                 <ul>

@@ -1,0 +1,55 @@
+.dashboard {
+  line-height: 1.5em;
+
+  h4 {
+    margin: 0 0 1em 0;
+    color: $col-primary;
+  }
+
+  .users-total {
+    display: block;
+    position: relative;
+    width: 200px;
+    height: 240px;
+  }
+  .users-total-number {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 5%);
+    font-family: $font-bold;
+    font-size: 3em;
+    line-height: 1em;
+    color: $col-primary
+  }
+}
+
+.dashboard-table {
+  & > tbody > tr {
+    border-bottom: 2em solid transparent;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    & > td {
+      border-right: 3em solid transparent;
+      vertical-align: top;
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+  }
+}
+
+.recently-logged-in-table {
+  td {
+    border-right: 1.5em solid transparent;
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+}

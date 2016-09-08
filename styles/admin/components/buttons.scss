@@ -1,5 +1,5 @@
 .cancel {
-  color: $red;
+  color: $col-cancel;
   text-decoration: none;
 
   &:hover {
@@ -12,24 +12,26 @@ button,
   border: 0;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  background-color: $yellow;
-  color: white;
+  background-color: $col-interactive;
+  //background-color: transparent;
+  //border: 1px solid $col-interactive;
+  color: lighten($col-interactive, 35%);
   font-family: $font-regular;
   text-transform: uppercase;
-  border-radius: 4px;
-  border-bottom: 2px solid darken($yellow, 10%);
+  border-radius: 1.5em;
+  //border-bottom: 2px solid darken($col-interactive, 10%);
 
   &:hover {
-    background-color: darken($yellow, 2%);
+    background-color: darken($col-interactive, 4%);
   }
 
   &.secondary {
-    background-color: $grey;
-    color: darken(white, 10%);
-    border-bottom-color: darken($grey, 10%);
+    background-color: $col-secondary;
+    color: darken($col-secondary, 20%);
+    border-bottom-color: darken($col-secondary, 10%);
 
     &:hover {
-      background-color: darken($grey, 2%);
+      background-color: darken($col-secondary, 4%);
     }
   }
 }
@@ -53,7 +55,7 @@ button,
   background-repeat: no-repeat;
 
   &.add {
-    background-image: url(../images/icons/plus.svg);
+    background-image: url('../images/icons/plus.svg');
   }
   &.ready {
 
@@ -73,7 +75,7 @@ button,
 
   button {
     border-radius: 0;
-    border-right: 1px solid darken($yellow, 2%);
+    border-right: 1px solid darken($col-interactive, 2%);
 
     &:first-child {
       border-top-left-radius: 4px;

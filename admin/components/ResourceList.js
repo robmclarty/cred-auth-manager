@@ -24,13 +24,6 @@ const ResourceList = ({
     <section className="list-container">
       {!isPending &&
         <div>
-          <PaginationControls
-              page={page}
-              total={total}
-              onClickNextPage={onClickNextPage}
-              onClickPrevPage={onClickPrevPage}
-          />
-
           <table className="resource-list">
             <thead>
               <tr>
@@ -74,6 +67,13 @@ const ResourceList = ({
               })}
             </tbody>
           </table>
+
+          <PaginationControls
+              page={page}
+              total={total}
+              onClickNextPage={onClickNextPage}
+              onClickPrevPage={onClickPrevPage}
+          />
         </div>
       }
     </section>

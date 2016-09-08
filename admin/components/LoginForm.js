@@ -21,7 +21,6 @@ const LoginForm = React.createClass({
       <form onSubmit={this.onSubmit} className="login-form">
         <div className="field">
             <label htmlFor="username">Username</label>
-            <br />
             <input
                 type="text"
                 ref="username"
@@ -31,7 +30,6 @@ const LoginForm = React.createClass({
           </div>
           <div className="field">
             <label htmlFor="password">Password</label>
-            <br />
             <input
                 type="password"
                 ref="password"

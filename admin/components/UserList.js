@@ -24,13 +24,6 @@ const UserList = ({
 
   return isPending ? false : (
     <div className="list-container">
-      <PaginationControls
-          page={page}
-          total={total}
-          onClickNextPage={onClickNextPage}
-          onClickPrevPage={onClickPrevPage}
-      />
-
       <table className="resource-list">
         <thead>
           <tr>
@@ -83,6 +76,13 @@ const UserList = ({
           })}
         </tbody>
       </table>
+
+      <PaginationControls
+          page={page}
+          total={total}
+          onClickNextPage={onClickNextPage}
+          onClickPrevPage={onClickPrevPage}
+      />
     </div>
   );
 };

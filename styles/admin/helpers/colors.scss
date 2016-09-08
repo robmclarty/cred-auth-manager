@@ -1,24 +1,27 @@
-// Core Color Palette
-$beige:   #e0e0ce;
-$black:   #000000;
-$yellow:  #f2af29;
-$grey:    #474747;
-$red:     #ad343e;
+// Core
+$col-bg:          #e0e0ce;
+$col-bg-hover:    lighten($col-bg, 3%);
+//$col-interactive: #f2af29;
+$col-interactive: #4bc0c0;
+$col-primary:     #3b3b36;
+$col-secondary:   #9b9b8f;
+$col-tertiary:    lighten($col-secondary, 10%);
+$col-titles:      #ad343e;
+$col-cancel:      #ad343e;
 
 // Flash
-// Messages
-$success-text:      #3c763d;
-$success-bg:        #dff0d8;
-$success-border:    #d6e9c6;
+$col-success-text:   #3c763d;
+$col-success-bg:     #dff0d8;
+$col-success-border: #d6e9c6;
 
-$error-text:        #a94442;
-$error-bg:          #f2dede;
-$error-border:      #ebccd1;
+$col-error-text:     #a94442;
+$col-error-bg:       #f2dede;
+$col-error-border:   #ebccd1;
 
-$info-text:         #31708f;
-$info-bg:           #d9edf7;
-$info-border:       #bce8f1;
+$col-info-text:      #31708f;
+$col-info-bg:        #d9edf7;
+$col-info-border:    #bce8f1;
 
-$warning-text:      #8a6d3b;
-$warning-bg:        #fcf8e3;
-$warning-border:    #faebcc;
+$col-warning-text:   #8a6d3b;
+$col-warning-bg:     #fcf8e3;
+$col-warning-border: #faebcc;
