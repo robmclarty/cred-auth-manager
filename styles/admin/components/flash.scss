@@ -3,19 +3,23 @@
   to { transform: rotate(360deg); }
 }
 
-.messenger {
+.flash {
   position: relative;
   padding: 1.3em 4em 1.3em 1.2em;
-  margin: 2em 4em;
+  margin: 2em 0 3em 0;
   min-height: 4em;
   color: white;
-  border: 1px solid $col-primary;
-  border-radius: 4px;
+  //border: 5px solid $col-tertiary !important;
+  //border-radius: 4px;
+  border: 0 !important;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, .02);
+  border-radius: 3em;
+  background-color: rgba(255, 255, 255, .5) !important;
 
-  .message-icon {
+  .flash-icon {
     position: absolute;
     top: 1em;
-    left: 1em;
+    left: 1.5em;
     width: 30px;
     height: 30px;
     font-family: $font-icons;
@@ -41,12 +45,12 @@
     }
   }
 
-  .message-text {
+  .flash-text {
     display: block;
-    margin-left: 40px;
+    margin-left: 3em;
     font-size: 1em;
 
-    .message-list {
+    .flash-list {
       margin: -10px 0;
 
       & > li {
@@ -55,16 +59,21 @@
     }
   }
 
-  .messenger-close-button {
+  .flash-close-button {
     position: absolute;
     top: 1em;
     right: 1em;
-    color: $col-primary;
+    //color: $col-primary;
+    color: rgba(0, 0, 0, .2) !important;
     border: 0;
     width: 30px;
     height: 30px;
     padding: 0;
     background-color: transparent;
+
+    &:hover {
+      color: rgba(0, 0, 0, .5) !important;
+    }
   }
 
   &.open {
@@ -77,10 +86,10 @@
     background-color: $col-info-bg;
     border-color: $col-info-border;
 
-    .message-icon:before {
+    .flash-icon:before {
       content: "\f149";
     }
-    .messenger-close-button {
+    .flash-close-button {
       color: $col-info-text;
       opacity: .5;
 
@@ -90,7 +99,7 @@
     }
   }
   &.pending {
-    .message-icon:before {
+    .flash-icon:before {
       content: "\f29d";
       animation-name: spin;
       animation-duration: 3000ms;
@@ -104,10 +113,10 @@
     background-color: $col-success-bg;
     border-color: $col-success-border;
 
-    .message-icon:before {
+    .flash-icon:before {
       content: "\f120";
     }
-    .messenger-close-button {
+    .flash-close-button {
       color: lighten($col-success-text, 20%);
 
       &:hover {
@@ -121,10 +130,10 @@
     background-color: $col-error-bg;
     border-color: $col-error-border;
 
-    .message-icon:before {
+    .flash-icon:before {
       content: "\f207";
     }
-    .messenger-close-button {
+    .flash-close-button {
       color: lighten($col-error-text, 20%);
 
       &:hover {
@@ -138,10 +147,10 @@
     background-color: $col-warning-bg;
     border-color: $col-warning-border;
 
-    .message-icon:before {
+    .flash-icon:before {
       content: "\f100";
     }
-    .messenger-close-button {
+    .flash-close-button {
       color: lighten($col-warning-text, 20%);
 
       &:hover {

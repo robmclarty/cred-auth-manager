@@ -2,7 +2,15 @@ import React from 'react'
 import { render } from 'react-dom'
 import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
-import { Router, Route, Redirect, IndexRoute, browserHistory } from 'react-router'
+import {
+  Router,
+  Route,
+  Redirect,
+  IndexRoute,
+  browserHistory,
+  applyRouterMiddleware
+} from 'react-router'
+import { useScroll } from 'react-router-scroll'
 import { syncHistoryWithStore, routerMiddleware, push } from 'react-router-redux'
 // TODO: switch this to cred-redux
 import jwtApi from './middleware/jwt-api'
@@ -49,10 +57,10 @@ const clearFlash = () => store.dispatch(resetFlash())
 
 render(
   <Provider store={store}>
-    <Router history={history}>
+    <Router history={history} render={applyRouterMiddleware(useScroll())}>
       <Route path="/admin" component={App}>
         <IndexRoute component={DashboardPage} />
-        <Route path="/admin" component={DashboardPage} onEnter={clearFlash()} />
+        <Route path="/admin" component={DashboardPage} onEnter={clearFlash} />
 
         <Route path="/admin/register" component={RegisterPage} onEnter={clearFlash} />
         <Route path="/admin/login" component={LoginPage} onEnter={clearFlash} />

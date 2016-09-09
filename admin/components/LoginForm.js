@@ -7,6 +7,10 @@ const LoginForm = React.createClass({
     onSubmit: PropTypes.func.isRequired
   },
 
+  componentDidMount: function () {
+    this.refs.username.focus()
+  },
+
   onSubmit: function (e) {
     e.preventDefault();
 

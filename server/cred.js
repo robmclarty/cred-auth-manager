@@ -40,12 +40,17 @@ cred.use('basic', req => {
       include: [Resource]
     }]
   })
+    .then(user => {
+      if (!user) throw 'Username or password do not match'
+
+      return user
+    })
     .then(user => Promise.all([user, user.verifyPassword(password)]))
     .then(userMatch => {
       const user = userMatch[0]
       const isMatch = userMatch[1]
 
-      if (!isMatch) throw 'Unauthorized: username or password do not match.'
+      if (!isMatch) throw 'Username or password do not match'
 
       return user.loginUpdate()
     })

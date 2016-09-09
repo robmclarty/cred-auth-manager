@@ -8,13 +8,15 @@ import Page from '../components/Page'
 const DashboardPageComponent = ({
   isAuthenticated,
   users,
-  resources
+  resources,
+  onClickLogin
 }) => (
-  <Page name={isAuthenticated ? 'Dashboard' : 'Homepage'}>
+  <Page name={isAuthenticated ? 'Dashboard' : 'Welcome'}>
     <Dashboard
        isAuthenticated={isAuthenticated}
        users={users}
        resources={resources}
+       onClickLogin={onClickLogin}
     />
   </Page>
 )
@@ -25,6 +27,13 @@ const mapStateToProps = state => ({
   resources: state.resources.list
 })
 
-const DashboardPage = connect(mapStateToProps)(DashboardPageComponent)
+const mapDispatchToProps = dispatch => ({
+  onClickLogin: () => dispatch(push('/admin/login'))
+})
+
+const DashboardPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DashboardPageComponent)
 
 export default DashboardPage

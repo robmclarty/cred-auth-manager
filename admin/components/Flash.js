@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react'
 
 const Flash = ({
   status,
@@ -10,7 +10,7 @@ const Flash = ({
 
   return (
     <div className={`flash ${ status }`}>
-      <span className={`flash-icon ${ status }`}>{status}</span>
+      <span className={`flash-icon ${ status }`}></span>
       <span className="flash-text">
         <ul className="flash-list">
           {messages && messages.map((msg, i) => {
@@ -22,7 +22,6 @@ const Flash = ({
       <button
           className="flash-close-button ion-close-circled"
           onClick={onClickClose}>
-        x
       </button>
     </div>
   );

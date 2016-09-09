@@ -18,11 +18,16 @@ const initialState = {
 const flash = (state = initialState, action) => {
   switch (action.type) {
     case SHOW_FLASH:
+      // `messages` can be either a single string or an array of strings.
+      const messages = typeof action.messages === 'string' ?
+        [action.messages] :
+        [...action.messages]
+
       return {
         ...state,
         isVisible: true,
         status: action.status,
-        messages: [...action.messages]
+        messages
       }
     case SHOW_FLASH_LOADING:
       // NOTE: This *replaces* pendingResources rather than adding to them.

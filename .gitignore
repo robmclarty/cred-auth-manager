@@ -1,6 +1,7 @@
 node_modules
 coverage
 build/**/*
+config/admin-options.json
 .sass_cache
 .DS_Store
 *.log

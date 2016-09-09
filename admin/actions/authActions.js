@@ -13,7 +13,8 @@ import {
 } from '../constants/ActionTypes';
 import {
   STATUS_PENDING,
-  STATUS_SUCCESS
+  STATUS_SUCCESS,
+  STATUS_ERROR
 } from '../constants/FlashTypes';
 import {
   updateTokens,
@@ -31,6 +32,7 @@ import {
 
 const tokensUrl = `${ config.authRoot }/tokens`;
 
+// Common actions to take to initialize the app's state.
 const startup = (dispatch, state) => {
   const userId = state.auth.tokenPayload.userId
 
@@ -52,7 +54,17 @@ export const register = creds => (dispatch, callApi) => {
     requireAuth: false
   })
     .then(json => json.user)
-    .catch(err => dispatch(registerFail(err)))
+    .then(user => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: `Registred as ${ user.username }.`
+    })))
+    .catch(err => {
+      dispatch(registerFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: err.message
+      }))
+    })
 }
 
 export const registerPending = () => ({
@@ -99,7 +111,13 @@ export const login = creds => (dispatch, callApi, getState) => {
     .then(tokens => dispatch(loginSuccess(tokens)))
     .then(() => startup(dispatch, getState()))
     .then(() => dispatch(push(`/admin`))) // TODO: try NOT having `push` in the action creator
-    .catch(err => dispatch(loginFail(err)))
+    .catch(err => {
+      dispatch(loginFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: err.message
+      }))
+    })
 };
 
 // TODO: Might want to handle auto-login failure differently than regular
@@ -142,11 +160,25 @@ const loginFail = err => ({
 export const logout = () => (dispatch, callApi) => {
   dispatch(logoutPending());
 
-  return callApi({ url: tokensUrl, method: 'DELETE', useRefreshToken: true })
-    .then(destroyTokens)
-    .then(dispatch(logoutSuccess()))
-    .then(dispatch(push('/admin'))) // TODO: try NOT having `push` in the action creator
-    .catch(err => dispatch(logoutFail(err)));
+  // Immediately remove tokens from local storage and initiate logout action so
+  // that the tokens are removed from local storage regardless of what happens
+  // on the server (e.g., maybe the server's token cache was reset but the local
+  // storage is still active).
+  return destroyTokens()
+    .then(() => dispatch(logoutSuccess()))
+    .then(() => dispatch(push('/admin'))) // TODO: try NOT having `push` in the action creator
+    .then(() => dispatch(showFlash({
+      status: STATUS_SUCCESS,
+      messages: ['You are now logged out.']
+    })))
+    .then(() => callApi({ url: tokensUrl, method: 'DELETE', useRefreshToken: true }))
+    .catch(err => {
+      dispatch(logoutFail(err))
+      dispatch(showFlash({
+        status: STATUS_ERROR,
+        messages: err.message
+      }))
+    })
 };
 
 const logoutPending = () => ({

@@ -132,12 +132,15 @@ const usersTotalChart  = users => {
 const Dashboard = ({
   isAuthenticated,
   users,
-  resources
+  resources,
+  onClickLogin
 }) => {
   if (!isAuthenticated) return (
     <div className="dashboard">
       <p>Welcome to the Cred Auth Manager admin interface.</p>
-      <Link to="/admin/login">Login</Link>
+      <button onClick={onClickLogin}>Login</button>
+      <span className="spacer">or</span>
+      <Link to="/admin/signup">sign up</Link>
     </div>
   )
 
