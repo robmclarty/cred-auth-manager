@@ -21,7 +21,7 @@ router.route('/registration')
 // handled by nginx.
 router.route('/admin/*')
   .get(function (req, res, next) {
-    res.sendFile('index.html', { root: `${ req.app.get('assets-path') }/admin` });
-  });
+    res.sendFile('index.html', { root: `${ req.app.get('assets-path') }/admin` })
+  })
 
 module.exports = router

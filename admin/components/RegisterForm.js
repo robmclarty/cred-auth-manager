@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
 const Register = React.createClass({
-  displayName: 'Login',
+  displayName: 'Register',
 
   propTypes: {
     onSubmit: PropTypes.func.isRequired
