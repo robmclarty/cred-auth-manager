@@ -1,5 +1,5 @@
 --ui bdd
---reporter nyan
+--reporter tap
 --require ./tests/server/common
 --recursive ./tests
 --timeout 5000
