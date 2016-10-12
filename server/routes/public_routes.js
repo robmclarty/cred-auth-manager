@@ -1,7 +1,7 @@
 'use strict'
 
 const router = require('express').Router()
-const { postRegistration } = require('../controllers/user_controller')
+const { postRegister } = require('../controllers/user_controller')
 
 // Homepage. Loads the index.html file to launch the front-end client UI.
 router.route('/')
@@ -13,8 +13,8 @@ router.route('/')
 // process which goes hand-in-hand with the above authentication routes.
 // Creating a user from the user_controller can then be reserved for different
 // purposes such as internal administration.
-router.route('/registration')
-  .post(postRegistration)
+router.route('/register')
+  .post(postRegister)
 
 // Admin app
 // In production this route should really never be hit and should instead be

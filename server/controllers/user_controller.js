@@ -63,21 +63,21 @@ const postUsers = (req, res, next) => {
 // POST /registration
 // Create a new user that is guaranteed to not be an admin. This is to be used
 // for public-facing signup/registration with the app.
-const postRegistration = (req, res, next) => {
-  // const auth = req.cred.payload
-  // const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
-  // const user = new User(filteredUpdates)
-  //
-  // // Admin users cannot be created through this endpoint.
-  // user.isAdmin = false
-  //
-  // user.save()
-  //   .then(res.json({
-  //     success: true,
-  //     message: 'Registration successful.',
-  //     user: newUser
-  //   }))
-  //   .catch(next)
+const postRegister = (req, res, next) => {
+  const auth = req.cred.payload
+  const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
+  const user = new User(filteredUpdates)
+
+  // Admin users cannot be created through this endpoint.
+  user.isAdmin = false
+
+  user.save()
+    .then(res.json({
+      success: true,
+      message: 'Registration successful.',
+      user: newUser
+    }))
+    .catch(next)
 }
 
 const getUsers = (req, res, next) => {
@@ -228,7 +228,7 @@ const deletePermissions = (req, res, next) => {
 
 module.exports = {
   postUsers,
-  postRegistration,
+  postRegister,
   getUsers,
   getUser,
   putUser,
