@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  cred-auth-manager:
+    build: ./
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE: 'postgres://db:5432/cred-auth-manager'
+    links:
+      - db
+    volumes:
+      - ./:/cred-auth-manager
+  db:
+    image: 'postgres:9.6'
+    restart: always
+    expose:
+      - 5432
