@@ -2,7 +2,7 @@
 
 module.exports = {
   development: {
-    url: 'postgres://localhost:5432/cred-auth-manager',
+    url: process.env.DATABASE || 'postgres://localhost:5432/cred-auth-manager',
     dialect: 'postgres',
     seederStorage: 'sequelize'
   },
