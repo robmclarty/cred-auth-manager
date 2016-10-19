@@ -60,22 +60,17 @@ const postUsers = (req, res, next) => {
     .catch(next)
 }
 
-// POST /registration
 // Create a new user that is guaranteed to not be an admin. This is to be used
 // for public-facing signup/registration with the app.
+// POST /registration
 const postRegister = (req, res, next) => {
-  const auth = req.cred.payload
-  const filteredUpdates = User.filterAdminProps(auth.isAdmin, req.body)
-  const user = new User(filteredUpdates)
+  const props = User.filterProps(false, req.body)
 
-  // Admin users cannot be created through this endpoint.
-  user.isAdmin = false
-
-  user.save()
-    .then(res.json({
+  User.create(props)
+    .then(user => res.json({
       success: true,
-      message: 'Registration successful.',
-      user: newUser
+      message: 'Registration successful',
+      user
     }))
     .catch(next)
 }

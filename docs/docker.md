@@ -1,4 +1,4 @@
-1. how do a completely rebuild my image from scratch if I change something in my
+1. how do I completely rebuild my image from scratch if I change something in my
 docker-compose.yml?
 
 2. what should be in my individual Dockerfiles for my node app?
