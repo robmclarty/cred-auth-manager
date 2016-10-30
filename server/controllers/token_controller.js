@@ -18,7 +18,7 @@ const postTokens = (req, res, next) => {
 
   // If a profile was attached to the cred object, include it in the data that
   // is returned to the client.
-  if (req.cred.profile) data.profile = req.cred.profile
+  if (req.credProfile) data.profile = req.credProfile
 
   res.json(Object.assign({
     success: true,

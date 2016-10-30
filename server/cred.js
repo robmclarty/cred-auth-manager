@@ -157,7 +157,8 @@ cred.use('facebook', req => {
       // If this is a new user that was just created and passed a fbProfile here
       // then attach a normalized profile to the cred object to be returned
       // along side the tokens in the response to the client.
-      if (fbProfile) req.cred.profile = {
+      if (fbProfile) req.credProfile = {
+        userId: user.id,
         firstName: fbProfile.first_name,
         lastName: fbProfile.last_name,
         name: fbProfile.name
