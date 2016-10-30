@@ -14,11 +14,16 @@ const postTokens = (req, res, next) => {
     message: 'Authentication failed'
   }))
 
-  res.json({
+  const data = { tokens: req.cred.tokens }
+
+  // If a profile was attached to the cred object, include it in the data that
+  // is returned to the client.
+  if (req.cred.profile) data.profile = req.cred.profile
+
+  res.json(Object.assign({
     success: true,
     message: 'Tokens generated successfully',
-    tokens: req.cred.tokens
-  })
+  }, data))
 }
 
 // PUT /tokens

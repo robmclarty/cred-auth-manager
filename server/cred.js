@@ -155,10 +155,13 @@ cred.use('facebook', req => {
       const payload = user.tokenPayload()
 
       // If this is a new user that was just created and passed a fbProfile here
-      // then attach it to the token payload to be used by the front-end to
-      // do what it needs to do with that data (e.g., create an app-specific
-      // profile on its own server).
-      if (fbProfile) payload.fbProfile = fbProfile
+      // then attach a normalized profile to the cred object to be returned
+      // along side the tokens in the response to the client.
+      if (fbProfile) req.cred.profile = {
+        firstName: fbProfile.first_name,
+        lastName: fbProfile.last_name,
+        name: fbProfile.name
+      }
 
       return payload
     })
