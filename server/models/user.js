@@ -182,20 +182,32 @@ const tokenPayload = user => ({
 })
 
 // More data returned in JSON form than in token payload.
-const toJSON = user => ({
-  id: user.id,
-  username: user.username,
-  email: user.email,
-  isActive: user.isActive,
-  isAdmin: user.isAdmin,
-  permissions: tokenPermissions(user.permissions, true),
-  loginAt: user.loginAt,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt
-})
+const toJSON = user => {
+  const props = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    isActive: user.isActive,
+    isAdmin: user.isAdmin,
+    permissions: tokenPermissions(user.permissions, true),
+    loginAt: user.loginAt,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt
+  }
+
+  // Add social IDs if they are being used.
+  if (user.facebookId) props.facebookId = user.facebookId
+  if (user.githubId) props.githubId = user.githubId
+  if (user.twitterId) props.twitterId = user.twitterId
+  if (user.googleId) props.googleId = user.googleId
+
+  return props
+}
 
 // If the password has changed, hash it before saving, otherwise just continue.
 const beforeSave = user => {
+  if (!user.password) return
+
   return hashPassword(user.password)
     .then(hash => { user.password = hash })
     .catch(err => console.log('Error hashing password', err))
@@ -234,12 +246,12 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: 'Password cannot be blank.'
-        }
-      }
+      allowNull: true
+      // validate: {
+      //   notEmpty: {
+      //     msg: 'Password cannot be blank.'
+      //   }
+      // }
     },
     email: {
       type: DataTypes.STRING,
@@ -267,6 +279,10 @@ const UserSchema = function (sequelize, DataTypes) {
         this.setDataValue('email', email)
       }
     },
+    facebookId: { type: DataTypes.STRING, allowNull: true },
+    githubId: { type: DataTypes.STRING, allowNull: true },
+    twitterId: { type: DataTypes.STRING, allowNull: true },
+    googleId: { type: DataTypes.STRING, allowNull: true },
     isActive: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

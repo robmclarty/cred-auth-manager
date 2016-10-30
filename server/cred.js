@@ -1,6 +1,9 @@
 'use strict'
 
 const { readFileSync } = require('fs')
+const fetch = require('node-fetch')
+const buildUrl = require('build-url')
+const base64url = require('base64-url')
 const gotCred = require('cred')
 const config = require('../config/server')
 const { User, Permission, Resource } = require('./models')
@@ -25,10 +28,11 @@ const cred = gotCred({
   }
 })
 
-// Find a user matching 'req.body.username', verify its password, and if it is
+// Find a user matching `req.body.username`, verify its password, and if it is
 // authentic, return a token payload for that user. No need to catch error here
 // (just trow them) as they will be handled by cred itself and passed to your
-// error handling middleware from there.
+// error handling middleware from there (although you can override the default
+// error handler by providing your own catch clause if that's what you'd like).
 cred.use('basic', req => {
   const username = String(req.body.username)
   const password = String(req.body.password)
@@ -55,6 +59,109 @@ cred.use('basic', req => {
       return user.loginUpdate()
     })
     .then(user => user.tokenPayload())
+})
+
+// Find a user matching `req.body.facebookId`, verify the associated facebook
+// access_token with Facebook's API, and if it is authentic, return a token
+// payload for that user. If no user is found with this facebookId, create a new
+// user with that id.
+cred.use('facebook', req => {
+  console.log('body: ', req.body)
+  const facebookToken = req.body.facebookToken
+
+  if (!facebookToken) throw 'No Facebook access token provided'
+
+  const verifyTokenUrl = buildUrl('https://graph.facebook.com', {
+    path: 'debug_token',
+    queryParams: {
+      input_token: facebookToken,
+      access_token: facebookToken
+    }
+  })
+
+  // Verify that the Facebook access token is valid.
+  return fetch(verifyTokenUrl)
+    .then(res => {
+      //console.log('res1: ', res)
+      if (!res.ok) throw 'Unable to verify Facebook token'
+      return res.json()
+    })
+    .then(json => {
+      console.log('json: ', json)
+      if (!json.data.is_valid) throw 'Facebook token is not valid'
+
+      const fbProfileUrl = buildUrl('https://graph.facebook.com', {
+        path: `v2.8/${ json.data.user_id }`,
+        queryParams: {
+          access_token: facebookToken,
+          fields: 'id,name,email,first_name,last_name'
+        }
+      })
+
+      // Retrieve user's Facebook profile.
+      return fetch(fbProfileUrl)
+    })
+    .then(res => {
+      //console.log('res2: ', res)
+      if (!res.ok) throw 'Unable to retrieve Facebook profile'
+      return res.json()
+    })
+    .then(fbProfile => {
+      console.log('json2: ', fbProfile)
+
+      // Try to find existing user with this Facebook id.
+      return Promise.all([
+        fbProfile,
+        User.findOne({
+          where: { facebookId: fbProfile.id },
+          include: [{
+            model: Permission,
+            include: [Resource]
+          }]
+        })
+      ])
+    })
+    .then(results => {
+      const fbProfile = results[0]
+      const user = results[1]
+
+      console.log('profile: ', fbProfile)
+
+      // If no user found with facebookId, create a new one.
+      if (!user) {
+        // TODO: There is currently no guarantee that the automatically created
+        // username from the facebook profile will be unique in this system.
+        // Check for uniqueness first, and then append numbers to the end until
+        // it is unique. Don't want to use the email as the username so that
+        // users' emails aren't passed around the internet inside their tokens.
+        return Promise.all([
+          fbProfile,
+          User.create({
+            username: base64url.escape(fbProfile.name.replace(/ /g, '')).toLowerCase(),
+            email: fbProfile.email,
+            facebookId: fbProfile.id,
+            isAdmin: false,
+            isActive: true
+          })
+        ])
+      }
+
+      // Otherwise, use the user that was found and update his/her loginAt
+      return Promise.all([null, user.loginUpdate()])
+    })
+    .then(results => {
+      const fbProfile = results[0]
+      const user = results[1]
+      const payload = user.tokenPayload()
+
+      // If this is a new user that was just created and passed a fbProfile here
+      // then attach it to the token payload to be used by the front-end to
+      // do what it needs to do with that data (e.g., create an app-specific
+      // profile on its own server).
+      if (fbProfile) payload.fbProfile = fbProfile
+
+      return payload
+    })
 })
 
 module.exports = cred

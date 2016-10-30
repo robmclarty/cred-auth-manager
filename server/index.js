@@ -21,10 +21,11 @@ app.use(bodyParser.json())
 
 // Enable cross-origin resource sharing.
 app.use(cors({
-  origin: config.origin,
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false
+  credentials: false,
+  preflightContinue: true
 }))
 
 // Pass remote address through proxy so that limiter knows about it.

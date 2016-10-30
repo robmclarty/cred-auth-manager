@@ -75,6 +75,12 @@ const postRegister = (req, res, next) => {
     .catch(next)
 }
 
+// Create a new facebook user storing a facebookId instead of username/password.
+// POST /registration/facebook
+const postRegisterFacebook = (req, res, next) => {
+
+}
+
 const getUsers = (req, res, next) => {
   User.findAll({
     include: [{
