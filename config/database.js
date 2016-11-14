@@ -12,7 +12,7 @@ module.exports = {
     seederStorage: 'sequelize'
   },
   production: {
-    url: process.env.DATABASE,
+    url: process.env.DATABASE || 'postgres://authuser:iQCtIRJr6zJZcnsN6Ja0dRoNl7PsLoe7HgJDs74UVQbXD72vuKw0SswZKmPiuks@localhost:5432/auth',
     dialect: 'postgres',
     seederStorage: 'sequelize'
   }

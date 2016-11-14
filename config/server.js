@@ -2,6 +2,7 @@
 
 module.exports = {
   appName: process.env.APP_NAME || 'cred-auth-manager',
+  folderName: process.env.FOLDER_NAME || 'auth',
   issuer: process.env.ISSUER || 'cred-auth-manager',
   origin: process.env.ORIGIN || '*',
   redis: process.env.REDIS || 'redis://localhost:6379',

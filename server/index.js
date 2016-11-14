@@ -21,7 +21,7 @@ app.use(bodyParser.json())
 
 // Enable cross-origin resource sharing.
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: config.origin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: false,

@@ -1,30 +1,32 @@
 [
   {
     "name": "cred-auth-manager",
-    "cwd": "/opt/cred-auth-manager",
+    "cwd": "/opt/auth",
     "script": "server/start.js",
     "max_memory_restart": "350M",
     "watch": false,
     "instances": 0,
     "env": {
       "NODE_ENV": "production",
-      "PORT": 4010,
+      "PORT": 4000,
       "APP_NAME": "cred-auth-manager",
+      "FOLDER_NAME": "auth",
       "ISSUER": "cred-auth-manager",
       "ORIGIN": "*",
-      "ASSETS_PATH": "/srv/opt/cred-auth-manager",
-      "ACCESS_PRIVATE_KEY": "/etc/opt/cred-auth-manager/certs/private/access-private.pem",
-      "ACCESS_PUBLIC_KEY": "/etc/opt/cred-auth-manager/certs/access-public.pem",
+      "DATABASE": "postgres://authuser:authpassword@localhost:5432/auth",
+      "ASSETS_PATH": "/srv/opt/auth",
+      "ACCESS_PRIVATE_KEY": "/etc/opt/auth/certs/private/access-private.pem",
+      "ACCESS_PUBLIC_KEY": "/etc/opt/auth/certs/access-public.pem",
       "ACCESS_EXPIRES_IN": "24 days",
       "ACCESS_ALG": "ES384",
       "REFRESH_SECRET": "[INSERT-SECRET_HERE]",
       "REFRESH_EXPIRES_IN": "7 days",
       "REFRESH_ALG": "HS512"
     },
-    "error_file": "/var/opt/cred-auth-manager/logs/err.log",
-    "out_file": "/var/opt/cred-auth-manager/logs/out.log",
+    "error_file": "/var/opt/auth/logs/err.log",
+    "out_file": "/var/opt/auth/logs/out.log",
     "merge_logs": true,
     "log_date_format": "YYYY-MM-DD HH:mm Z",
-    "pid_file": "/var/opt/cred-auth-manager/pm2.pid"
+    "pid_file": "/var/opt/auth/pm2.pid"
   }
 ]

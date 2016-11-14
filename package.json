@@ -36,6 +36,7 @@
     "pg": "6.0.3",
     "redis": "2.6.2",
     "sequelize": "3.23.6",
+    "sequelize-cli": "2.4.0",
     "validator": "5.5.0"
   },
   "devDependencies": {
@@ -54,6 +55,9 @@
     "gulp-concat": "2.6.0",
     "gulp-cssnano": "2.1.2",
     "gulp-if": "2.0.1",
+    "gulp-rev": "7.1.2",
+    "gulp-rev-replace": "0.4.3",
+    "gulp-rsync": "0.0.6",
     "gulp-sass": "2.3.2",
     "gulp-sourcemaps": "1.6.0",
     "gulp-uglify": "2.0.0",
@@ -71,7 +75,6 @@
     "react-router-scroll": "0.3.2",
     "redux": "3.5.2",
     "require-dir": "0.3.0",
-    "sequelize-cli": "2.4.0",
     "sequelize-fixtures": "0.5.4",
     "supertest": "2.0.0",
     "supertest-as-promised": "3.2.0",
