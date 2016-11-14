@@ -19,7 +19,7 @@
       "ACCESS_PUBLIC_KEY": "/etc/opt/auth/certs/access-public.pem",
       "ACCESS_EXPIRES_IN": "24 days",
       "ACCESS_ALG": "ES384",
-      "REFRESH_SECRET": "[INSERT-SECRET_HERE]",
+      "REFRESH_SECRET": "shhhhhhh_its_a_secret",
       "REFRESH_EXPIRES_IN": "7 days",
       "REFRESH_ALG": "HS512"
     },
