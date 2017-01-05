@@ -1,7 +1,8 @@
 node_modules
 coverage
 build/**/*
-config/admin-options.json
+config/private-key.pem
+config/public-key.pem
 .sass_cache
 .DS_Store
 *.log

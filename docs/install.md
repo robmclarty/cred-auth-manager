@@ -98,3 +98,49 @@ defined in the `authorizedAccess` array.
 
 The point is, it's flexible and can be used in conjuction with your own
 middleware to give you all the control you need to manage authorization.
+
+## Misc
+
+Reference: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04
+
+sudo add-apt-repository ppa:nginx/stable
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get update
+sudo apt-get install -y build-essential git nginx nodejs postgresql postgresql-contrib
+sudo apt-get upgrade -y openssl
+
+sudo npm install -g n
+sudo n 6.2.2
+sudo npm install -g yarn
+sudo npm install -g pm2
+
+# Login to postgres and setup user
+
+sudo -i -u postgres
+createdb auth
+psql -d auth
+CREATE USER authuser WITH PASSWORD 'VV4USkPBfhZEbTcmJqVcntHiCZ2e2jby98Tg4e9RUAGdSA9';
+\q
+exit
+
+
+psql template1
+\q # to quit
+
+\l # list
+\dt # list all tables in current db
+\c db_name # switch db
+
+CREATE USER authuser WITH PASSWORD 'VV4USkPBfhZEbTcmJqVcntHiCZ2e2jby98Tg4e9RUAGdSA9';
+GRANT ALL PRIVILEGES ON DATABASE quota to authuser;
+
+createuser --interactive
+createdb quota
+
+./node_modules/.bin/sequelize db:migrate --env production
+./node_modules/.bin/sequelize db:seed:all
+
+NOTE: For some reason, the seed command ignores the --env flag so you'll need
+to make a one time change to use the production credentials in place of the
+development credentials for the db in /config/database.js. After the db is
+seeded this isn't needed anymore and can be overwritten.

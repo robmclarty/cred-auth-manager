@@ -24,8 +24,8 @@ app.use(cors({
   origin: config.origin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false,
-  preflightContinue: true
+  credentials: false
+  //preflightContinue: true
 }))
 
 // Pass remote address through proxy so that limiter knows about it.

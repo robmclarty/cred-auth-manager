@@ -46,9 +46,9 @@ localforage.config({
   name: config.appName,
   storeName: 'auth',
   driver: [
-    localforage.LOCALSTORAGE,
     localforage.INDEXEDDB,
-    localforage.WEBSQL
+    localforage.WEBSQL,
+    localforage.LOCALSTORAGE
   ]
 });
 
