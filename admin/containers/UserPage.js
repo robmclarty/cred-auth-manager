@@ -12,9 +12,7 @@ const UserPageComponent = ({
   isAuthenticated,
   onSubmit,
   onClickRemove
-}) => {
-  console.log('user: ', user)
-  return (
+}) => (
   <Page name={user.id ? 'Modify User' : 'Add User'}>
     <UserForm
         user={user}
@@ -38,7 +36,6 @@ const UserPageComponent = ({
     }
   </Page>
 )
-}
 
 // Use a purposely invalid id if its value is "new" in order to trigger the user
 // form in "add user" mode as opposed to "update user" mode.
