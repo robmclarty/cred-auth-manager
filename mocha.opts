@@ -1,5 +1,5 @@
 --ui bdd
---reporter tap
+--reporter spec
 --require ./tests/server/common
 --recursive ./tests
 --timeout 5000
