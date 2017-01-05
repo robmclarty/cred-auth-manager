@@ -1,5 +1,4 @@
 .global-header {
-
 }
 
 .site-name {
@@ -13,7 +12,6 @@
   line-height: 1em;
 
   & > a {
-    //font-family: $font-bold;
     line-height: 1em;
     height: 100%;
     padding: 0 1em;
@@ -21,25 +19,27 @@
     font-weight: normal;
     text-decoration: none;
     color: $col-primary;
-    //opacity: 1;
     text-transform: uppercase;
 
-    // &:hover {
-    //   color: $col-primary;
-    //   opacity: 1;
-    //
-    //   //background: rgba(0, 0, 0, .04);
-    // }
-
-    span {
+    .title {
+      margin-left: 30px;
       font-family: $font-extrabold;
       line-height: 3em;
     }
 
     .logo {
+      position: absolute;
+      top: 50%;
+      margin-top: -15px;
+      display: block;
       width: 25px;
       height: 25px;
       margin-right: 0.4em;
+      background-image: url('../images/lock-combination.svg');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-color: transparent;
+      background-size: 25px 25px;
     }
   }
 }

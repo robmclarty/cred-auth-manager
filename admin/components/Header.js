@@ -29,8 +29,8 @@ const Header = ({
     <header className="global-header">
       <h1 className="site-name">
         <Link to="/admin/">
-          <span className="ion-lock-combination logo"></span>
-          <span>Cred Auth Manager</span>
+          <span className="logo"></span>
+          <span className="title">Cred Auth Manager</span>
         </Link>
       </h1>
 
