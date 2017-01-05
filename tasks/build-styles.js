@@ -12,8 +12,9 @@ const autoprefixer = require('gulp-autoprefixer')
 // assets. Minify and output to the build folder.
 gulp.task('build:styles', function () {
   const isProduction = process.env.NODE_ENV === 'production'
+  const stylesRoot = process.env.STYLES_ROOT || './styles/admin/index.scss'
 
-  return gulp.src(['./styles/admin/index.scss'])
+  return gulp.src([stylesRoot])
     .pipe(gulpif(!isProduction, sourcemaps.init({ loadMaps: true })))
       .pipe(concat('application.scss'))
       .pipe(sass({ style: 'expanded' }))
