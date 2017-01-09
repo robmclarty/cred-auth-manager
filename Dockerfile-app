@@ -1,0 +1,42 @@
+FROM node:7.4.0
+
+MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
+
+EXPOSE 3000
+
+ENV NODE_ENV development
+
+# Create an unpriviledged user called "cred-auth-user" so that default root user
+# is not used.
+#RUN useradd --user-group --create-home --shell /bin/false app-user
+
+# Create folder to hold app files.
+RUN mkdir -p /opt/cred-auth-manager/config
+
+# Define an environment variable called $HOME which will reference the
+# `app-user` user's home directory.
+ENV HOME=/opt/cred-auth-manager
+
+WORKDIR $HOME
+
+# Copy package.json to working directory in order to install dependencies.
+# NOTE: Not copying application files at this time to speed up build process and
+# take better advantage of docker's layer caching.
+COPY package.json $HOME/
+
+# Install all npm package dependencies.
+RUN npm install
+
+# Update permissions for all files under $HOME so that `app-user` can use them,
+# because files copied with the COPY command will be owned by `root` by default.
+#RUN chown -R app-user:app-user $HOME/*
+
+# Switch to `app-user` as the USER and change the working directory to a folder
+# inside that user's home directory.
+#USER app-user
+
+# Copy all app files to working directory.
+COPY config/server.js config/database.js $HOME/config/
+COPY server db .sequelizerc $HOME/
+
+CMD ['npm', 'start']

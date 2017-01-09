@@ -1,20 +1,33 @@
 version: '2'
-
 services:
-  cred-auth-manager:
-    build: ./
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile-app
+    container_name: app
     depends_on:
       - db
     ports:
       - '3000:3000'
     environment:
-      DATABASE: 'postgres://db:5432/cred-auth-manager'
+      NODE_ENV: development
+      DATABASE: postgres://db:5432/cred-auth-manager
     links:
       - db
     volumes:
-      - ./:/cred-auth-manager
+      - .:/opt/cred-auth-manager
+      - /opt/cred-auth-manager/node_modules
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile-web
+    container_name: web
+    ports:
+      - '80:80'
+    volumes:
+      - .:/srv/opt/cred-auth-manager
   db:
-    image: 'postgres:9.6'
+    image: postgres:9.6
     restart: always
     expose:
       - 5432

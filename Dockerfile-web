@@ -1,0 +1,19 @@
+FROM nginx:1.10.2
+
+MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
+
+EXPOSE 80
+
+ENV NODE_ENV production
+
+RUN mkdir -p /srv/opt/cred-auth-manager
+ENV HOME=/srv/opt/cred-auth-manager
+WORKDIR $HOME
+
+RUN rm /etc/nginx/sites-enabled/default
+COPY config/nginx.conf /etc/nginx/nginx.conf
+COPY config/cred-auth-manager.conf /etc/nginx/sites-available/cred-auth-manager.conf
+
+COPY build $HOME/
+
+CMD ['service', 'nginx', 'start']
