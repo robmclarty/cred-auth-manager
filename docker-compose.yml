@@ -1,33 +1,39 @@
 version: '2'
 services:
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-web
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      NODE_ENV: development
+      VIRTUAL_HOST: cred-auth-manager.com
+    links:
+      - app
   app:
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile-app
-    container_name: app
-    depends_on:
-      - db
     ports:
       - '3000:3000'
     environment:
       NODE_ENV: development
-      DATABASE: postgres://db:5432/cred-auth-manager
+      DATABASE: postgres://db-user:password@db:5432/cred-auth-manager
     links:
       - db
     volumes:
       - .:/opt/cred-auth-manager
       - /opt/cred-auth-manager/node_modules
-  web:
-    build:
-      context: ./
-      dockerfile: Dockerfile-web
-    container_name: web
-    ports:
-      - '80:80'
-    volumes:
-      - .:/srv/opt/cred-auth-manager
   db:
-    image: postgres:9.6
     restart: always
-    expose:
-      - 5432
+    image: postgres:9.6
+    ports:
+      - '5432:5432'
+    environment:
+      # The following environment vars will be automatically picked up by the
+      # docker image and used to initialize the database.
+      POSTGRES_USER: db-user
+      POSTGRES_PASSWORD: password

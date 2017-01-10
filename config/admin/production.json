@@ -1,4 +1,4 @@
 {
   "appName": "cred-auth-manager",
-  "authRoot": "https://your-auth-domain.com"
+  "authRoot": "http://localhost"
 }

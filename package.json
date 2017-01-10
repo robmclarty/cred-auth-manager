@@ -5,6 +5,7 @@
   "main": "server/start.js",
   "scripts": {
     "start": "node ./server/start.js",
+    "dockerize": "./node_modules/.bin/gulp build && docker-compose up",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
     "db:seed": "./node_modules/.bin/sequelize db:seed:all",
     "test": "node_modules/.bin/mocha --opts ./mocha.opts",

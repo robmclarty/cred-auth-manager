@@ -2,18 +2,24 @@ FROM nginx:1.10.2
 
 MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
 
-EXPOSE 80
+EXPOSE 80 443
 
-ENV NODE_ENV production
-
+# Create directory for static files.
 RUN mkdir -p /srv/opt/cred-auth-manager
-ENV HOME=/srv/opt/cred-auth-manager
-WORKDIR $HOME
 
-RUN rm /etc/nginx/sites-enabled/default
+# Remove default site.
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy general nginx config.
 COPY config/nginx.conf /etc/nginx/nginx.conf
-COPY config/cred-auth-manager.conf /etc/nginx/sites-available/cred-auth-manager.conf
 
-COPY build $HOME/
+# Process needs to run in foreground within container.
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-CMD ['service', 'nginx', 'start']
+# Copy site-specific config.
+COPY config/cred-auth-manager.conf /etc/nginx/conf.d/cred-auth-manager.conf
+
+# Copy all static files to image.
+COPY build /srv/opt/cred-auth-manager/
+
+CMD ["nginx"]

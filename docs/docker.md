@@ -38,3 +38,32 @@ or leave that for someone implementing a higher-level OS container?
 7. Does file hierarchy matter in containers?
 
 8. How do I incorporate nginx for a production setup?
+
+
+`docker pull <image name>` - pull an image stored on docker hub down to local machine
+
+`docker images` - list images stored locally
+
+`docker run <image name> <command>` - run a docker *container* based on an *image*
+`docker run alpine ls -l` - run image 'alpine' as container and list files in root
+`docker run alpine /bin/sh` - run image 'alpine' as container and launch bash session
+
+To launch container with an *interactive terminal* without exiting, use the
+`-it` flag for `docker run` (type `exit` to get out of it):
+
+`docker run -it alpine /bin/sh` - launch interactive terminal in alphine container
+
+`docker run --name <new container name> -p 80:80 -d <image name>`
+
+`docker ps` - List all containers that are currently running
+`docker ps -a` - List all containers that have run in the past too
+
+`docker stop <container name>` - stop a running container
+
+`docker rm $(docker ps -a -q)` - destroy all containers
+`docker rmi $(docker images -q)` - destroy all images
+
+`docker-compose up` - build any unbuilt images and launch containers
+`docker-compose up --build` - force rebuild of images before launching containers
+`docker-compose up --force-recreate` - force recreate of all images
+`docker-compose down` - tear down any active containers

@@ -20,23 +20,13 @@ ENV HOME=/opt/cred-auth-manager
 WORKDIR $HOME
 
 # Copy package.json to working directory in order to install dependencies.
-# NOTE: Not copying application files at this time to speed up build process and
-# take better advantage of docker's layer caching.
 COPY package.json $HOME/
 
 # Install all npm package dependencies.
-RUN npm install
-
-# Update permissions for all files under $HOME so that `app-user` can use them,
-# because files copied with the COPY command will be owned by `root` by default.
-#RUN chown -R app-user:app-user $HOME/*
-
-# Switch to `app-user` as the USER and change the working directory to a folder
-# inside that user's home directory.
-#USER app-user
+RUN npm install --production --quiet
 
 # Copy all app files to working directory.
 COPY config/server.js config/database.js $HOME/config/
 COPY server db .sequelizerc $HOME/
 
-CMD ['npm', 'start']
+CMD ["npm", "start"]
