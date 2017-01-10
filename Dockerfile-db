@@ -1,3 +1,0 @@
-FROM postgres:9.6
-
-COPY config/initdb.sql /docker-entrypoint-initdb.d/
