@@ -5,23 +5,28 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-web
-    ports:
-      - '80:80'
-      - '443:443'
+    expose:
+      - 80
+      - 443
     environment:
-      NODE_ENV: development
       VIRTUAL_HOST: cred-auth-manager.com
+      APP_HOST: app
+      APP_HOST_PORT: 3000
+    depends_on:
+      - app
     links:
       - app
   app:
     build:
       context: .
       dockerfile: Dockerfile-app
-    ports:
-      - '3000:3000'
+    expose:
+      - 3000
     environment:
       NODE_ENV: development
       DATABASE: postgres://db-user:password@db:5432/cred-auth-manager
+    depends_on:
+      - db
     links:
       - db
     volumes:
@@ -30,8 +35,8 @@ services:
   db:
     restart: always
     image: postgres:9.6
-    ports:
-      - '5432:5432'
+    expose:
+      - 5432
     environment:
       # The following environment vars will be automatically picked up by the
       # docker image and used to initialize the database.
