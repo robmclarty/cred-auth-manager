@@ -86,3 +86,8 @@ Watch logs using `docker-compose logs <container>`
 `docker-compose stop app`
 
 Check running containers with `docker-compose ps`
+
+Launch using multiple compose files (using the `-f` option). Subsequent
+compose file values will override values from previous compose files:
+
+`docker-compose -f docker-compose.yml -f docker-compose-production.yml up -d`
