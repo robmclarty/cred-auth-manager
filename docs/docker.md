@@ -67,3 +67,22 @@ To launch container with an *interactive terminal* without exiting, use the
 `docker-compose up --build` - force rebuild of images before launching containers
 `docker-compose up --force-recreate` - force recreate of all images
 `docker-compose down` - tear down any active containers
+
+
+To initialize the database with migrations from an app container, first start
+up the app + the db containers in daemon mode (using `-d`) and then use the
+`docker-compose exec <container> <command>` syntax to run your migration scripts.
+
+`docker-compose up -d db`
+`docker-compose up -d app`
+`docker-compose exec app npm run db:migrate`
+`docker-compose exec app npm run db:seed`
+(the commands `db:migrate` and `db:seed` are defined in the `package.json` for
+the `app` container)
+
+Watch logs using `docker-compose logs <container>`
+
+`docker-compose stop db`
+`docker-compose stop app`
+
+Check running containers with `docker-compose ps`

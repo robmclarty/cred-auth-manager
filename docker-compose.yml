@@ -5,13 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-web
-    expose:
-      - 80
-      - 443
+    ports:
+      - '80:80'
+      - '443:443'
     environment:
       VIRTUAL_HOST: cred-auth-manager.com
-      APP_HOST: app
-      APP_HOST_PORT: 3000
     depends_on:
       - app
     links:
@@ -42,3 +40,4 @@ services:
       # docker image and used to initialize the database.
       POSTGRES_USER: db-user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: cred-auth-manager

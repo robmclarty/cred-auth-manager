@@ -8,6 +8,7 @@ module.exports = {
       queryInterface.addColumn('Users', 'twitterId', Sequelize.STRING),
       queryInterface.addColumn('Users', 'googleId', Sequelize.STRING)
     ])
+    .catch(err => console.log('Already exists; skipping...'))
   },
 
   down: function (queryInterface, Sequelize) {
