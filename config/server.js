@@ -8,8 +8,8 @@ module.exports = {
   redis: process.env.REDIS || 'redis://localhost:6379',
   assetsPath: process.env.ASSETS_PATH || './build',
   access: {
-    privateKeyPath: process.env.ACCESS_PRIVATE_KEY || './config/private-key.pem.sample',
-    publicKeyPath: process.env.ACCESS_PUBLIC_KEY || './config/public-key.pem.sample',
+    privateKeyPath: process.env.ACCESS_PRIVATE_KEY || './config/keys/private-key.pem.sample',
+    publicKeyPath: process.env.ACCESS_PUBLIC_KEY || './config/keys/public-key.pem.sample',
     expiresIn: process.env.ACCESS_EXPIRES_IN || '24 hours',
     algorithm: process.env.ACCESS_ALG || 'ES384' // ECDSA using P-384 curve and SHA-384 hash algorithm
   },

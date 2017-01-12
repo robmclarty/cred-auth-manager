@@ -12,7 +12,6 @@ const buffer = require('vinyl-buffer')
 
 const vendors = [
   'chart.js',
-  //'cred-redux',
   'moment',
   'node-fetch',
   'paginated-redux',

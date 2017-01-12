@@ -1,7 +1,13 @@
-let config = require('./development.json')
+'use strict'
 
-// By default, use the dev environment. If 'production' is explicitly specified,
-// use the special production config variables instead.
-if (process.env.NODE_ENV === 'production') config = require('./production.json')
+const settings = require('./settings.json')
+const isProduction = process.env.NODE_ENV === 'production'
 
-module.exports = config
+const stuff = {
+  appName: process.env.APP_NAME || isProduction ? settings.appName : "cred-auth-manager",
+  authRoot: process.env.AUTH_ROOT || isProduction ? settings.authRoot : "http://localhost"
+}
+
+console.log('stuff: ', stuff)
+
+module.exports = stuff

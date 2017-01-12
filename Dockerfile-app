@@ -4,8 +4,6 @@ MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
 
 EXPOSE 3000
 
-ENV NODE_ENV development
-
 # Create an unpriviledged user called "cred-auth-user" so that default root user
 # is not used.
 #RUN useradd --user-group --create-home --shell /bin/false app-user

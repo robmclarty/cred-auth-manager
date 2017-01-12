@@ -11,13 +11,13 @@ RUN mkdir -p /srv/opt/cred-auth-manager
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy general nginx config.
-COPY config/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Process needs to run in foreground within container.
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 # Copy site-specific config.
-COPY config/cred-auth-manager.conf /etc/nginx/conf.d/cred-auth-manager.conf
+COPY config/nginx/cred-auth-manager.conf /etc/nginx/conf.d/cred-auth-manager.conf
 
 # Copy all static files to image.
 COPY build /srv/opt/cred-auth-manager/
