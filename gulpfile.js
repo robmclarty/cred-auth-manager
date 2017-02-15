@@ -14,10 +14,18 @@ function setProductionEnv(done) {
 }
 
 function watch() {
-  gulp.watch('styles/**/*', gulp.parallel('build:styles'))
-  gulp.watch('admin/**/*', gulp.parallel('build:admin', 'build:html'))
   gulp.watch('assets/**/*', gulp.parallel('build:assets'))
-  gulp.watch('server/**/*', gulp.series('server'))
+  gulp.watch('styles/**/*', gulp.parallel('build:styles'))
+  gulp.watch([
+    'admin/**/*',
+    'config/admin/**/*'
+  ], gulp.parallel('build:admin', 'build:html'))
+  gulp.watch([
+    'server/**/*',
+    'config/keys/**/*',
+    'config/database.js',
+    'config/server.js'
+  ], gulp.series('server'))
 }
 watch.description = 'Watch variable folders for changes and rebuild if necessary.'
 gulp.task(watch)
