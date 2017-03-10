@@ -1,0 +1,4 @@
+{
+  "appName": "my-staging-auth-manager",
+  "authRoot": "https://my-auth-staging-server.com"
+}

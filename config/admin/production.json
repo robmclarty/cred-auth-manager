@@ -1,0 +1,4 @@
+{
+  "appName": "my-auth-manager",
+  "authRoot": "https://my-auth-server.com"
+}
