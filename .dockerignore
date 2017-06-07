@@ -1,3 +1,9 @@
 node_modules
 .tmp
 coverage
+assets
+docs
+styles
+subapps
+tasks
+tests

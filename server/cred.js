@@ -11,7 +11,6 @@ const { User, Permission, Resource } = require('./models')
 // Authentication
 // --------------
 const cred = gotCred({
-  //key: 'cred',
   resource: config.appName,
   issuer: config.issuer,
   //cache: config.redis,
@@ -66,7 +65,6 @@ cred.use('basic', req => {
 // payload for that user. If no user is found with this facebookId, create a new
 // user with that id.
 cred.use('facebook', req => {
-  console.log('body: ', req.body)
   const facebookToken = req.body.facebookToken
 
   if (!facebookToken) throw 'No Facebook access token provided'
@@ -82,12 +80,11 @@ cred.use('facebook', req => {
   // Verify that the Facebook access token is valid.
   return fetch(verifyTokenUrl)
     .then(res => {
-      //console.log('res1: ', res)
       if (!res.ok) throw 'Unable to verify Facebook token'
+
       return res.json()
     })
     .then(json => {
-      console.log('json: ', json)
       if (!json.data.is_valid) throw 'Facebook token is not valid'
 
       const fbProfileUrl = buildUrl('https://graph.facebook.com', {
@@ -102,13 +99,11 @@ cred.use('facebook', req => {
       return fetch(fbProfileUrl)
     })
     .then(res => {
-      //console.log('res2: ', res)
       if (!res.ok) throw 'Unable to retrieve Facebook profile'
+
       return res.json()
     })
     .then(fbProfile => {
-      console.log('json2: ', fbProfile)
-
       // Try to find existing user with this Facebook id.
       return Promise.all([
         fbProfile,
@@ -124,8 +119,6 @@ cred.use('facebook', req => {
     .then(results => {
       const fbProfile = results[0]
       const user = results[1]
-
-      console.log('profile: ', fbProfile)
 
       // If no user found with facebookId, create a new one.
       if (!user) {

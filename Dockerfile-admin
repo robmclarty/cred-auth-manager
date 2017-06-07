@@ -1,0 +1,17 @@
+# https://hub.docker.com/_/nginx/
+FROM nginx:1.13.1-alpine
+
+MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
+
+RUN mkdir -p /srv/opt/app
+WORKDIR /srv/opt/app
+
+RUN rm /etc/nginx/nginx.conf
+
+COPY build/ /srv/opt/app/
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/admin.conf /etc/nginx/sites-enabled/admin.conf
+
+EXPOSE 80 443
+
+CMD ["nginx"]

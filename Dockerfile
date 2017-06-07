@@ -1,56 +1,42 @@
-FROM ubuntu:16.04
+# Base image upon which subsequent data will be added.
+# Found on Docker Hub: https://hub.docker.com/_/node/
+FROM node:7.10-alpine
 
-MAINTAINER Rob McLarty <r@robmclarty.com> (robmclarty.com)
+# Name of the author or maintainer as a single string.
+MAINTAINER Rob McLarty <r@robmclarty.com> (http://robmclarty.com)
 
-EXPOSE 80 443
+# Install system dependencies using Alpine Linux package manager.
+# List of apk packages: https://pkgs.alpinelinux.org/packages
+# (e.g., need gcc to compile npm packages with C bindings)
+RUN apk add --update make gcc g++ git python
 
-RUN apt-get update \
-  && apt-get install -yq \
-    curl \
-    software-properties-common \
-  && add-apt-repository ppa:nginx/stable \
-  && curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-  && apt-get update \
-  && apt-get install -yq \
-    build-essential \
-    git \
-    nginx \
-    nodejs \
-    postgresql \
-    postgresql-client \
-    postgresql-contrib \
-  && apt-get upgrade -yq openssl \
-  && rm -rf /var/lib/apt/lists/* \
-  && apt-get -y autoclean
+# Create directory to store app code.
+RUN mkdir -p /opt/app/config/keys
 
-# Login to postgres and setup user
-USER postgres
+# Change the current working directory to the new app directory.
+WORKDIR /opt/app
 
-RUN /etc/init.d/postgresql start \
-  && psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'pguser';" \
-  && createdb -O pguser cred-auth-manager
+# Install app dependencies from local source code.
+# e.g., `COPY file1 file2 file3 /path/in/container`
+COPY package.json .npmrc .sequelizerc /opt/app/
+COPY config/server.js config/database.js /opt/app/config/
+# Use env secrets instead of this
+COPY config/keys /opt/app/config/keys
+COPY server /opt/app/server
+COPY db /opt/app/db
+RUN npm install --production
 
-ENV DATABASE=postgres://pguser@127.0.0.1:5432/cred-auth-manager
+# NOTE: node-alpine creates a group "node" and a user "node" and adds that user
+# to that group for use in running the node app as a limited-priviledge user.
+# Because this is included in the base image, we don't need to define this again
+# with the following command, so it has been commented out.
+# RUN groupadd -r node && useradd -r -g node node
 
-USER root
+# Set the user when running this image.
+USER node
 
-RUN mkdir -p /opt/cred-auth-manager/config \
-  && mkdir -p /etc/opt/cred-auth-manager \
-  && mkdir -p /var/opt/cred-auth-manager \
-  && mkdir -p /srv/opt/cred-auth-manager
+# Open ports to outside world.
+EXPOSE 3000
 
-WORKDIR /opt/cred-auth-manager
-
-COPY server db package.json .sequelizerc /opt/cred-auth-manager/
-COPY config/server.js config/database.js /opt/cred-auth-manager/config/
-COPY config/nginx-standalone.conf /etc/nginx/nginx.conf
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-COPY config/cred-auth-manager-standalone.conf /etc/nginx/sites-enabled/
-COPY build /srv/opt/cred-auth-manager/
-
-RUN npm install --production --quiet \
-  && ./node_modules/.bin/sequelize db:migrate --env production \
-  && ./node_modules/.bin/sequelize db:seed:all
-
-CMD npm start && nginx
-#CMD ["npm", "start", "&&", "nginx"]
+# Start main process.
+CMD ["node", "./server/start.js"]

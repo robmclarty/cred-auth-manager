@@ -1,0 +1,69 @@
+Resources:
+  App:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroup:
+        - !Ref AppSG # ...from definition below
+
+      # Found from starting "Launch EC2 Instance" from the AWS console.
+      # NOTE: Different regions have different codes. This one is for an
+      # Ubuntu 16.04 instance in the Canada-central region.
+      ImageId: ami-b3d965d7
+
+      # This is the name of an EC2 key pair, generated in the AWS console.
+      KeyName: docker-registry
+
+      # A bash script for configuring the fresh Ubuntu instance with docker
+      # and other tools.
+      # This grabs the dependencies for docker, apache-utils (for htpasswd),
+      # and curl. Then, it downloads the official docker image and finally
+      # creates a new user called "docker" from the existing user called "ubuntu".
+      #
+      # With all this complete, the script then installs deps for Letsencrypt
+      # and grabs new SSL certs from LE and sets up a cron job to renew those
+      # certs so they never expire.
+      UserData: !Base64 |
+        #!/bin/bash
+        apt-get update -qq
+        apt-get install -y apt-transport-https ca-certificates curl software-properties-common apache2-utils
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+        apt-get update -qq
+        apt-get -y install docker-ce
+        usermod -aG docker ubuntu
+        curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+
+  AppSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: for the app node that allows ssh, http, and docker ports
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: 'cred-auth-manager'
+      Engine: PostgresSQL
+      MasterUsername: testdbuser
+      MasterPassword: testdbpassword
+      DBInstanceClass: db.t2.micro
+      AllocatedStorage: 5
+      DBSecurityGroups:
+        - !Ref DatabaseSG
+
+  DatabaseSG:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties:
+      GroupDescription: 'Security group for RDS public access'
+      DBSecurityGroupIngress:
+        - CIDRIP: '0.0.0.0/0'
