@@ -1,7 +1,7 @@
 {
   "name": "cred-auth-manager",
   "version": "0.6.0",
-  "description": "A JSON resource API, with front-end admin web UI, using the Cred JWT library for authentication and authorization.",
+  "description": "An auth system for managing users and resources via custom persmissions using JSON web tokens.",
   "scripts": {
     "start": "node ./server/start.js",
     "dockerize": "./node_modules/.bin/gulp build && docker-compose up",
