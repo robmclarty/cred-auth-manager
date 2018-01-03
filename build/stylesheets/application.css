@@ -170,7 +170,8 @@ figure {
  * Address differences between Firefox and other browsers.
  */
 hr {
-  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   height: 0; }
 
 /**
@@ -276,7 +277,8 @@ input {
  */
 input[type="checkbox"],
 input[type="radio"] {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   /* 1 */
   padding: 0;
   /* 2 */ }
@@ -298,6 +300,7 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="search"] {
   -webkit-appearance: textfield;
   /* 1 */
+  -webkit-box-sizing: content-box;
   /* 2 */
   box-sizing: content-box; }
 
@@ -2667,7 +2670,8 @@ th {
 *,
 *:before,
 *:after {
-  box-sizing: border-box; }
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
 
 ::-ms-clear {
   display: none;
@@ -2796,16 +2800,22 @@ label {
     top: 0;
     left: 0;
     right: 0;
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-direction: row;
-        flex-direction: row;
-    -ms-flex-align: center;
-        align-items: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     width: 100%;
     height: 3.5em;
+    background: -webkit-gradient(linear, left top, left bottom, from(0), color-stop(rgba(224, 224, 206, 0.9)), to(#e0e0ce));
     background: linear-gradient(0, rgba(224, 224, 206, 0.9), #e0e0ce);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); }
+    -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); }
   .app-container main {
     width: 100%;
     padding: 0 3em; }
@@ -2929,11 +2939,21 @@ button.cancel {
     top: 0;
     left: 100px; }
 
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
 @keyframes spin {
   from {
-    transform: rotate(0deg); }
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
   to {
-    transform: rotate(360deg); } }
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
 
 .flash {
   position: relative;
@@ -2942,7 +2962,8 @@ button.cancel {
   min-height: 4em;
   color: white;
   border: 0 !important;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.02);
+  -webkit-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.02);
+          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.02);
   border-radius: 3em;
   background-color: rgba(255, 255, 255, 0.5) !important; }
   .flash .flash-icon {
@@ -2963,16 +2984,20 @@ button.cancel {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; }
     .flash .flash-icon:before {
+      display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
       width: 30px;
       height: 30px;
       font-size: 30px;
-      -ms-flex-align: center;
-          align-items: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-      transform-origin: center center; }
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-transform-origin: center center;
+              transform-origin: center center; }
   .flash .flash-text {
     display: block;
     margin-left: 3em;
@@ -3008,10 +3033,14 @@ button.cancel {
         opacity: 1; }
   .flash.pending .flash-icon:before {
     content: "\f29d";
-    animation-name: spin;
-    animation-duration: 3000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear; }
+    -webkit-animation-name: spin;
+            animation-name: spin;
+    -webkit-animation-duration: 3000ms;
+            animation-duration: 3000ms;
+    -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+            animation-timing-function: linear; }
   .flash.success {
     color: #3c763d;
     background-color: #dff0d8;
@@ -3053,12 +3082,15 @@ button.cancel {
   right: 0; }
 
 .site-name {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-align: center;
-      align-items: center;
-  -ms-flex: none;
-      flex: none;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
   height: 100%;
   margin: 0;
   padding: 0 0 0 2em;
@@ -3092,14 +3124,19 @@ button.cancel {
       background-size: 25px 25px; }
 
 .site-nav {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: row;
-      flex-direction: row;
-  -ms-flex-pack: end;
-      justify-content: flex-end;
-  -ms-flex: auto;
-      flex: auto;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-flex: 1;
+      -ms-flex: auto;
+          flex: auto;
   height: 100%;
   font-size: 1em;
   line-height: 1em;
@@ -3143,7 +3180,8 @@ button.cancel {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, 5%);
+    -webkit-transform: translate(-50%, 5%);
+            transform: translate(-50%, 5%);
     font-family: "opensans_bold", Helvetica, Arial, sans-serif;
     font-size: 3em;
     line-height: 1em;
