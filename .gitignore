@@ -1,6 +1,5 @@
 node_modules
 coverage
-build/**/*
 config/keys/private-key.pem
 config/keys/public-key.pem
 config/admin/settings.json

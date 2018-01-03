@@ -36,9 +36,11 @@ app.disable('x-powered-by')
 
 // Serve static files from /build in development (on the production server,
 // this would be handled by a web server/proxy, like nginx).
-if (process.env.NODE_ENV === ('development' || 'test')) {
-  app.use('/', express.static(`${ __dirname }/../build`))
-}
+// if (process.env.NODE_ENV === ('development' || 'test')) {
+//   app.use('/', express.static(`${ __dirname }/../build`))
+// }
+
+app.use(express.static(`${ __dirname }/../build`))
 
 // Rate limiter
 // ------------

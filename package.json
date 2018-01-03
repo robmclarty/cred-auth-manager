@@ -1,8 +1,7 @@
 {
   "name": "cred-auth-manager",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "A JSON resource API, with front-end admin web UI, using the Cred JWT library for authentication and authorization.",
-  "main": "server/start.js",
   "scripts": {
     "start": "node ./server/start.js",
     "dockerize": "./node_modules/.bin/gulp build && docker-compose up",
@@ -25,6 +24,14 @@
   ],
   "author": "Rob McLarty",
   "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "build",
+    "db",
+    "server",
+    "config/server.js",
+    "config/database.js"
+  ],
   "dependencies": {
     "argon2": "0.14.1",
     "base64-url": "1.3.3",
