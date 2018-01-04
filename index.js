@@ -1,8 +1,8 @@
 'use strict'
 
-module.exports = opts => {
-  const cwd = process.cwd()
+const cwd = process.cwd()
 
+module.exports = opts => {
   process.env['ISSUER'] = opts.issuer
   process.env['APP_NAME'] = opts.issuer
   process.env['DATABASE'] = opts.database
@@ -13,14 +13,12 @@ module.exports = opts => {
 
   const app = require('./server')
   const models = require('./server/models')
-  const listen = app.listen
 
-  return {
-    use: (path, middleware) => app.use(path, middleware),
-    listen: (port, cb) => {
-      models.sequelize.sync()
-        .then(() => app.listen(port, cb))
-        .catch(err => cb(err))
-    }
-  }
+  // Override Express `listen` function in order to load the Sequelize models
+  // when Express server is started, but return express listen once done.
+  app.init = (port, cb) => models.sequelize.sync()
+    .then(() => app.listen(port, cb))
+    .catch(err => cb(err))
+
+  return app
 }

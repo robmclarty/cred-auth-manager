@@ -72,30 +72,34 @@ if (process.env.NODE_ENV === ('development' || 'test')) {
 
 // Routes
 // ------
+// Routes are bolted on through custom functions rather than done directly here
+// in this file in order to give freedom to users to apply their own custom
+// routes and middleware as they see fit. Three functions are provided to split
+// the routes into categories of 1. public, unauthenticated, routes/middleware,
+// 2. authenticated routes/middleware (all subsequent routes/middleware will
+// be required to have a valid auth token), and 3. error handling middleware.
 const tokenRoutes = require('./routes/token_routes')
 const publicRoutes = require('./routes/public_routes')
 const userRoutes = require('./routes/user_routes')
 const resourceRoutes = require('./routes/resource_routes')
+const errorHandler = require('./middleware/error_middleware')
 
-// Unauthenticated routes
-app.use('/', [
+// Unauthenticated routes.
+app.loginMiddleware = () => app.use('/', [
   tokenRoutes,
   publicRoutes
 ])
 
 // All API routes require a valid token and an active user account.
-app.use('/', [
+app.authMiddleware = () => app.use('/', [
   cred.requireAccessToken,
   cred.requireProp('isActive', true),
   userRoutes,
   resourceRoutes
 ])
 
-// Error handlers
-// --------------
-const errorHandler = require('./middleware/error_middleware')
-
-app.use([
+// Error handlers.
+app.errorMiddleware = () => app.use([
   errorHandler.sequelizeError,
   errorHandler.unauthorized,
   errorHandler.forbidden,
