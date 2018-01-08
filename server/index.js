@@ -78,27 +78,44 @@ if (process.env.NODE_ENV === ('development' || 'test')) {
 // the routes into categories of 1. public, unauthenticated, routes/middleware,
 // 2. authenticated routes/middleware (all subsequent routes/middleware will
 // be required to have a valid auth token), and 3. error handling middleware.
-const tokenRoutes = require('./routes/token_routes')
-const publicRoutes = require('./routes/public_routes')
-const userRoutes = require('./routes/user_routes')
-const resourceRoutes = require('./routes/resource_routes')
-const errorHandler = require('./middleware/error_middleware')
 
 // Unauthenticated routes.
 app.loginMiddleware = () => app.use('/', [
-  tokenRoutes,
-  publicRoutes
+  require('./routes/token_routes'),
+  //require('./routes/password_reset_routes'),
+  require('./routes/public_routes')
 ])
 
 // All API routes require a valid token and an active user account.
 app.authMiddleware = () => app.use('/', [
   cred.requireAccessToken,
   cred.requireProp('isActive', true),
-  userRoutes,
-  resourceRoutes
+  require('./routes/user_routes'),
+  //require('./routes/metadata_routes'),
+  require('./routes/resource_routes')
 ])
 
+// Friendships
+app.friendshipMiddleware = () => app.use('/', [
+  require('./routes/friendship_routes')
+])
+
+// Groups
+app.groupMiddleware = () => app.use('/', [
+  require('./routes/group_routes'),
+  require('./routes/membership_routes')
+])
+
+app.standalone = () => {
+  app.loginMiddleware()
+  app.authMiddleware()
+  app.friendshipMiddleware()
+  app.groupMiddleware()
+}
+
 // Error handlers.
+const errorHandler = require('./middleware/error_middleware')
+
 app.errorMiddleware = () => app.use([
   errorHandler.sequelizeError,
   errorHandler.unauthorized,

@@ -69,6 +69,9 @@ curl \
   http://localhost:3000/users/8
 
 
+## Metadata
+
+
 ## Permissions
 
 curl \
@@ -123,7 +126,7 @@ curl \
   http://localhost:3000/resources/4
 
 
-## Resource Actions
+## Permissible Actions for Resources
 
 curl \
   -X GET \
@@ -143,3 +146,86 @@ curl \
   -H "Content-Type: application/json" \
   -d '{"actions":["actionA"]}' \
   http://localhost:3000/resources/2/actions
+
+
+## Groups
+
+POST /groups
+
+GET /groups
+
+GET /groups/:id
+
+PUT /groups/:id
+
+DELETE /groups/:id
+
+POST /users/:user_id/groups
+
+GET /users/:user_id/groups
+
+
+## Memberships
+
+GET /memberships
+
+POST /memberships
+
+GET /memberships/:id
+
+PUT /memberships/:id
+
+DELETE /memberships/:id
+
+POST /users/:user_id/memberships
+
+GET /users/:user_id/memberships
+
+
+## Friendships
+
+POST /friendships
+
+GET /friendships
+
+GET /friendships/:id
+
+PUT /friendships/:id
+
+DELETE /friendships/:id
+
+POST /users/:user_id/friendships
+
+curl \
+  -X POST \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FjdGl2ZSI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwicGVybWlzc2lvbnMiOnsieWV0LWFub3RoZXItcmVzb3VyY2UiOnsiYWN0aW9ucyI6W119LCJpbXNpLXF1b3RhLW1hbmFnZXIiOnsiYWN0aW9ucyI6WyJ1c2VyczpyZWFkIiwidXNlcnM6d3JpdGUiLCJyZXNvdXJjZXM6cmVhZCIsInJlc291cmNlczp3cml0ZSIsInBlcm1pc3Npb25zOnJlYWQiLCJwZXJtaXNzaW9uczp3cml0ZSJdfSwibmV3LXJlc291cmNlIjp7ImFjdGlvbnMiOltdfSwiZGlhbWV0ZXItcXVvdGEiOnsiYWN0aW9ucyI6WyJwcm9maWxlczpyZWFkIiwicHJvZmlsZXM6d3JpdGUiLCJxdW90YXM6cmVhZCIsInF1b3Rhczp3cml0ZSIsImRldmljZXM6cmVhZCIsImRldmljZXM6d3JpdGUiXX0sInJvYmNoYXQiOnsiYWN0aW9ucyI6WyJyZWFkOnByb2ZpbGVzIiwid3JpdGU6cHJvZmlsZXMiLCJjaGF0IiwicmVhZDpmcmllbmRzIiwid3JpdGU6ZnJpZW5kcyJdfX0sImlhdCI6MTUxNTQyNzgwOSwiZXhwIjoxNTE1NTE0MjA5LCJpc3MiOiJjcmVkLWF1dGgtbWFuYWdlci1leGFtcGxlIiwic3ViIjoiYWNjZXNzIiwianRpIjoiU3lGa2R6Yk5HIn0.1SFRfcbZeV---YaXM37t4vlMP6B01BNVvgVqXOMPoJfSSoPD8DcDh3gVb1A65o7ATyVFGXVfhcSRM1fB3_MpcdN1DO31bE5E0PdSnBMdIq3SqCI6ZmaPLUI-uPls2rXb" \
+  -H "Content-Type: application/json" \
+  -d '{"usernames": ["rob", "another-user", "harry"] }' \
+  http://localhost:3000/users/1/friendships
+
+GET /users/:user_id/friendships
+
+
+
+
+curl \
+  -X GET \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlzQWN0aXZlIjp0cnVlLCJpc0FkbWluIjp0cnVlLCJwZXJtaXNzaW9ucyI6eyJjcmVkLWF1dGgtbWFuYWdlciI6eyJhY3Rpb25zIjpbInVzZXJzOnJlYWQiLCJ1c2Vyczp3cml0ZSIsInJlc291cmNlczpyZWFkIiwicmVzb3VyY2VzOndyaXRlIiwicGVybWlzc2lvbnM6cmVhZCIsInBlcm1pc3Npb25zOndyaXRlIl19fSwiaWF0IjoxNDcwOTQyNjA3LCJleHAiOjE0NzEwMjkwMDcsImlzcyI6ImNyZWQtYXV0aC1tYW5hZ2VyIiwic3ViIjoiYWNjZXNzIiwianRpIjoiU3lkNWFIY0YifQ.sTdciCuOataS3g1bmXRLRmV3dueD7tfmiCNi7RPEblRqIVkIFUmfJbMucZhGBC1UycbwnRRwuuIEf3JrusdBeYHOC_4PXqbv6gpJByXQXkqbPamSAr-gRn5Aj8QJ1nj8" \
+  http://localhost:3000/resources
+
+curl \
+  -X GET \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlzQWN0aXZlIjp0cnVlLCJpc0FkbWluIjp0cnVlLCJwZXJtaXNzaW9ucyI6eyJjcmVkLWF1dGgtbWFuYWdlciI6eyJhY3Rpb25zIjpbInVzZXJzOnJlYWQiLCJ1c2Vyczp3cml0ZSIsInJlc291cmNlczpyZWFkIiwicmVzb3VyY2VzOndyaXRlIiwicGVybWlzc2lvbnM6cmVhZCIsInBlcm1pc3Npb25zOndyaXRlIl19fSwiaWF0IjoxNDcwOTQyNjA3LCJleHAiOjE0NzEwMjkwMDcsImlzcyI6ImNyZWQtYXV0aC1tYW5hZ2VyIiwic3ViIjoiYWNjZXNzIiwianRpIjoiU3lkNWFIY0YifQ.sTdciCuOataS3g1bmXRLRmV3dueD7tfmiCNi7RPEblRqIVkIFUmfJbMucZhGBC1UycbwnRRwuuIEf3JrusdBeYHOC_4PXqbv6gpJByXQXkqbPamSAr-gRn5Aj8QJ1nj8" \
+  http://localhost:3000/resources/2
+
+curl \
+  -X PUT \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsImlzQWN0aXZlIjp0cnVlLCJpc0FkbWluIjp0cnVlLCJwZXJtaXNzaW9ucyI6eyJjcmVkLWF1dGgtbWFuYWdlciI6eyJhY3Rpb25zIjpbInVzZXJzOnJlYWQiLCJ1c2Vyczp3cml0ZSIsInJlc291cmNlczpyZWFkIiwicmVzb3VyY2VzOndyaXRlIiwicGVybWlzc2lvbnM6cmVhZCIsInBlcm1pc3Npb25zOndyaXRlIl19fSwiaWF0IjoxNDcwOTQyNjA3LCJleHAiOjE0NzEwMjkwMDcsImlzcyI6ImNyZWQtYXV0aC1tYW5hZ2VyIiwic3ViIjoiYWNjZXNzIiwianRpIjoiU3lkNWFIY0YifQ.sTdciCuOataS3g1bmXRLRmV3dueD7tfmiCNi7RPEblRqIVkIFUmfJbMucZhGBC1UycbwnRRwuuIEf3JrusdBeYHOC_4PXqbv6gpJByXQXkqbPamSAr-gRn5Aj8QJ1nj8" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"yet-another-resource", "url":"http://somewhere.else.com", "invalidProp":"somethingInvalid", "actions":["actionA", "actionB"]}' \
+  http://localhost:3000/resources/2
+
+curl \
+  -X DELETE \
+  -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FjdGl2ZSI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwicGVybWlzc2lvbnMiOnsiY3JlZC1hdXRoLW1hbmFnZXIiOnsiYWN0aW9ucyI6WyJ1c2VyczpyZWFkIiwidXNlcnM6d3JpdGUiLCJyZXNvdXJjZXM6cmVhZCIsInJlc291cmNlczp3cml0ZSIsInBlcm1pc3Npb25zOnJlYWQiLCJwZXJtaXNzaW9uczp3cml0ZSJdfX0sImlhdCI6MTQ3MTQ0NzkxOCwiZXhwIjoxNDcxNTM0MzE4LCJpc3MiOiJjcmVkLWF1dGgtbWFuYWdlciIsInN1YiI6ImFjY2VzcyIsImp0aSI6IlNKOGRtLU1jIn0.5qcbODr4zheOL68v7FImk48qUR6UKAPvzt_6LeYC711SZSGaeQOVTWZbN0robCEeeafzOUkFB1K71oGLJOqWUNewvO3lAWhfzZodSO_gZSFUh3jzB7FpDu0HI7bnNvyx" \
+  http://localhost:3000/resources/4

@@ -311,6 +311,23 @@ const UserSchema = function (sequelize, DataTypes) {
     classMethods: {
       associate: models => {
         User.hasMany(models.Permission, { foreignKey: 'userId' })
+        User.hasMany(models.Metadata, { foreignKey: 'userId' })
+        User.hasMany(models.Friendship, {
+          foreignKey: 'userId',
+          onDelete: 'cascade'
+        })
+        User.belongsToMany(models.User, {
+          as: 'friends',
+          through: 'Friendship',
+          foreignKey: 'userId'
+        })
+        User.hasMany(models.Group, { foreignKey: 'userId' })
+        User.hasMany(models.Membership, { foreignKey: 'userId' })
+        User.belongsToMany(models.Group, {
+          as: 'memberships',
+          through: 'Membership',
+          foreignKey: 'userId',
+        })
       },
       filterProps
     },
