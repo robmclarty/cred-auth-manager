@@ -6,27 +6,21 @@ const { requireOwner } = require('../middleware/basic_permissions')
 const {
   getFriendships,
   postFriendships,
+  deleteFriendships,
   getFriendship,
-  putFriendship,
   deleteFriendship,
-  getUserFriendships,
-  getPendingUserFriendships,
-  postUserFriendships
+  updateFriendshipStatus
 } = require('../controllers/friendship_controller')
-
-router.route('/friendships')
-  .all(requireOwner)
-  .get(getFriendships)
-  .post(postFriendships)
-
-router.route('/friendships/:friendship_id')
-  .all(requireOwner)
-  .get(getFriendship)
-  .put(putFriendship)
 
 router.route('/users/:user_id/friendships')
   .all(requireOwner)
-  .get(getUserFriendships)
-  .post(postUserFriendships)
+  .get(getFriendships)
+  .post(postFriendships)
+  .delete(deleteFriendships)
+
+router.route('/users/:user_id/friendships/:friendship_id')
+  .all(requireOwner)
+  .get(getFriendship)
+  .delete(deleteFriendship)
 
 module.exports = router

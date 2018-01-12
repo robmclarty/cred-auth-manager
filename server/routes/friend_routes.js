@@ -11,9 +11,8 @@ const {
 const {
   postFriends,
   getFriends,
-  getFriend,
-  putFriend,
-  deleteFriend,
+  getFriendship,
+  deleteFriendship,
   getPendingFriends,
   updateFriendStatus
 } = require('../controllers/friendship_controller')
@@ -28,9 +27,8 @@ router.route('/users/:user_id/friends/pending')
 
 router.route('/users/:user_id/friends/:friend_id')
   .all(requireOwner)
-  .get(getFriend)
-  .put(putFriend)
-  .delete(deleteFriend)
+  .get(getFriendship)
+  .delete(deleteFriendship)
 
 router.route('/users/:user_id/friends/:friend_id/accept')
   .post(requireOwner, updateFriendStatus(ACCEPTED))
