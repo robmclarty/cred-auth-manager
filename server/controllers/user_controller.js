@@ -124,8 +124,6 @@ const getUsers = (req, res, next) => {
         }
       ))
 
-      //console.log('users: ', usersWithFriends)
-
       return res.json({
         success: true,
         message: 'Users found',

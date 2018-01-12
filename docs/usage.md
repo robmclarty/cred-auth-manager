@@ -71,6 +71,16 @@ curl \
 
 ## Metadata
 
+POST /users/1/metadata
+
+GET /users/1/metadata
+
+PUT /users/1/metadata/2
+
+GET /users/1/metadata/2
+
+DELETE /users/1/metadata/2
+
 
 ## Permissions
 
@@ -184,21 +194,11 @@ GET /users/:user_id/memberships
 
 ## Friendships
 
-POST /friendships
-
-GET /friendships
-
-GET /friendships/:id
-
-PUT /friendships/:id
-
-DELETE /friendships/:id
-
 curl \
   -X PUT \
   -H "Authorization: Bearer eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FjdGl2ZSI6dHJ1ZSwiaXNBZG1pbiI6dHJ1ZSwicGVybWlzc2lvbnMiOnsieWV0LWFub3RoZXItcmVzb3VyY2UiOnsiYWN0aW9ucyI6W119LCJpbXNpLXF1b3RhLW1hbmFnZXIiOnsiYWN0aW9ucyI6WyJ1c2VyczpyZWFkIiwidXNlcnM6d3JpdGUiLCJyZXNvdXJjZXM6cmVhZCIsInJlc291cmNlczp3cml0ZSIsInBlcm1pc3Npb25zOnJlYWQiLCJwZXJtaXNzaW9uczp3cml0ZSJdfSwibmV3LXJlc291cmNlIjp7ImFjdGlvbnMiOltdfSwiZGlhbWV0ZXItcXVvdGEiOnsiYWN0aW9ucyI6WyJwcm9maWxlczpyZWFkIiwicHJvZmlsZXM6d3JpdGUiLCJxdW90YXM6cmVhZCIsInF1b3Rhczp3cml0ZSIsImRldmljZXM6cmVhZCIsImRldmljZXM6d3JpdGUiXX0sInJvYmNoYXQiOnsiYWN0aW9ucyI6WyJyZWFkOnByb2ZpbGVzIiwid3JpdGU6cHJvZmlsZXMiLCJjaGF0IiwicmVhZDpmcmllbmRzIiwid3JpdGU6ZnJpZW5kcyJdfX0sImlhdCI6MTUxNTQyNzgwOSwiZXhwIjoxNTE1NTE0MjA5LCJpc3MiOiJjcmVkLWF1dGgtbWFuYWdlci1leGFtcGxlIiwic3ViIjoiYWNjZXNzIiwianRpIjoiU3lGa2R6Yk5HIn0.1SFRfcbZeV---YaXM37t4vlMP6B01BNVvgVqXOMPoJfSSoPD8DcDh3gVb1A65o7ATyVFGXVfhcSRM1fB3_MpcdN1DO31bE5E0PdSnBMdIq3SqCI6ZmaPLUI-uPls2rXb" \
   -H "Content-Type: application/json" \
-  -d '{}' \
+  -d '{ "status": "accepted" }' \
   http://localhost:3000/friendships/2
 
 curl \

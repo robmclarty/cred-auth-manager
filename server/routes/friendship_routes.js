@@ -10,8 +10,8 @@ const {
   putFriendship,
   deleteFriendship,
   getUserFriendships,
-  postUserFriendships,
-  getUserFriends
+  getPendingUserFriendships,
+  postUserFriendships
 } = require('../controllers/friendship_controller')
 
 router.route('/friendships')
@@ -23,15 +23,10 @@ router.route('/friendships/:friendship_id')
   .all(requireOwner)
   .get(getFriendship)
   .put(putFriendship)
-  .delete(deleteFriendship)
 
 router.route('/users/:user_id/friendships')
   .all(requireOwner)
   .get(getUserFriendships)
   .post(postUserFriendships)
-
-router.route('/users/:user_id/friends')
-  .all(requireOwner)
-  .get(getUserFriends)
 
 module.exports = router

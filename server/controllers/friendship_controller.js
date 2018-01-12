@@ -385,7 +385,7 @@ const findSentReceivedFriendships = userId => Promise.all([
   })
 ])
 
-// POST /users/:user_id/contact-requests
+// POST /users/:user_id/friendships
 const postUserContactRequests = (req, res, next) => {
   const userId = req.params.user_id
   const userIds = req.body.user_ids || []
@@ -397,7 +397,7 @@ const postUserContactRequests = (req, res, next) => {
     .then(([sentFriendships, receivedFriendships]) => res.json({
       ok: true,
       message: 'User friendships created',
-      contactRequests: {
+      friendships: {
         sent: sentFriendships.map(f => ({
           id: f.user.id,
           issuedAt: f.createdAt,
@@ -413,7 +413,7 @@ const postUserContactRequests = (req, res, next) => {
     .catch(next)
 }
 
-// GET /users/:user_id/contact-requests
+// GET /users/:user_id/friendships
 const getPendingUserFriendships = (req, res, next) => {
   const userId = req.params.user_id
 
@@ -421,7 +421,7 @@ const getPendingUserFriendships = (req, res, next) => {
     .then(([sentFriendships, receivedFriendships]) => res.json({
       ok: true,
       message: 'User friendships found',
-      contactRequests: {
+      friendships: {
         sent: sentFriendships.map(f => ({
           id: f.user.id,
           username: f.user.username,
@@ -508,5 +508,6 @@ module.exports = {
   deleteFriendship,
   postUserFriendships,
   getUserFriendships,
+  getPendingUserFriendships,
   getUserFriends
 }
