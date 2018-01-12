@@ -1,0 +1,40 @@
+.friendships {
+  .friendships-list {
+    max-width: 420px;
+    //margin-left: 2em;
+    margin-bottom: 1em;
+
+    li {
+      position: relative;
+      padding: 0.5em 1em;
+
+      &:nth-child(2n-1) {
+        background-color: $col-bg-hover;
+      }
+
+      & > button {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+      }
+    }
+  }
+
+  .friendship-name {
+    margin-right: 1em;
+  }
+}
+
+.friendship-remove-button {
+  padding: 0.1em 0.5em 0.2em 0.5em;
+  color: #666;
+  background-color: darken($col-bg-hover, 10%);
+  border: 0;
+  border-radius: 2px;
+  text-transform: none;
+  font-size: 0.8em;
+
+  &:hover {
+    background-color: darken($col-bg-hover, 15%);
+  }
+}

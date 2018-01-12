@@ -3284,4 +3284,31 @@ button.cancel {
 .pagination-arrow-right {
   margin-left: 1em; }
 
+.friendships .friendships-list {
+  max-width: 420px;
+  margin-bottom: 1em; }
+  .friendships .friendships-list li {
+    position: relative;
+    padding: 0.5em 1em; }
+    .friendships .friendships-list li:nth-child(2n-1) {
+      background-color: #e6e6d7; }
+    .friendships .friendships-list li > button {
+      position: absolute;
+      top: 0.5em;
+      right: 0.5em; }
+
+.friendships .friendship-name {
+  margin-right: 1em; }
+
+.friendship-remove-button {
+  padding: 0.1em 0.5em 0.2em 0.5em;
+  color: #666;
+  background-color: #d2d2b8;
+  border: 0;
+  border-radius: 2px;
+  text-transform: none;
+  font-size: 0.8em; }
+  .friendship-remove-button:hover {
+    background-color: #c8c8a9; }
+
 /*# sourceMappingURL=application.css.map */

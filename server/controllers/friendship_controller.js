@@ -355,21 +355,6 @@ const postUserFriendships = (req, res, next) => {
     .catch(next)
 }
 
-// POST /users/:user_id/contacts
-const postUserContacts = (req, res, next) => {
-  const userId = req.params.user_id
-  const userIds = req.body.user_ids || []
-  const emails = req.body.emails || []
-
-  createMutualFriendships({ userId, userIds, emails })
-    .then(friendships => res.json({
-      ok: true,
-      message: 'User friendships created',
-      friends: friendships.map(f => f.friend)
-    }))
-    .catch(next)
-}
-
 // Helper function for retrieving sent and received pending friendships (aka
 // "friend requests").
 const findSentReceivedFriendships = userId => Promise.all([
@@ -490,14 +475,7 @@ const getUserFriends = (req, res, next) => {
     .then(friendships => res.json({
       ok: true,
       message: 'Found user friends',
-      contacts: friendships.map(friendship => ({
-        id: friendship.friendId,
-        user: {
-          id: friendship.friendId,
-          email: friendship.friend.email,
-          username: friendship.friend.username
-        }
-      }))
+      friends: friendships.map(friendship => friendship.friend)
     }))
     .catch(next)
 }
@@ -507,7 +485,12 @@ const getUserFriendships = (req, res, next) => {
   Friendship.findAll({
     where: {
       userId: req.params.user_id
-    }
+    },
+    include: [{
+      model: User,
+      attributes: ['id', 'username'],
+      as: 'friend'
+    }]
   })
     .then(friendships => res.json({
       ok: true,
@@ -523,13 +506,7 @@ module.exports = {
   getFriendship,
   putFriendship,
   deleteFriendship,
-  updateFriendshipStatus,
   postUserFriendships,
-  postUserContactRequests,
-  postUserContacts,
-  deleteUserFriendships,
-  deleteUserFriendship,
-  getUserFriends,
-  getPendingUserFriendships,
-  getUserFriendships
+  getUserFriendships,
+  getUserFriends
 }

@@ -6,6 +6,9 @@
     "start": "node ./server/start.js",
     "server": "npx soko server ./index.js",
     "build": "npx soko build --jsIn ./admin/index.js --cssIn ./styles/admin/index.scss --assetsIn ./assets",
+    "build:js": "npx soko build:js ./admin/index.js",
+    "build:css": "npx soko build:css ./styles/admin/index.scss",
+    "build:assets": "npx soko build:assets ./assets",
     "dockerize": "./node_modules/.bin/gulp build && docker-compose up",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
     "db:seed": "./node_modules/.bin/sequelize db:seed:all",
@@ -78,7 +81,7 @@
     "react-router-scroll": "0.3.2",
     "redux": "3.5.2",
     "sequelize-fixtures": "0.5.4",
-    "soko": "^0.1.6",
+    "soko": "^0.2.1",
     "supertest": "2.0.0",
     "supertest-as-promised": "3.2.0"
   }

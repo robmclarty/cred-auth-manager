@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
+import FriendshipForm from './FriendshipForm'
 
 const checkboxName = (resourceName, action) => `${ resourceName }:${ action }`
 
@@ -166,6 +167,30 @@ const UserForm = React.createClass({
             ))}
           </ul>
         </div>
+
+        <h4>Friends</h4>
+        <FriendshipForm
+            userId={user.id}
+            friendships={user.friendships}
+        />
+
+        {/*
+        <div className="field">
+          <label htmlFor="friend-list">Friends</label>
+          <ul className="friend-list">
+            {user.friendships && user.friendships.length > 0 &&
+              user.friendships.map((friendship, friendshipIndex) => (
+                <li
+                    key={`friendship:${ friendshipIndex }`}
+                    className="friendship-item">
+                  <b>{friendship.friend.username}</b> ({friendship.status})
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        */}
+
         <div className="submit-group">
           <button
               type="submit"

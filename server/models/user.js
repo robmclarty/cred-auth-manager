@@ -163,7 +163,7 @@ const tokenPermissions = (permissions = [], includeId = false) => {
 // Run toJSON() on each permission so the data is in the expected format for the
 // custom user toJSON() function.
 const userWithJSONPermissions = user => {
-  if (!user.permissions || user.permissions.length === 0) return user
+  if (!user.permissions || user.permissions.length <= 0) return user
 
   const permissions = user.permissions.map(permission => {
     return permission.toJSON()
@@ -190,6 +190,7 @@ const toJSON = user => {
     isActive: user.isActive,
     isAdmin: user.isAdmin,
     permissions: tokenPermissions(user.permissions, true),
+    friendships: user.friendships ? user.friendships : [],
     loginAt: user.loginAt,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt

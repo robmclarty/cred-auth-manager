@@ -3,7 +3,7 @@
 FROM node:7.10-alpine
 
 # Name of the author or maintainer as a single string.
-MAINTAINER Rob McLarty <r@robmclarty.com> (http://robmclarty.com)
+MAINTAINER Rob McLarty <r@robmclarty.com> (https://robmclarty.com)
 
 # Install system dependencies using Alpine Linux package manager.
 # List of apk packages: https://pkgs.alpinelinux.org/packages

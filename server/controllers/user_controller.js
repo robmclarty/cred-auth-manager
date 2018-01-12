@@ -1,7 +1,7 @@
 'use strict'
 
 const { createError, BAD_REQUEST, UNPROCESSABLE, NOT_FOUND } = require('../helpers/error_helper')
-const { User, Resource, Permission } = require('../models')
+const { User, Resource, Permission, Friendship } = require('../models')
 
 const isAuthorizedToWritePermissions = (auth, appName) => {
   const appPermission = auth.permissions[appName]
@@ -14,10 +14,20 @@ const isAuthorizedToWritePermissions = (auth, appName) => {
 }
 
 const findUserById = userId => User.findById(userId, {
-  include: [{
-    model: Permission,
-    include: [Resource]
-  }]
+  include: [
+    {
+      model: Permission,
+      include: [Resource]
+    },
+    {
+      model: Friendship,
+      include: [{
+        model: User,
+        attributes: ['id', 'username'],
+        as: 'friend'
+      }]
+    }
+  ]
 })
   .then(user => {
     if (!user) throw createError({
@@ -83,16 +93,45 @@ const postRegisterFacebook = (req, res, next) => {
 
 const getUsers = (req, res, next) => {
   User.findAll({
-    include: [{
-      model: Permission,
-      include: [Resource]
-    }]
+    include: [
+      {
+        model: Permission,
+        include: [Resource]
+      },
+      {
+        model: Friendship,
+        include: [{
+          model: User,
+          attributes: ['id', 'username'],
+          as: 'friend'
+        }]
+      }
+    ]
   })
-    .then(users => res.json({
-      success: true,
-      message: 'Users found',
-      users
-    }))
+    .then(users => {
+      const usersWithFriends = users.map(user => Object.assign({},
+        user.toJSON(),
+        {
+          friendships: user.friendships.map(friendship => Object.assign({},
+            friendship.toJSON(),
+            {
+              friend: Object.assign({}, {
+                id: friendship.friend.id,
+                username: friendship.friend.username
+              })
+            }
+          ))
+        }
+      ))
+
+      //console.log('users: ', usersWithFriends)
+
+      return res.json({
+        success: true,
+        message: 'Users found',
+        users: usersWithFriends
+      })
+    })
     .catch(next)
 }
 
