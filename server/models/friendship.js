@@ -43,7 +43,7 @@ const FriendshipSchema = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.ENUM,
       allowNull: false,
-      values: Object.keys(friendshipStatus).map(status => friendshipStatus[status]),
+      values: friendshipStatus.FRIENDSHIP_STATUSES,
       defaultValue: friendshipStatus.PENDING
     },
     acceptedAt: {

@@ -20,7 +20,7 @@ const {
   findFriendshipById,
   createMutualFriendships,
   getMutualFriendships,
-  updateFriendshipStatus,
+  changeFriendshipStatus,
   findSentReceivedFriendships
 } = require('../helpers/friend_helper')
 
@@ -105,7 +105,7 @@ const updateFriendshipStatus = newStatus => (req, res, next) => {
   const userId = req.params.user_id
   const friendId = req.params.friend_id
 
-  updateFriendshipStatus(userId, friendId, newStatus)
+  changeFriendshipStatus(userId, friendId, newStatus)
     .then(friendship => res.json({
       ok: true,
       message: `Friendship status updated to '${ newStatus }'`,

@@ -16,9 +16,7 @@ const ARGON2_OPTIONS = {
 }
 
 // Return argon2 hash from password string.
-const hashPassword = password => argon2.generateSalt(SALT_LENGTH)
-  .then(salt => argon2.hash(password, salt, ARGON2_OPTIONS))
-
+const hashPassword = password => argon2.hash(password, ARGON2_OPTIONS)
 const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
 
 // Only admins can activate or de-activate users and set the admin status.

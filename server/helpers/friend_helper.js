@@ -204,7 +204,7 @@ const getMutualFriendships = userId => {
     })
 }
 
-const updateFriendshipStatus = (userId, friendId, newStatus) => new Promise((resolve, reject) => {
+const changeFriendshipStatus = (userId, friendId, newStatus) => new Promise((resolve, reject) => {
   if (!userId) return reject('No userId provided')
   if (!friendId) return reject('No friendId provided')
   if (!newStatus) return reject('No status provided')
@@ -304,5 +304,6 @@ module.exports = {
   findLinkedFriendships,
   createMutualFriendships,
   getMutualFriendships,
-  findSentReceivedFriendships
+  findSentReceivedFriendships,
+  changeFriendshipStatus
 }
