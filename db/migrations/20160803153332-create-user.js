@@ -21,6 +21,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      phone: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       isActive: {
         allowNull: false,
         type: Sequelize.BOOLEAN,

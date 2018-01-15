@@ -185,6 +185,7 @@ const toJSON = user => {
     id: user.id,
     username: user.username,
     email: user.email,
+    phone: user.phone,
     isActive: user.isActive,
     isAdmin: user.isAdmin,
     permissions: tokenPermissions(user.permissions, true),
@@ -277,6 +278,10 @@ const UserSchema = function (sequelize, DataTypes) {
 
         this.setDataValue('email', email)
       }
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     facebookId: { type: DataTypes.STRING, allowNull: true },
     githubId: { type: DataTypes.STRING, allowNull: true },
