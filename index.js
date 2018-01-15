@@ -11,6 +11,10 @@ module.exports = opts => {
   process.env['REFRESH_SECRET'] = opts.refreshSecret
   process.env['ASSETS_PATH'] = `${ __dirname }/build`
 
+  if (opts.accessExpiresIn) process.env['ACCESS_EXPIRES_IN'] = opts.accessExpiresIn
+  if (opts.refreshExpiresIn) process.env['REFRESH_EXPIRES_IN'] = opts.refreshExpiresIn
+  if (opts.resetSecret) process.env['RESET_SECRET'] = opts.resetSecret
+
   const app = require('./server')
   const models = require('./server/models')
 

@@ -51,8 +51,6 @@
     "cred": "0.5.5",
     "email-templates": "3.3.2",
     "express": "4.14.0",
-    "express-rate-limit": "2.4.0",
-    "express-status-monitor": "0.1.4",
     "kerberos": "0.0.21",
     "morgan": "1.7.0",
     "node-fetch": "1.6.0",
