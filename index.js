@@ -20,8 +20,9 @@ module.exports = opts => {
 
   // Override Express `listen` function in order to load the Sequelize models
   // when Express server is started, but return express listen once done.
-  app.init = (port, cb) => models.sequelize.sync()
-    .then(() => app.listen(port, cb))
+  // TODO: attach models/db-config to app instance for use outside module
+  app.init = port => models.sequelize.sync()
+    .then(() => app.listen(port))
     .catch(err => cb(err))
 
   return app

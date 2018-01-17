@@ -8,6 +8,7 @@ module.exports = {
       username: 'admin',
       password: 'password',
       email: 'admin@email.com',
+      phone: '1234567890',
       isActive: true,
       isAdmin: true
     })
