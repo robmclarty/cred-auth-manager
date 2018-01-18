@@ -100,7 +100,7 @@ app.errorMiddleware = () => app.use([
   errorHandler.catchall
 ])
 
-app.errorHelper = require('./middleware/error_helper')
+app.errorHelper = require('./helpers/error_helper')
 
 app.models = require('./models')
 
