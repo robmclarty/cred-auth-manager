@@ -33,9 +33,9 @@ const MetadataSchema = function (sequelize, DataTypes) {
   {
     name: {
       singular: 'metadata',
-      plural: 'metadatas'
+      plural: 'metadata'
     },
-    tableName: 'Metadatas',
+    tableName: 'Metadata',
     classMethods: {
       associate: models => {
         Metadata.belongsTo(models.User, { foreignKey: 'userId' })
