@@ -189,6 +189,7 @@ const toJSON = user => {
     isActive: user.isActive,
     isAdmin: user.isAdmin,
     permissions: tokenPermissions(user.permissions, true),
+    metadata: user.metadata ? user.metadata : [],
     friendships: user.friendships ? user.friendships : [],
     loginAt: user.loginAt,
     createdAt: user.createdAt,
