@@ -12,6 +12,13 @@ const toJSON = metadata => ({
 // A join table between Users and Groups (i.e., a User is a member of a Group).
 const MetadataSchema = function (sequelize, DataTypes) {
   const Metadata = sequelize.define('Metadata', {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      unique: true
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
