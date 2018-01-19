@@ -1,23 +1,29 @@
 'use strict'
 
-const argon2 = require('argon2')
+//const argon2 = require('argon2')
+const bcrypt = require('bcrypt')
 const validator = require('validator')
 const base64url = require('base64-url')
 const { isUrlSafe } = require('../helpers/validation_helper')
 const Sequelize = require('sequelize')
 
-const SALT_LENGTH = 32
+// const SALT_LENGTH = 32
+//
+// const ARGON2_OPTIONS = {
+//   timeCost: 3,
+//   memoryCost: 12, // 2^12kb
+//   parallelism: 1, // threads
+//   argon2d: false // use agron2i
+// }
+//
+// // Return argon2 hash from password string.
+// const hashPassword = password => argon2.hash(password, ARGON2_OPTIONS)
+// const verifyPassword = (password, hash) => argon2.verify(hash, password)
 
-const ARGON2_OPTIONS = {
-  timeCost: 3,
-  memoryCost: 12, // 2^12kb
-  parallelism: 1, // threads
-  argon2d: false // use agron2i
-}
+const SALT_ROUNDS = 10
 
-// Return argon2 hash from password string.
-const hashPassword = password => argon2.hash(password, ARGON2_OPTIONS)
-const verifyPassword = (p1, p2) => argon2.verify(p1, p2)
+const hashPassword = password => bcrypt.hash(password, SALT_ROUNDS)
+const verifyPassword = (password, hash) => bcrypt.compare(password, hash)
 
 // Only admins can activate or de-activate users and set the admin status.
 // Also, ignore password field if it is blank (keep existing in that case).
@@ -338,7 +344,7 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     instanceMethods: {
       verifyPassword: function (password) {
-        return verifyPassword(this.password, password)
+        return verifyPassword(password, this.password)
       },
       loginUpdate: function () {
         return this.update({ loginAt: Date.now() })

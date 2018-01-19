@@ -2,7 +2,7 @@
 
 const credAuthManager = require('../index.js')
 
-const port = 3000
+const PORT = 3000
 
 const app = credAuthManager({
   issuer: 'cred-auth-manager-example',
@@ -35,8 +35,15 @@ app.use('/custom-authenticated', (req, res, next) => {
 
 app.errorMiddleware()
 
-app.init(port, err => {
-  if (err) return console.log('ERROR: ', err)
+app.connect()
+  .then(models => {
+    //console.log('models: ', models)
 
-  console.log('server started on port', port)
-})
+    return app.listen(PORT)
+  })
+  .then(server => {
+    //console.log(server)
+
+    console.log('server started on port', PORT)
+  })
+  .catch(err => console.log('ERROR: ', err))
