@@ -13,23 +13,12 @@ const {
   postUserMetadatas
 } = require('../controllers/metadata_controller')
 
-router.route('/metadatas')
-  .all(requireAdmin)
-  .get(getMetadatas)
-  .post(postMetadatas)
-
-router.route('/metadatas/:metadata_id')
+router.route('/users/:user_id/metadata')
   .all(requireOwner)
-  .get(getMetadata)
-  .put(putMetadata)
-  .delete(deleteMetadata)
+  .get(listMetadata)
+  .post(postMetadata)
 
-router.route('/users/:user_id/metadatas')
-  .all(requireOwner)
-  .get(getUserMetadatas)
-  .post(postUserMetadatas)
-
-router.route('/users/:user_id/metadatas/:metadata_id')
+router.route('/users/:user_id/metadata/:metadata_id')
   .all(requireOwner)
   .get(getMetadata)
   .put(putMetadata)

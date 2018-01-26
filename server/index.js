@@ -34,6 +34,7 @@ app.enable("trust proxy")
 app.disable('x-powered-by')
 
 // Server static assets from /build folder.
+// TODO: Make optional so user can serve static files themselves through nginx or apache.
 app.use(express.static(`${ __dirname }/../build`))
 
 // Logs

@@ -2,6 +2,7 @@
   "name": "cred-auth-manager",
   "version": "0.6.13",
   "description": "An auth system for managing users and resources via custom persmissions using JSON web tokens.",
+  "main": "index.js",
   "scripts": {
     "start": "node ./server/start.js",
     "server": "npx soko server ./index.js",
@@ -12,8 +13,8 @@
     "dockerize": "./node_modules/.bin/gulp build && docker-compose up",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
     "db:seed": "./node_modules/.bin/sequelize db:seed:all",
-    "test": "node_modules/.bin/mocha --opts ./mocha.opts",
-    "coverage": "node_modules/.bin/istanbul cover _mocha -- --opts ./mocha.opts",
+    "test": "./node_modules/.bin/mocha --opts ./mocha.opts",
+    "coverage": "./node_modules/.bin/istanbul cover _mocha -- --opts ./mocha.opts",
     "example": "node ./example/index.js"
   },
   "engines": {
@@ -34,7 +35,6 @@
   ],
   "author": "Rob McLarty",
   "license": "MIT",
-  "main": "index.js",
   "files": [
     "build",
     "db",

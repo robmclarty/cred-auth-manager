@@ -22,8 +22,8 @@ approximately 1 week while the `accessToken` is only valid for approximately
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d '{"username":"rob", "password":"password"}' \
-  https://hack2017.mbenablers.com/tokens
+  -d '{"username":"admin", "password":"password"}' \
+  http://localhost:3000/tokens
 ```
 
 ### Response
@@ -49,7 +49,7 @@ curl \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{ "facebookId": "623523423", "facebookToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9" }' \
-  https://hack2017.mbenablers.com/tokens/facebook
+  http://localhost:3000/tokens/facebook
 ```
 
 ### Response
@@ -106,7 +106,7 @@ curl \
   -H "Content-Type: application/json" \
   -d '{"token": "i9YYifTpQsmKWA4G.eyJqdGkiOiJhMDFkZGU2.eyJ0eXAiOiJKV1"}' \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  https://hack2017.mbenablers.com/tokens
+  http://localhost:3000/tokens
 ```
 
 ### Response
@@ -143,7 +143,7 @@ like this. Every other endpoint takes the *access* token.
 curl \
   -X PUT \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  https://hack2017.mbenablers.com/tokens
+  http://localhost:3000/tokens
 ```
 
 ### Response
@@ -175,7 +175,7 @@ curl \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{"email": "rob@email.com"}' \
-  https://hack2017.mbenablers.com/password-reset
+  http://localhost:3000/password-reset
 ```
 
 ```shell
@@ -207,7 +207,7 @@ following example.
 ```shell
 curl \
   -X GET \
-  https://hack2017.mbenablers.com/admin/reset_password?
+  http://localhost:3000/admin/reset_password?
 token=eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG
 ```
 
@@ -235,7 +235,7 @@ curl \
   -H "Content-Type: application/json" \
   -d '{"password": "new-password"}' \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  https://hack2017.mbenablers.com/password-reset
+  http://localhost:3000/password-reset
 ```
 
 **reset token in url**
@@ -245,7 +245,7 @@ curl \
   -X PUT \
   -H "Content-Type: application/json" \
   -d '{"password": "password2"}' \
-  https://hack2017.mbenablers.com/password-reset?
+  http://localhost:3000/password-reset?
 token=eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG
 ```
 
