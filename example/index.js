@@ -35,7 +35,7 @@ app.use('/custom-authenticated', (req, res, next) => {
 
 app.errorMiddleware()
 
-app.connect()
+app.connect(require('../server/models'))
   .then(models => {
     //console.log('models: ', models)
 

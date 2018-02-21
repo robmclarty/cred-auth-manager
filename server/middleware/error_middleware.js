@@ -88,7 +88,7 @@ const notFound = (err, req, res, next) => {
 
   res.status(NOT_FOUND).send({
     success: false,
-    message: 'The requested resource could not be found'
+    message: err.message || 'The requested resource could not be found'
   })
 }
 

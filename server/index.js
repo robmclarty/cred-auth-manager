@@ -103,6 +103,4 @@ app.errorMiddleware = () => app.use([
 
 app.errorHelper = require('./helpers/error_helper')
 
-app.models = require('./models')
-
 module.exports = app

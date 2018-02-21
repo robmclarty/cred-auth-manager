@@ -1,5 +1,36 @@
 'use strict'
 
+// Take an array of sequelize model files and load/init them with sequelize and
+// return an object containing each model as an attribute.
+const loadModels = files => {
+  const path = require('path')
+  const Sequelize = require('sequelize')
+  const env = process.env.NODE_ENV || 'development'
+  const config = require('./config/database')
+  const sequelize = new Sequelize(config[env].url, {
+    dialect: config[env].dialect,
+    logging: false
+  })
+  const models = {}
+
+  files.forEach(file => {
+    console.log('file: ', file)
+    const model = sequelize.import(file)
+
+    models[model.name] = model
+    console.log('Loaded model ', model.name)
+  })
+
+  Object.keys(models).forEach(modelName => {
+    if ('associate' in models[modelName]) models[modelName].associate(models)
+  })
+
+  models.sequelize = sequelize
+  models.Sequelize = Sequelize
+
+  return models
+}
+
 const cwd = process.cwd()
 
 module.exports = opts => {
@@ -16,13 +47,15 @@ module.exports = opts => {
   if (opts.resetSecret) process.env['RESET_SECRET'] = opts.resetSecret
 
   const app = require('./server')
-  const models = require('./server/models')
+  //const coreModels = require('./server/models')
 
   // Override Express `listen` function in order to load the Sequelize models
   // when Express server is started, but return express listen once done.
   // TODO: attach models/db-config to app instance for use outside module
-  app.connect = () => models.sequelize.sync()
-    .then(() => models)
+  app.connect = models => {
+    return models.sequelize.sync()
+      .then(() => models)
+  }
 
   return app
 }
