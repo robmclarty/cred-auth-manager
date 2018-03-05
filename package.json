@@ -1,8 +1,11 @@
 {
   "name": "cred-auth-manager",
-  "version": "0.7.1",
+  "version": "0.8.1",
   "description": "An auth system for managing users and resources via custom persmissions using JSON web tokens.",
   "main": "index.js",
+  "bin": {
+    "cred-auth-manager": "./bin/setup.js"
+  },
   "scripts": {
     "start": "node ./server/start.js",
     "server": "npx soko server ./index.js",
@@ -51,7 +54,9 @@
     "cred": "0.5.5",
     "email-templates": "3.3.2",
     "express": "4.14.0",
+    "fs-extra": "5.0.0",
     "kerberos": "0.0.21",
+    "minimist": "1.2.0",
     "morgan": "1.7.0",
     "node-fetch": "1.6.0",
     "nodemailer": "4.4.1",
