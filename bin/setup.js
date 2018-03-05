@@ -8,7 +8,7 @@ const setupMigrations = argv => {
   const migrationsFolder = `${ __dirname }/../db/migrations`
 
   fse.copy(migrationsFolder, argv._[1])
-    .then(() => console.log('migration files copyied'))
+    .then(() => console.log('cred-auth-manager migration files copied'))
     .catch(err => console.log('ERROR: ', err))
 }
 
@@ -17,7 +17,7 @@ const setupSeeders = argv => {
   const seedersFolder = `${ __dirname }/../db/seeders`
 
   fse.copy(seedersFolder, argv._[1])
-    .then(() => console.log('seeder files copyied'))
+    .then(() => console.log('cred-auth-manager seeder files copied'))
     .catch(err => console.log('ERROR: ', err))
 }
 
@@ -26,7 +26,7 @@ const setupDatabase = argv => {
   const databaseConfig = `${ __dirname }/../config/database.js`
 
   fse.copy(databaseConfig, argv._[1])
-    .then(() => console.log('database config copyied'))
+    .then(() => console.log('cred-auth-manager database config copied'))
     .catch(err => console.log('ERROR: ', err))
 }
 
