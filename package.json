@@ -1,6 +1,6 @@
 {
   "name": "cred-auth-manager",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "An auth system for managing users and resources via custom persmissions using JSON web tokens.",
   "main": "index.js",
   "bin": {
