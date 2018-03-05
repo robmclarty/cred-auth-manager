@@ -2,8 +2,8 @@
 
 const fs = require('fs')
 
-const modulePath = '../../node_modules/cred-auth-manager/server/models'
-const localPath = '../../server/models'
+const modulePath = `${ __dirname }/../../node_modules/cred-auth-manager/server/models`
+const localPath = `${ __dirname }/../server/models`
 const modelsPath = fs.existsSync(modulePath) ? modulePath : localPath
 
 const {
