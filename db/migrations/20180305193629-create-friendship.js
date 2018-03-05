@@ -1,6 +1,30 @@
 'use strict'
 
-const friendshipStatus = require('../../constants/friendship_status')
+const PENDING = 'pending'
+const REQUESTED = 'requested'
+const ACCEPTED = 'accepted'
+const DECLINED = 'declined'
+const REJECTED = 'rejected'
+const BANNED = 'banned'
+
+const FRIENDSHIP_STATUSES = [
+  PENDING,
+  REQUESTED,
+  ACCEPTED,
+  DECLINED,
+  REJECTED,
+  BANNED
+]
+
+const friendshipStatus = [
+  PENDING,
+  REQUESTED,
+  ACCEPTED,
+  DECLINED,
+  REJECTED,
+  BANNED,
+  FRIENDSHIP_STATUSES
+]
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
