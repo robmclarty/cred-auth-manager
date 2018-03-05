@@ -1,6 +1,6 @@
 # Base image upon which subsequent data will be added.
 # Found on Docker Hub: https://hub.docker.com/_/node/
-FROM node:7.10-alpine
+FROM node:8.9.4-alpine
 
 # Name of the author or maintainer as a single string.
 MAINTAINER Rob McLarty <r@robmclarty.com> (https://robmclarty.com)
