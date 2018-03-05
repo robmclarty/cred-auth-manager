@@ -16,7 +16,7 @@ const FRIENDSHIP_STATUSES = [
   BANNED
 ]
 
-const friendshipStatus = [
+const friendshipStatus = {
   PENDING,
   REQUESTED,
   ACCEPTED,
@@ -24,7 +24,7 @@ const friendshipStatus = [
   REJECTED,
   BANNED,
   FRIENDSHIP_STATUSES
-]
+}
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
