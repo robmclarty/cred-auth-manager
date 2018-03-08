@@ -59,46 +59,6 @@ curl \
 }
 ```
 
-## List Filtered Users (Basic)
-
-You may also filter users by matching against their email address using a query
-parameter and get back a list which includes only each user's id and their
-profile.
-
-### Request
-
-```shell
-curl \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  http://localhost:3000/users/basic?query=rob
-```
-
-### Response
-
-```json
-{
-  "ok": true,
-  "message": "Users found",
-  "users": [
-    {
-      "id": 2222,
-      "profile": {
-        "firstName": "Rob",
-        "lastName": "McLarty"
-      }
-    },
-    {
-      "id": 3333,
-      "profile": {
-        "firstName": "Rob2",
-        "lastName": "McLarty"
-      }
-    }
-  ]
-}
-```
-
-
 ## Create User
 
 Create a new user account. Only admins have permissions to perform this action.
