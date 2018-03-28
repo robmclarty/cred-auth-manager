@@ -103,6 +103,6 @@ app.errorMiddleware = () => app.use([
 
 app.errorHelper = require('./helpers/error_helper')
 
-app.cred = require('./cred')
+app.cred = cred
 
 module.exports = app
