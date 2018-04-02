@@ -105,4 +105,6 @@ app.errorHelper = require('./helpers/error_helper')
 
 app.cred = cred
 
+app.requireRefreshToken = cred.requireRefreshToken
+
 module.exports = app
