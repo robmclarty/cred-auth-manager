@@ -46,13 +46,16 @@ const getGroups = (req, res, next) => {
     .catch(next)
 }
 
-// POST /users/:user_id/groups
-// TODO: postGroups takes a param called `group_contacts` but putGroup takes a
-// param called `contact_ids`. This should be made consistent.
+// POST /groups
+//
+// TODO: deprecate `group_contacts` param
 const postGroups = (req, res, next) => {
-  const requestedMemberIds = req.body.group_contacts || []
+  const requestedMemberIds = req.body.memberIds || req.body.group_contacts || []
   const userId = req.body.userId
   const groupName = req.body.name
+
+  // Ensure the owner is always in the membership.
+  if (!requestedMemberIds.includes(userId)) requestedMemberIds.push(userId)
 
   createGroup(userId, groupName)
     .then(group => Promise.all([
@@ -97,11 +100,15 @@ const getGroup = (req, res, next) => {
 //
 // REFACTOR: This is way too complicated! Use Sequelize relationships rather
 // than manually updating the join table directly.
+//
+// TODO: deprecate `contact_ids` param
+// TODO: deprecate `group_name` param
+//
 // PUT /groups/:group_id
 const putGroup = (req, res, next) => {
-  const requestedMemberIds = req.body.contact_ids || []
+  const requestedMemberIds = req.body.memberIds || req.body.contact_ids || []
   const groupId = req.params.group_id
-  const groupName = req.body.group_name
+  const groupName = req.body.name || req.body.group_name
 
   findGroupById(groupId)
     .then(group => !groupName ? group : group.update({ name: groupName }))
@@ -110,6 +117,9 @@ const putGroup = (req, res, next) => {
       Membership.findAll({ where: { groupId: group.id } })
     ]))
     .then(([group, memberships]) => {
+      // Ensure the owner is always in the membership.
+      if (!requestedMemberIds.includes(group.userId)) requestedMemberIds.push(group.userId)
+
       const currentMemberIds = memberships.map(m => m.userId)
       const newMemberIds = requestedMemberIds.filter(userId => {
         return !currentMemberIds.includes(userId)
@@ -179,13 +189,19 @@ const getUserGroups = (req, res, next) => {
 }
 
 // POST /users/:user_id/groups
+//
 // Creates a new group for this user and immediately adds a list of members
-// based on the user IDs listed in `contact_ids` in the body of the req.
-// TODO: rename `group_contacts` in body of request to be consistent with other functions.
+// based on the user IDs listed in `memberIds` in the body of the req.
+//
+// TODO: deprecate `group_contacts` param
+// TODO: deprecate `group_name` param
 const postUserGroups = (req, res, next) => {
-  const newMemberIds = req.body.group_contacts || []
+  const requestedMemberIds = req.body.memberIds || req.body.group_contacts || []
   const userId = req.params.user_id
-  const groupName = req.body.group_name
+  const groupName = req.body.name || req.body.group_name
+
+  // Ensure the owner is always in the membership.
+  if (!requestedMemberIds.includes(userId)) requestedMemberIds.push(userId)
 
   User.findById(userId)
     .then(user => {
@@ -198,7 +214,7 @@ const postUserGroups = (req, res, next) => {
     })
     .then(group => Promise.all([
       group,
-      Membership.bulkCreate(newMemberIds.map(userId => ({
+      Membership.bulkCreate(requestedMemberIds.map(userId => ({
         userId,
         groupId: group.id
       })))

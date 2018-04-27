@@ -1,29 +1,25 @@
 # Groups
 
-A group is a way for users to organize their friendships with other users.
-You may group other people into collections (e.g., "family", "teammates",
-"doctors", etc.). You must still accept each user as a friend before you may add
-them to one of your groups.
-
-A group is just an sub-array of your friends with a label applied to it.
-
+A group is a way for users to organize their relationships. You may group other
+people into collections (e.g., "family", "teammates", "doctors", etc.).
 
 ## Create a New Group
 
-`POST /users/:user_id/groups`
+POST `/users/:user_id/groups`
 
-Create a new group for yourself out of your list of existing friends. Give it
-a name, and an array of ids which is a subset of your total friends.
+Create a new group for yourself out of your list of existing user ids. If you
+do not provide an array of `memberIds`, the group will still be created, but
+with only the owner as a member.
 
 ### Request
 
 ```shell
 curl \
   -X POST \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
   -H "Content-Type: application/json" \
-  -d '{ "name": "Family", "members": [12, 34, 56] }' \
-  http://localhost:3000/users/1111/groups
+  -d '{ "name": "Family", "memberIds": [12, 34, 56] }' \
+  https://disruptor.mbenablers.com/users/1111/groups
 ```
 
 ### Response
@@ -56,7 +52,7 @@ curl \
 
 ## List Groups
 
-`GET /users/:user_id/groups`
+GET `/users/:user_id/groups`
 
 Get a list of all your active groups. Will return an array of each group, which
 themselves include a `members` array of each user which is a member.
@@ -66,8 +62,8 @@ themselves include a `members` array of each user which is a member.
 ```shell
 curl \
   -X GET \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  http://localhost:3000/users/1111/groups
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
+  https://disruptor.mbenablers.com/users/1111/groups
 ```
 
 ### Response
@@ -93,16 +89,16 @@ curl \
 
 ## Get Group Details
 
-`GET /users/:user_id/groups/:group_id`
+GET `/users/:user_id/groups/:group_id`
 
-Retrieve an individual group, which its array of members.
+Retrieve an individual group by its id, with its array of members.
 
 ### Request
 
 ```shell
 curl \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  http://localhost:3000/users/1111/groups/123
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
+  https://disruptor.mbenablers.com/users/1111/groups/123
 ```
 
 ### Response
@@ -127,19 +123,31 @@ curl \
 
 ## Update a Group
 
-`PUT /users/:user_id/groups/:group_id`
+PUT `/users/:user_id/groups/:group_id`
 
-Modify the values for an existing group.
+Modify the values for an existing group. The array `membersIds` that is
+provided will overwrite any existing members in the group (i.e., any user ids
+currently in the group, which are NOT included in `membersIds` will be removed
+from the group).
+
+Omitting `name` will keep the existing group name.
+
+Omitting `membersIds` will be treated as if it were an empty array, effectively
+removing all members from the group, except the owner.
+
+NOTE: If you would like to add members to an existing group by only supplying
+the new member ids, use the POST `/users/:user_id/groups/:group_id/members`
+endpoint instead.
 
 ### Request
 
 ```shell
 curl \
   -X PUT \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
   -H "Content-Type: application/json" \
-  -d '{ "name": "Family", "members": [2222, 3333] }' \
-  http://localhost:3000/users/1111/groups/123
+  -d '{ "name": "Family", "memberIds": [2222, 3333] }' \
+  https://disruptor.mbenablers.com/users/1111/groups/123
 ```
 
 ### Response
@@ -168,17 +176,17 @@ curl \
 
 ## Delete a Group
 
-`DELETE /users/:user_id/groups/:group_id`
+DELETE `/users/:user_id/groups/:group_id`
 
-Remove a group from your account.
+Remove a group from a user's account.
 
 ### Request
 
 ```shell
 curl \
   -X DELETE \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  http://localhost:3000/users/1111/groups/123
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
+  https://disruptor.mbenablers.com/users/1111/groups/123
 ```
 
 ### Response
@@ -193,20 +201,23 @@ curl \
 
 ## Add members to an existing group
 
-`POST /users/:user_id/groups/:group_id/contacts`
+POST `/users/:user_id/groups/:group_id/members`
 
-If you already have a group but you want to add more friends to it, add any of
-your existing members to append them to a group that matches the `group_id`.
+If you already have a group but you want to add more user ids to it, include any
+of your existing members to append them to a group that matches the `group_id`.
+
+Duplicates will be ignored, and existing members will remain in the group. This
+only adds new members.
 
 ### Request
 
 ```shell
 curl \
   -X PUT \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
   -H "Content-Type: application/json" \
-  -d '{ "members": [2222, 3333] }' \
-  http://localhost:3000/users/1111/groups/123/members
+  -d '{ "memberIds": [2222, 3333] }' \
+  https://disruptor.mbenablers.com/users/1111/groups/123/members
 ```
 
 ### Response
@@ -221,17 +232,21 @@ curl \
 
 ## Remove a member from an existing group
 
-Remove a member from an existing group. This does not destroy the friend
+DELETE `/users/:user_id/groups/:group_id/members`
+
+Remove members from an existing group. This does not destroy the user
 themselves, it just removes them from this specific group.
+
+Existing members not included in `memberIds` will remain members of the group.
 
 ### Request
 
 ```shell
 curl \
   -X DELETE \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1.eyJqdGkiOiJhMDFU2.i9YYifTpQsmKWAG" \
-  -d '{ "members": [2222, 3333] }' \
-  http://localhost:3000/users/1111/groups/123/members
+  -H "Authorization: Bearer xxxxx.yyyyy.zzzzz" \
+  -d '{ "memberIds": [2222, 3333] }' \
+  https://disruptor.mbenablers.com/users/1111/groups/123/members
 ```
 
 ### Response
