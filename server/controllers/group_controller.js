@@ -63,12 +63,15 @@ const postGroups = (req, res, next) => {
         groupId: group.id
       })))
     ]))
-    .then(([group, memberships]) => res.json({
+    .then(([group, memberships]) => Promise.all([
+      findGroupById(group.id), // reload group to populate members
+      memberships.map(m => m.userId)
+    ]))
+    .then(([group, memberIds]) => res.json({
       ok: true,
       message: 'Group created',
-      group: Object.assign({}, group.toJSON(), {
-        contacts: memberships.map(m => m.userId)
-      })
+      group,
+      memberIds
     }))
     .catch(next)
 }
