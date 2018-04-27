@@ -10,8 +10,7 @@ const {
 const findGroupById = id => Group.findById(id, {
   include: [{
     model: User,
-    as: 'members',
-    attributes: ['id']
+    as: 'members'
   }]
 })
   .then(group => {
@@ -34,8 +33,7 @@ const getGroups = (req, res, next) => {
   Group.findAll({
     include: [{
       model: User,
-      as: 'members',
-      attributes: ['id']
+      as: 'members'
     }]
   })
     .then(groups => res.json({
@@ -167,8 +165,7 @@ const getUserGroups = (req, res, next) => {
       model: Group,
       include: [{
         model: User,
-        as: 'members',
-        attributes: ['id']
+        as: 'members'
       }]
     }]
   })

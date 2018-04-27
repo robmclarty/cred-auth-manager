@@ -194,13 +194,14 @@ const toJSON = user => {
     phone: user.phone,
     isActive: user.isActive,
     isAdmin: user.isAdmin,
-    permissions: tokenPermissions(user.permissions, true),
-    metadata: user.metadata ? user.metadata : [],
-    friendships: user.friendships ? user.friendships : [],
     loginAt: user.loginAt,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt
   }
+
+  if (user.permissions) props.permissions = tokenPermissions(user.permissions, true)
+  if (user.friendships) props.friendships = user.friendships
+  if (user.metadata) props.metadata = user.metadata
 
   // Add social IDs if they are being used.
   if (user.facebookId) props.facebookId = user.facebookId
