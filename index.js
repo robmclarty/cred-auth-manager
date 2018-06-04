@@ -21,7 +21,7 @@ module.exports = opts => {
 
   const app = require('./server')
 
-  app.connect = dir => buildModels(`${ cwd }/${ dir }`, opts.database, dialect)
+  app.connect = dir => buildModels(dir, opts.database, dialect)
     .then(models => models.sequelize.sync())
 
   return app
