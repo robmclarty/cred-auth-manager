@@ -1,146 +1,199 @@
-## Argon2
 
-Installation of argon2 on OSX requires jumping through a few hoops. The
-following is pulled directly from
-[argon2's README](https://github.com/ranisalt/node-argon2).
+## 1. Install Dependencies
 
-You **MUST** have a **node-gyp** global install before proceeding with install,
-along  with GCC >= 4.8 / Clang >= 3.3. On Windows, you must compile under Visual
-Studio 2015 or newer.
+Install cred-auth-manager & sequelize-cli.
 
-**node-argon2** works only and is tested against Node >=4.0.0.
+You could optionally install sequelize-cli globally using the `-g` flag, in
+which case you could execute it directly rather than using `npx` below.
 
-**OSX**
-
-To install GCC >= 4.8 on OSX, use [homebrew](http://brew.sh/):
-
-```
-$ brew install gcc
-```
-
-Once you've got GCC installed and ready to run, you then need to install
-node-gyp, you must do this globally:
-
-```
-$ npm install -g node-gyp
-```
-
-Finally, once node-gyp is installed and ready to go, you can install this
-library, specifying the GCC or Clang binary to use:
-
-```
-$ CXX=g++-5 npm install argon2
-```
-
-**NOTE**: If your GCC or Clang binary is named something different than `g++-6`,
-you'll need to specify that in the command.
+`npm install cred-auth-manager`
+`npm install sequelize-cli`
 
 
+## 2. Copy Migrations & Seeders
 
-## Setup
+Assuming you want to put your migrations and seeders in a folder called `./db`,
+the following commands will copy all the necessary migration and seeders files
+from inside cred-auth-manager into the folders you specify (remembers these
+locations for later):
 
-A few initial requirements should be performed upon first installing the server.
+`npx cred-auth-manager setup:migrations ./db/migrations`
+`npx cred-auth-manager setup:seeders ./db/seeders`
 
-1. Create an admin user.
 
-  `gulp create-user --username admin --password password --email admin@email.com --admin true`
+## 3. Create `database.js`
 
-2. Create a "resource" for the auth manager server (this server). Other
-   resources can also be added (for other, different servers). Include the url
-   of the actual server (here we're just using localhost for dev). And finally
-   include a set of actions which from which users may be given permissions.
-
-   `gulp create-resource --name cred-auth-manager --url http://localhost:3000 --actions admin`
-
-3. Give your admin user the "admin" permission for this resource.
-
-   `gulp add-permissions --username admin --resource cred-auth-manager --actions admin`
-
-This is the basic way of authorizing access to the server. There is also a
-separate global attribute called "isAdmin" included in each user's token which
-is set when creating your user. You could optionally make use of this attribute
-in your own custom middleware as a way of perhaps overriding all other
-authorization mechanisms. This isn't implemented here as it could potentially
-be done in many different ways. But using the user's "permissions" is just as
-valid.
-
-If you wanted to make an overriding middleware, you might write a custom
-authorization middleware function that looks something like the following (just
-as an example based on the `auth.js` module used in this app):
+Create a file called `database.js` with settings for connecting to your
+postgres database (I like creating a folder in the root of my project called
+`./config` for holding files such as this):
 
 ```javascript
-const { tokenFromReq } = require('cred')
-
-const customAuthorize = regularAuthorize => (req, res, next) => {
-  const token = tokenFromReq(req)
-  const payload = jwt.decode(token)
-
-  return payload.isAdmin ? next() : regularAuthorize(req, res, next)
+module.exports = {
+  url: process.env.DATABASE || 'postgres://localhost:5432/my-database-name',
+  dialect: 'postgres',
+  seederStorage: 'sequelize'
 }
 ```
 
-And then in your routes file (or wherever you do your authorization), you could
-use your new function like this:
+
+## 4. Create `.sequelizerc`
+
+Create a file called `.sequelizerc` in the root of your project with the
+following settings. These include pointers to where you created your database
+settings file (above), the location of your Sequelize model files (in this case
+I've place them in a folder called `./server/models` as well as the locations
+of your migrations and seeders.
 
 ```javascript
-const { authorizedAccess } = require('../auth.js')
-
-router.route('/authorized-resource')
-  .all(customAuthorize(authorizedAccess(['an-action', 'another-action'])))
-  .post()
-  .get()
-  .delete()
+module.exports = {
+  'config': './config/database.js',
+  'models-path': './server/models',
+  'seeders-path': './db/seeders',
+  'migrations-path': './db/migrations'
+}
 ```
 
-This way, if a user has `isAdmin` in their token set to true, they are
-immediately granted access, otherwise, they will need to posses the permissions
-defined in the `authorizedAccess` array.
 
-The point is, it's flexible and can be used in conjuction with your own
-middleware to give you all the control you need to manage authorization.
+## 5. Run migrations & seeders
 
-## Misc
+`npx sequelize db:migrate`
+`npx sequelize db:seed:all`
 
-Reference: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04
-
-sudo add-apt-repository ppa:nginx/stable
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get update
-sudo apt-get install -y build-essential git nginx nodejs postgresql postgresql-contrib
-sudo apt-get upgrade -y openssl
-
-sudo npm install -g n
-sudo n 6.2.2
-sudo npm install -g yarn
-sudo npm install -g pm2
-
-# Login to postgres and setup user
-
-sudo -i -u postgres
-createdb auth
-psql -d auth
-CREATE USER authuser WITH PASSWORD 'VV4USkPBfhZEbTcmJqVcntHiCZ2e2jby98Tg4e9RUAGdSA9';
-\q
-exit
+...or, if you installed sequelize-cli globally, simply ommit `npx`.
 
 
-psql template1
-\q # to quit
+## 6. Create Secrets
 
-\l # list
-\dt # list all tables in current db
-\c db_name # switch db
+cred-auth-manager makes use of different types of tokens for different purposes:
 
-CREATE USER authuser WITH PASSWORD 'VV4USkPBfhZEbTcmJqVcntHiCZ2e2jby98Tg4e9RUAGdSA9';
-GRANT ALL PRIVILEGES ON DATABASE quota to authuser;
+- a) *access tokens* are the work-horse of the system. These are used for any
+  and all auth access to the system from the outside. These are the tokens you
+  use when you want the system to *do* something. These use 384-bit elliptic
+  curve  public key cryptography to harden them against cracking while also
+  enabling the sharing of micro-services such that other systems can store a
+  public key while having no knowledge of the private key stored on the issuing
+  auth system.
 
-createuser --interactive
-createdb quota
+- b) *refresh tokens* are used for one single purpose: creating new access
+  tokens. Access tokens have a short life-span and die frequently. This secures
+  the system by making the token used in regular everyday system requests expire
+  automatically in the case that it is potentially intercepted; the attacker
+  will not have long to make use of it before it becomes useless. Refresh tokens
+  are  used by legitimate users to generate new access tokens as needed. They
+  use SHA-512 cryptography with a secret key string stored only on the issuing
+  system. An attacker would thus need to have root access to the system itself
+  to get at the key (in which case you have bigger problems that access to your
+  keys).
 
-./node_modules/.bin/sequelize db:migrate --env production
-./node_modules/.bin/sequelize db:seed:all
+- c) *reset tokens* are extremely short-lived one-time-use tokens used as part
+  of the password-reset process. They can be emailed to users granting them
+  short-term access to perform a reset, but expiring quickly and immediately
+  after use. They use SHA-512 like the refresh tokens.
 
-NOTE: For some reason, the seed command ignores the --env flag so you'll need
-to make a one time change to use the production credentials in place of the
-development credentials for the db in /config/database.js. After the db is
-seeded this isn't needed anymore and can be overwritten.
+### Create Access Token Keys
+
+You will need OpenSSL to create these keys. You can get a list of what curves
+are available on your system using the `openssl ecparam -list_curves` command.
+Also see http://safecurves.cr.yp.to/ for comparison of curves and their security.
+
+Generate a private/public key pair:
+
+`openssl ecparam -name secp384r1 -genkey -noout -out ./config/keys/access_private.pem`
+
+Save the public key to its own file (for distribution):
+
+`openssl ec -in ./config/keys/access_private.pem -out ./config/keys/access_public.pem -pubout`
+
+This will create two `.pem` files in `./config/keys` which you can refer to
+with your config settings in your app for creating new auth tokens. This value
+will be referred to in the config settings for cred-auth-manager.
+
+**NOTE**: Create new keys in production and store their location in your environment
+variables referred to by the config settings (don't store your dev keys in the
+repo, nor use them in production!)
+
+### Create Refresh Token Secret
+
+I like using the website https://www.grc.com/passwords.htm for creating random
+strings for use as secrets in cryptographic systems. You can concatenate multiple
+random strings from this site together to form a longer secret if needed. Use
+the result for your secret and store it in your env var for refresh secret.
+
+**NOTE**: Do not use the same secret in production!
+
+### Create Reset Token Secret
+
+Same process as for the refresh token, but create a new, different, secret.
+
+**NOTE**: Do not use the same secret in production!
+
+
+## 7. Create your app
+
+Note that cred-auth-manager returns an Express app so you don't need to include
+Express in your own app.
+
+TODO: Maybe pass in Express as a parameter to cred-auth-manager to give more
+fine-grained control to the user?
+
+Example bare-bones app:
+
+```javascript
+const PORT = process.env.PORT || 3000
+
+const credAuthManager = require('cred-auth-manager')
+const bodyParser = require('body-parser')
+const dbConfig = require('../config/database.js')
+
+const app = credAuthManager({
+  issuer: 'phone-disruptor-cloud',
+  database: dbConfig.url,
+  accessPrivKey: process.env.ACCESS_PRIVATE_KEY || './config/keys/access_private.pem',
+  accessPubKey: process.env.ACCESS_PUBLIC_KEY || './config/keys/access_public.pem',
+  accessExpiresIn: '24 hours',
+  refreshSecret: process.env.REFRESH_SECRET || 'my_super_secret_secret',
+  refreshExpiresIn: '7 days',
+  resetSecret: process.env.RESET_SECRET || 'my_super_secret_reset_secret'
+})
+
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.loginMiddleware()
+
+// Include any public endpoints here.
+
+app.authMiddleware()
+
+// Include any secured endpoints here (will require access token).
+
+app.errorMiddleware()
+
+app.connect('/absolute/path/to/custom/sequelize/models')
+  .then(models => app.listen(PORT))
+  .then(server => console.log('Server started on port', PORT))
+  .catch(err => console.log('Server ERROR: ', err))
+```
+
+
+## 8. Run it!
+
+`node /path/to/app.js`
+
+
+## 9. Optionally create shortcut scripts
+
+I like putting all these commands in the `scripts` section of my `package.json`
+file for reference because I know I will almost definitely forget what to do
+later:
+
+```json
+{
+  "scripts": {
+    "start": "node server/index.js",
+    "install:migrations": "npx cred-auth-manager setup:migrations ./db/migrations",
+    "install:seeders": "npx cred-auth-manager setup:seeders ./db/seeders",
+    "db:migrate": "npx sequelize db:migrate",
+    "db:seed": "npx sequelize db:seed:all"
+  }
+}
+```
