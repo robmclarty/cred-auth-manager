@@ -8,6 +8,8 @@ const getModelFiles = dir => fs.readdirSync(dir)
   .filter(file => (file.indexOf('.') !== 0) && (file !== 'index.js'))
   .map(file => path.join(dir, file))
 
+// Take an array of sequelize model files and load/init them with sequelize and
+// return an object containing each model as an attribute.
 const modelBuilder = (customDir, url, dialect) => new Promise((resolve, reject) => {
   const sequelize = new Sequelize(url, { dialect, logging: false })
   const models = {}

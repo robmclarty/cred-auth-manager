@@ -1,8 +1,17 @@
 {
   "name": "cred-auth-manager",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "An auth system for managing users and resources via custom persmissions using JSON web tokens.",
   "main": "index.js",
+  "files": [
+    "model_builder.js",
+    "build",
+    "db",
+    "server",
+    "config/server.js",
+    "config/database.js",
+    "bin"
+  ],
   "bin": {
     "cred-auth-manager": "./bin/setup.js"
   },
@@ -38,14 +47,6 @@
   ],
   "author": "Rob McLarty",
   "license": "MIT",
-  "files": [
-    "build",
-    "db",
-    "server",
-    "config/server.js",
-    "config/database.js",
-    "bin"
-  ],
   "dependencies": {
     "base64-url": "1.3.3",
     "bcrypt": "2.0.1",
