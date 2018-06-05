@@ -1,6 +1,5 @@
 'use strict'
 
-const router = require('express').Router()
 const {
   postUsers,
   getUsers,
@@ -21,22 +20,28 @@ const {
   requireOwnerOrReadPermission
 } = require('../middleware/user_permission_middleware')
 
-// Only admins can create new users and list all users.
-router.route('/users')
-  .post(requireWriteUser, postUsers)
-  .get(requireReadUser, getUsers)
+const userRoutes = express => {
+  const router = express.Router()
 
-// Users can only get and change data for themselves, not any other users.
-router.route('/users/:id')
-  .get(requireOwnerOrReadUser, getUser)
-  .put(requireOwnerOrWriteUser, putUser)
-  .delete(requireWriteUser, deleteUser)
+  // Only admins can create new users and list all users.
+  router.route('/users')
+    .post(requireWriteUser, postUsers)
+    .get(requireReadUser, getUsers)
 
-// Only users with the 'admin' action set for the given resource can change a
-// user's permissions for that resource.
-router.route('/users/:id/permissions/:resource_name')
-  .post(requireWritePermission, postPermissions)
-  .get(requireOwnerOrReadPermission, getPermissions)
-  .delete(requireWritePermission, deletePermissions)
+  // Users can only get and change data for themselves, not any other users.
+  router.route('/users/:id')
+    .get(requireOwnerOrReadUser, getUser)
+    .put(requireOwnerOrWriteUser, putUser)
+    .delete(requireWriteUser, deleteUser)
 
-module.exports = router
+  // Only users with the 'admin' action set for the given resource can change a
+  // user's permissions for that resource.
+  router.route('/users/:id/permissions/:resource_name')
+    .post(requireWritePermission, postPermissions)
+    .get(requireOwnerOrReadPermission, getPermissions)
+    .delete(requireWritePermission, deletePermissions)
+
+  return router
+}
+
+module.exports = userRoutes

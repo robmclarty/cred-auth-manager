@@ -2,7 +2,8 @@
 
 'use strict'
 
-const app = require('../server')
+const createApp = require('../server')
+const app = createApp() // Create app with built-in Express module.
 const models = require('./models')
 
 app.set('port', process.env.PORT || 3000)

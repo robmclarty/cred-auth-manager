@@ -1,6 +1,5 @@
 'use strict'
 
-const router = require('express').Router()
 const {
   postResources,
   getResources,
@@ -16,18 +15,24 @@ const {
   requireWriteResource
 } = require('../middleware/resource_permission_middleware')
 
-router.route('/resources')
-  .post(requireWriteResource, postResources)
-  .get(requireReadResource, getResources)
+const resourceRoutes = express => {
+  const router = express.Router()
 
-router.route('/resources/:id')
-  .get(requireReadResource, getResource)
-  .put(requireWriteResource, putResource)
-  .delete(requireWriteResource, deleteResource)
+  router.route('/resources')
+    .post(requireWriteResource, postResources)
+    .get(requireReadResource, getResources)
 
-router.route('/resources/:id/actions')
-  .put(requireWriteResource, putActions)
-  .get(requireReadResource, getActions)
-  .delete(requireWriteResource, deleteActions)
+  router.route('/resources/:id')
+    .get(requireReadResource, getResource)
+    .put(requireWriteResource, putResource)
+    .delete(requireWriteResource, deleteResource)
 
-module.exports = router
+  router.route('/resources/:id/actions')
+    .put(requireWriteResource, putActions)
+    .get(requireReadResource, getActions)
+    .delete(requireWriteResource, deleteActions)
+
+  return router
+}
+
+module.exports = resourceRoutes

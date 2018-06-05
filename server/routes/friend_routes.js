@@ -1,7 +1,5 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
 const { requireOwner } = require('../middleware/basic_permissions')
 const {
   ACCEPTED,
@@ -17,26 +15,32 @@ const {
   updateFriendStatus
 } = require('../controllers/friendship_controller')
 
-router.route('/users/:user_id/friends')
-  .all(requireOwner)
-  .post(postFriends)
-  .get(getFriends)
+const friendRoutes = express => {
+  const router = express.Router()
 
-router.route('/users/:user_id/friends/pending')
-  .get(requireOwner, getPendingFriends)
+  router.route('/users/:user_id/friends')
+    .all(requireOwner)
+    .post(postFriends)
+    .get(getFriends)
 
-router.route('/users/:user_id/friends/:friend_id')
-  .all(requireOwner)
-  .get(getFriendship)
-  .delete(deleteFriendship)
+  router.route('/users/:user_id/friends/pending')
+    .get(requireOwner, getPendingFriends)
 
-router.route('/users/:user_id/friends/:friend_id/accept')
-  .post(requireOwner, updateFriendStatus(ACCEPTED))
+  router.route('/users/:user_id/friends/:friend_id')
+    .all(requireOwner)
+    .get(getFriendship)
+    .delete(deleteFriendship)
 
-router.route('/users/:user_id/friends/:friend_id/decline')
-  .post(requireOwner, updateFriendStatus(DECLINED))
+  router.route('/users/:user_id/friends/:friend_id/accept')
+    .post(requireOwner, updateFriendStatus(ACCEPTED))
 
-router.route('/users/:user_id/friends/:friend_id/reject')
-  .post(requireOwner, updateFriendStatus(REJECTED))
+  router.route('/users/:user_id/friends/:friend_id/decline')
+    .post(requireOwner, updateFriendStatus(DECLINED))
 
-module.exports = router
+  router.route('/users/:user_id/friends/:friend_id/reject')
+    .post(requireOwner, updateFriendStatus(REJECTED))
+
+  return router
+}
+
+module.exports = friendRoutes

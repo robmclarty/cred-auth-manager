@@ -1,7 +1,5 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
 const { requireOwner, requireAdmin } = require('../middleware/basic_permissions')
 const {
   getMetadatas,
@@ -13,15 +11,21 @@ const {
   postUserMetadatas
 } = require('../controllers/metadata_controller')
 
-router.route('/users/:user_id/metadata')
-  .all(requireOwner)
-  .get(listMetadata)
-  .post(postMetadata)
+const metadataRoutes = express => {
+  const router = express.Router()
 
-router.route('/users/:user_id/metadata/:metadata_id')
-  .all(requireOwner)
-  .get(getMetadata)
-  .put(putMetadata)
-  .delete(deleteMetadata)
+  router.route('/users/:user_id/metadata')
+    .all(requireOwner)
+    .get(listMetadata)
+    .post(postMetadata)
 
-module.exports = router
+  router.route('/users/:user_id/metadata/:metadata_id')
+    .all(requireOwner)
+    .get(getMetadata)
+    .put(putMetadata)
+    .delete(deleteMetadata)
+
+  return router
+}
+
+module.exports = metadataRoutes

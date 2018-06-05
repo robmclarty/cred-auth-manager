@@ -19,7 +19,8 @@ module.exports = opts => {
   if (opts.refreshExpiresIn) process.env['REFRESH_EXPIRES_IN'] = opts.refreshExpiresIn
   if (opts.resetSecret) process.env['RESET_SECRET'] = opts.resetSecret
 
-  const app = require('./server')
+  const createApp = require('./server')
+  const app = createApp(opts.express)
 
   app.connect = dir => buildModels(dir, opts.database, dialect)
     .then(models => models.sequelize.sync())

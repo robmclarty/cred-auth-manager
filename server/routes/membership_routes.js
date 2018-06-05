@@ -1,17 +1,21 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
 const { requireOwner } = require('../middleware/basic_permissions')
 const {
   postMemberships,
   deleteMembership
 } = require('../controllers/membership_controller')
 
-router.route('/groups/:group_id/users')
-  .post(requireOwner, postMemberships)
+const membershipRoutes = express => {
+  const router = express.Router()
 
-router.route('/groups/:group_id/users/:user_id')
-  .delete(requireOwner, deleteMembership)
+  router.route('/groups/:group_id/users')
+    .post(requireOwner, postMemberships)
 
-module.exports = router
+  router.route('/groups/:group_id/users/:user_id')
+    .delete(requireOwner, deleteMembership)
+
+  return router
+}
+
+module.exports = membershipRoutes
