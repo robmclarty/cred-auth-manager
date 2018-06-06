@@ -56,11 +56,22 @@ const createApp = customExpress => {
   // 2. authenticated routes/middleware (all subsequent routes/middleware will
   // be required to have a valid auth token), and 3. error handling middleware.
 
+  app.publicMiddleware = () => app.use('/', [
+    require('./routes/public_routes')(express)
+  ])
+
   // Unauthenticated routes.
   app.loginMiddleware = () => app.use('/', [
     require('./routes/token_routes')(express),
-    //require('./routes/password_reset_routes')(express),
-    require('./routes/public_routes')(express)
+    //require('./routes/password_reset_routes')(express)
+  ])
+
+  app.registerMiddleware = () => app.use('/', [
+    require('./routes/register_routes')(express)
+  ])
+
+  app.adminMiddleware = () => app.use('/', [
+    require('./routes/admin_routes')(express)
   ])
 
   // All API routes require a valid token and an active user account.

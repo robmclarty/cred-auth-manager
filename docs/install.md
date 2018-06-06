@@ -131,21 +131,22 @@ Same process as for the refresh token, but create a new, different, secret.
 ## 7. Create your app
 
 Note that cred-auth-manager returns an Express app so you don't need to include
-Express in your own app.
-
-TODO: Maybe pass in Express as a parameter to cred-auth-manager to give more
-fine-grained control to the user?
+Express in your own app. But if you would like to use a specific version of
+Express other than the one included with cred-auth-manager, you can pass in
+you Express instance as a parameter.
 
 Example bare-bones app:
 
 ```javascript
 const PORT = process.env.PORT || 3000
 
+const express = require('express') // optional
 const credAuthManager = require('cred-auth-manager')
 const bodyParser = require('body-parser')
 const dbConfig = require('../config/database.js')
 
 const app = credAuthManager({
+  express, // optional
   issuer: 'phone-disruptor-cloud',
   database: dbConfig.url,
   accessPrivKey: process.env.ACCESS_PRIVATE_KEY || './config/keys/access_private.pem',
