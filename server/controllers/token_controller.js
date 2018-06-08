@@ -21,7 +21,7 @@ const postTokens = (req, res, next) => {
   if (req.credProfile) data.profile = req.credProfile
 
   res.json(Object.assign({
-    success: true,
+    ok: true,
     message: 'Tokens generated successfully',
   }, data))
 }
@@ -32,12 +32,12 @@ const postTokens = (req, res, next) => {
 const putTokens = (req, res, next) => {
   cred.refresh(req.cred.token)
     .then(freshTokens => res.json({
-      success: true,
+      ok: true,
       message: 'Tokens refreshed',
       tokens: freshTokens
     }))
     .catch(err => next(createError({
-      success: false,
+      ok: false,
       status: UNAUTHORIZED,
       message: err
     })))
@@ -52,7 +52,7 @@ const deleteToken = (req, res, next) => {
 
   // Don't allow non-admin users to revoke other users' tokens.
   if (req.body.token && !req.cred.payload.isAdmin) return next(createError({
-    success: false,
+    ok: false,
     status: FORBIDDEN,
     message: 'You are not authorized to revoke this token.'
   }))
@@ -64,12 +64,12 @@ const deleteToken = (req, res, next) => {
 
   cred.revoke(token)
     .then(revokedToken => res.json({
-      success: true,
+      ok: true,
       message: 'Token revoked',
       token: revokedToken
     }))
     .catch(err => next(createError({
-      success: false,
+      ok: false,
       status: UNAUTHORIZED,
       message: err
     })))

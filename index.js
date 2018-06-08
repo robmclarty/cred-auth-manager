@@ -1,6 +1,6 @@
 'use strict'
 
-const buildModels = require('./model_builder')
+const buildModels = require('server/helpers/model_builder')
 const cwd = process.cwd()
 
 module.exports = opts => {
@@ -23,7 +23,12 @@ module.exports = opts => {
   const app = createApp(opts.express)
 
   app.connect = dir => buildModels(dir, opts.database, dialect)
-    .then(models => models.sequelize.sync())
+    .then(models => {
+      // Attach models to app instance for use throughout the app.
+      app.models = models
+
+      return models.sequelize.sync()
+    })
 
   return app
 }

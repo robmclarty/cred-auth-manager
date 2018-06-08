@@ -63,7 +63,7 @@ const postUsers = (req, res, next) => {
       user
     )
     .then(user => res.json({
-      success: true,
+      ok: true,
       message: 'User created',
       user
     }))
@@ -78,7 +78,7 @@ const postRegister = (req, res, next) => {
 
   User.create(props)
     .then(user => res.json({
-      success: true,
+      ok: true,
       message: 'Registration successful',
       user
     }))
@@ -125,7 +125,7 @@ const getUsers = (req, res, next) => {
       ))
 
       return res.json({
-        success: true,
+        ok: true,
         message: 'Users found',
         users: usersWithFriends
       })
@@ -139,7 +139,7 @@ const getUser = (req, res, next) => {
 
   findUserById(userId)
     .then(user => res.json({
-      success: true,
+      ok: true,
       message: 'User found',
       user
     }))
@@ -163,7 +163,7 @@ const putUser = (req, res, next) => {
       user
     )
     .then(user => res.json({
-      success: true,
+      ok: true,
       message: 'User updated',
       user
     }))
@@ -178,7 +178,7 @@ const deleteUser = (req, res, next) => {
   findUserById(userId)
     .then(user => user.destroy())
     .then(() => res.json({
-      success: true,
+      ok: true,
       message: 'User deleted'
     }))
     .catch(next)
@@ -204,7 +204,7 @@ const getPermissions = (req, res, next) => {
         []
 
       res.json({
-        success: true,
+        ok: true,
         message: 'Permissions found',
         actions
       })
@@ -234,7 +234,7 @@ const postPermissions = (req, res, next) => {
       return user.updatePermission(resource, actions)
     })
     .then(permission => res.json({
-      success: true,
+      ok: true,
       message: 'Permission saved',
       actions: permission.actions
     }))
@@ -258,7 +258,7 @@ const deletePermissions = (req, res, next) => {
       return user.deletePermission(resourceName)
     })
     .then(permission => res.json({
-      success: true,
+      ok: true,
       message: 'Permissions removed'
     }))
     .catch(next)

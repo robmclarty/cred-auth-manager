@@ -19,7 +19,7 @@ const postResources = (req, res, next) => {
 
   Resource.create(req.body)
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Resource created',
       resource
     }))
@@ -30,7 +30,7 @@ const postResources = (req, res, next) => {
 const getResources = (req, res, next) => {
   Resource.findAll()
     .then(resources => res.json({
-      success: true,
+      ok: true,
       message: 'Resources found',
       resources
     }))
@@ -43,7 +43,7 @@ const getResource = (req, res, next) => {
 
   findResourceById(resourceId)
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Resource found',
       resource
     }))
@@ -57,7 +57,7 @@ const putResource = (req, res, next) => {
   findResourceById(resourceId)
     .then(resource => resource.update(req.body))
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Resource updated',
       resource
     }))
@@ -73,7 +73,7 @@ const deleteResource = (req, res, next) => {
   findResourceById(resourceId)
     .then(resource => resource.destroy())
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Resource deleted'
     }))
     .catch(next)
@@ -85,7 +85,7 @@ const getActions = (req, res, next) => {
 
   findResourceById(resourceId)
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Actions found',
       actions: resource.actions
     }))
@@ -109,7 +109,7 @@ const putActions = (req, res, next) => {
       return resource.save()
     })
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Actions updated',
       actions: resource.actions
     }))
@@ -135,7 +135,7 @@ const deleteActions = (req, res, next) => {
       return resource.save()
     })
     .then(resource => res.json({
-      success: true,
+      ok: true,
       message: 'Actions removed',
       actions: resource.actions
     }))
