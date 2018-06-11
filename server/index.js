@@ -8,7 +8,7 @@ const config = require('../config/server')
 
 // Express App
 // -----------
-const createApp = customExpress => {
+const createApp = (customExpress, useStatic = false) => {
   // If an express reference was passed as a parameter, use that, otherwise use
   // the built-in express defined in cred-auth-manager's package.json.
   const express = customExpress ? customExpress : require('express')
@@ -38,8 +38,7 @@ const createApp = customExpress => {
   app.disable('x-powered-by')
 
   // Server static assets from /build folder.
-  // TODO: Make optional so user can serve static files themselves through nginx or apache.
-  app.use(express.static(`${ __dirname }/../build`))
+  if (useStatic) app.use(express.static(`${ __dirname }/../build`))
 
   // Logs
   // ----
