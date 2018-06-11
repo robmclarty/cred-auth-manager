@@ -1,6 +1,6 @@
 'use strict'
 
-const buildModels = require('server/helpers/model_builder')
+const buildModels = require('./server/helpers/model_builder')
 const cwd = process.cwd()
 
 module.exports = opts => {
