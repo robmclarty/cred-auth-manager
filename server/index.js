@@ -84,6 +84,7 @@ const createApp = (customExpress, useStatic = false) => {
 
   // Friendships
   app.friendshipMiddleware = () => app.use('/', [
+    require('./routes/friend_routes')(express)
     require('./routes/friendship_routes')(express)
   ])
 
