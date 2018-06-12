@@ -1,3 +1,13 @@
+# Install
+
+Install cred-auth-manager as a module into your existing app is easy. This
+method enables you to create one, single, server application, but augment it
+with auth features that you don't need to write yourself.
+
+Essentially what needs to happen is prepare your database with the necessary
+tables, configure keys for generating tokens, and apply the desired middleware
+in your Express-based application where you see fit.
+
 
 ## 1. Install Dependencies
 
