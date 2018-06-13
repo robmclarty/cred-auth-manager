@@ -32,7 +32,4 @@ const createApp = opts => {
   return app
 }
 
-module.exports = {
-  createApp,
-  buildModels
-}
+module.exports = createApp
