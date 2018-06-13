@@ -344,6 +344,9 @@ const UserSchema = function (sequelize, DataTypes) {
       filterProps
     },
     instanceMethods: {
+      hashPassword: function (password) {
+        return hashPassword(password)
+      },
       verifyPassword: function (password) {
         return verifyPassword(password, this.password)
       },
