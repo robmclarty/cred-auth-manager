@@ -9,9 +9,8 @@ const {
   BANNED,
   FRIENDSHIP_STATUSES
 } = require('../constants/friendship_status')
-const { Friendship, User, Metadata } = require('../models')
 
-const findFriendshipById = id => Friendship.findById(id).then(friendship => {
+const findFriendshipById = (Friendship, id) => Friendship.findById(id).then(friendship => {
   if (!friendship) throw createError({
     status: NOT_FOUND,
     message: `No friendship found with the id '${ id }'`
@@ -20,7 +19,7 @@ const findFriendshipById = id => Friendship.findById(id).then(friendship => {
   return friendship
 })
 
-const findLinkedFriendships = (userId, friendId) => Promise.all([
+const findLinkedFriendships = (Friendship, userId, friendId) => Promise.all([
   Friendship.findOne({
     where: {
       userId,
@@ -37,7 +36,7 @@ const findLinkedFriendships = (userId, friendId) => Promise.all([
 
 // Take an array of email addresses and return an array of user ids which
 // correspond to user accounts containing matching email addresses.
-const getUserIdsFromEmails = emails => User.findAll({
+const getUserIdsFromEmails = (User, emails) => User.findAll({
   where: {
     email: {
       $or: emails
@@ -47,7 +46,7 @@ const getUserIdsFromEmails = emails => User.findAll({
 
 // Take an array of usernames and return an array of user ids which
 // correspond to user accounts containing matching usernames.
-const getUserIdsFromUsernames = usernames => User.findAll({
+const getUserIdsFromUsernames = (User, usernames) => User.findAll({
   where: {
     username: {
       $or: usernames
@@ -61,21 +60,24 @@ const getUserIdsFromUsernames = usernames => User.findAll({
 // friendships pointing back towards the user.
 
 // Find users based on *either* `userIds`, `emails`, or `usernames` exclusively.
-const getUserIds = ({ userIds = [], emails = [], usernames = [] }) => {
+const getUserIds = ({ User, userIds = [], emails = [], usernames = [] }) => {
   return emails.length > 0 ?
-    getUserIdsFromEmails(emails) :
+    getUserIdsFromEmails(User, emails) :
     usernames.length > 0 ?
-      getUserIdsFromUsernames(usernames) :
+      getUserIdsFromUsernames(User, usernames) :
       userIds
 }
 
 // TODO: create a MUTUAL friendship (i.e., 2 ACCEPTED friendships in both directions)
 const createMutualFriendships = ({
+  models,
   userId,
   userIds = [],
   emails = [],
   usernames = []
 }) => {
+  const { Friendship, User, Metadata } = models
+
   if (!userId || (!userIds && !emails && !usernames)) return false
 
   const isFriend = id => friendship => friendship.friendId === id
@@ -84,7 +86,7 @@ const createMutualFriendships = ({
 
   return Promise.all([
     Friendship.findAll({ where: { userId } }),
-    getUserIds({ userIds, emails, usernames })
+    getUserIds({ User, userIds, emails, usernames })
   ])
     .then(([friendships, friendIds]) => Promise.all([
       friendIds.filter(newFriends(friendships)),
@@ -171,7 +173,7 @@ const createMutualFriendships = ({
 // Get a filtered version of userFriendships which only includes those
 // friendships which are also held in otherFriendships in reverse (i.e.,
 // others who are also friends with user.
-const getMutualFriendships = userId => {
+const getMutualFriendships = (Friendship, userId) => {
   const isMutualFriend = friendship => otherFriendship => {
     return friendship.friendId === otherFriendship.userId
   }
@@ -204,7 +206,9 @@ const getMutualFriendships = userId => {
     })
 }
 
-const changeFriendshipStatus = (userId, friendId, newStatus) => new Promise((resolve, reject) => {
+const changeFriendshipStatus = (models, userId, friendId, newStatus) => new Promise((resolve, reject) => {
+  const { Friendship, User, Metadata } = models
+
   if (!userId) return reject('No userId provided')
   if (!friendId) return reject('No friendId provided')
   if (!newStatus) return reject('No status provided')
@@ -271,33 +275,37 @@ const changeFriendshipStatus = (userId, friendId, newStatus) => new Promise((res
 
 // Helper function for retrieving sent and received pending friendships (aka
 // "friend requests").
-const findSentReceivedFriendships = userId => Promise.all([
-  Friendship.findAll({
-    where: {
-      friendId: userId,
-      status: REQUESTED
-    },
-    include: [{
-      model: User,
-      attributes: ['id', 'username'],
-      include: [Metadata]
-    }],
-    order: [['updatedAt', 'DESC']]
-  }),
-  Friendship.findAll({
-    where: {
-      userId,
-      status: REQUESTED
-    },
-    include: [{
-      model: User,
-      as: 'friend',
-      attributes: ['id', 'username'],
-      include: [Metadata]
-    }],
-    order: [['updatedAt', 'DESC']]
-  })
-])
+const findSentReceivedFriendships = (models, userId) => {
+  const { Friendship, User, Metadata } = models
+
+  return Promise.all([
+    Friendship.findAll({
+      where: {
+        friendId: userId,
+        status: REQUESTED
+      },
+      include: [{
+        model: User,
+        attributes: ['id', 'username'],
+        include: [Metadata]
+      }],
+      order: [['updatedAt', 'DESC']]
+    }),
+    Friendship.findAll({
+      where: {
+        userId,
+        status: REQUESTED
+      },
+      include: [{
+        model: User,
+        as: 'friend',
+        attributes: ['id', 'username'],
+        include: [Metadata]
+      }],
+      order: [['updatedAt', 'DESC']]
+    })
+  ])
+}
 
 module.exports = {
   findFriendshipById,

@@ -19,7 +19,7 @@ const {
   findLinkedFriendships,
   createMutualFriendships,
   getMutualFriendships,
-  updateFriendshipStatus,
+  changeFriendshipStatus,
   findSentReceivedFriendships
 } = require('../helpers/friend_helper')
 
@@ -29,7 +29,13 @@ const postFriends = (req, res, next) => {
   const emails = req.body.emails || []
   const usernames = req.body.usernames || []
 
-  createMutualFriendships({ userId, userIds, emails, usernames })
+  createMutualFriendships({
+    models: req.app.models,
+    userId,
+    userIds,
+    emails,
+    usernames
+  })
     .then(friendships => res.json({
       ok: true,
       message: 'Friendships created',
@@ -39,7 +45,10 @@ const postFriends = (req, res, next) => {
 }
 
 const getFriends = (req, res, next) => {
-  getMutualFriendships(req.params.user_id)
+  const { Friendship } = req.app.models
+  const userId = req.params.user_id
+
+  getMutualFriendships(Friendship, userId)
     .then(friendships => res.json({
       ok: true,
       message: 'Found user friends',
@@ -49,10 +58,11 @@ const getFriends = (req, res, next) => {
 }
 
 const getFriendship = (req, res, next) => {
+  const { Friendship } = req.app.models
   const userId = req.params.user_id
   const friendId = req.params.friend_id
 
-  findLinkedFriendships(userId, friendId)
+  findLinkedFriendships(Friendship, userId, friendId)
     .then(([userFriendship, friendFriendship]) => res.json({
       ok: true,
       message: 'Friendships found.',
@@ -82,7 +92,7 @@ const deleteFriendship = (req, res, next) => {
 const getPendingFriends = (req, res, next) => {
   const userId = req.params.user_id
 
-  findSentReceivedFriendships(userId)
+  findSentReceivedFriendships(req.app.models, userId)
     .then(([sentFriendships, receivedFriendships]) => res.json({
       ok: true,
       message: 'User friendships found',
@@ -106,7 +116,7 @@ const updateFriendStatus = newStatus => (req, res, next) => {
   const userId = req.params.user_id
   const friendId = req.params.friend_id
 
-  updateFriendshipStatus(userId, friendId, newStatus)
+  changeFriendshipStatus(req.app.models, userId, friendId, newStatus)
     .then(friendship => res.json({
       ok: true,
       message: `Friendship status updated to '${ newStatus }'`,

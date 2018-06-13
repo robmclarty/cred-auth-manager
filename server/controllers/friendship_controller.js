@@ -50,7 +50,13 @@ const postFriendships = (req, res, next) => {
   const emails = req.body.emails || []
   const usernames = req.body.usernames || []
 
-  createMutualFriendships({ userId, userIds, emails, usernames })
+  createMutualFriendships({
+    models: req.app.models,
+    userId,
+    userIds,
+    emails,
+    usernames
+  })
     .then(friendships => res.json({
       ok: true,
       message: 'User friendships created',
@@ -60,7 +66,10 @@ const postFriendships = (req, res, next) => {
 }
 
 const getFriendship = (req, res, next) => {
-  findFriendshipById(req.params.friendship_id)
+  const { Friendship } = req.app.models
+  const friendshipId = req.params.friendship_id
+
+  findFriendshipById(Friendship, friendshipId)
     .then(friendship => res.json({
       ok: true,
       message: 'Friendship found',
@@ -110,7 +119,7 @@ const updateFriendshipStatus = newStatus => (req, res, next) => {
   const userId = req.params.user_id
   const friendId = req.params.friend_id
 
-  changeFriendshipStatus(userId, friendId, newStatus)
+  changeFriendshipStatus(req.app.models, userId, friendId, newStatus)
     .then(friendship => res.json({
       ok: true,
       message: `Friendship status updated to '${ newStatus }'`,
