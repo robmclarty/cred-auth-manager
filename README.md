@@ -62,9 +62,11 @@ You can use cred-auth-manager in three different ways:
 ### NPM Module
 
 ```javascript
-const credAuthManager = require('cred-auth-manager')
+const express = require('express')
+const createApp = require('cred-auth-manager')
 
-const app = credAuthManager({
+const app = createApp({
+  express,
   issuer: 'my-app-name',
   database: 'postgres://localhost:5432/my-db-name',
   accessPrivKey: '/path/to/private/key',
