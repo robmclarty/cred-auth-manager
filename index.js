@@ -3,7 +3,7 @@
 const buildModels = require('./server/helpers/model_builder')
 const cwd = process.cwd()
 
-module.exports = opts => {
+const createApp = opts => {
   const dialect = opts.dialect || 'postgres'
 
   process.env['ISSUER'] = opts.issuer
@@ -19,8 +19,7 @@ module.exports = opts => {
   if (opts.refreshExpiresIn) process.env['REFRESH_EXPIRES_IN'] = opts.refreshExpiresIn
   if (opts.resetSecret) process.env['RESET_SECRET'] = opts.resetSecret
 
-  const createApp = require('./server')
-  const app = createApp(opts.express)
+  const app = require('./server')(opts.express)
 
   app.connect = dir => buildModels(dir, opts.database, dialect)
     .then(models => {
@@ -31,4 +30,9 @@ module.exports = opts => {
     })
 
   return app
+}
+
+module.exports = {
+  createApp,
+  buildModels
 }

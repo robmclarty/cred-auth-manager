@@ -13,7 +13,7 @@ const getModelFiles = dir => fs.readdirSync(dir)
 const modelBuilder = (customDir, url, dialect) => new Promise((resolve, reject) => {
   const sequelize = new Sequelize(url, { dialect, logging: false })
   const models = {}
-  const customFiles = getModelFiles(customDir)
+  const customFiles = customDir ? getModelFiles(customDir) : []
   const coreFiles = getModelFiles('./server/models')
   const files = [...customFiles, ...coreFiles]
 
