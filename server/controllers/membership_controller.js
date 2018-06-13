@@ -1,13 +1,12 @@
 'use strict'
 
-const { User, Group, Membership } = require('../models')
 const {
   createError,
   BAD_REQUEST,
   NOT_FOUND
 } = require('../helpers/error_helper')
 
-const findMembershipByGroupId = id => Membership.findOne({
+const findMembershipByGroupId = (models, id) => models.Membership.findOne({
   where: { groupId: id }
 }).then(membership => {
   if (!membership) throw createError({
@@ -23,6 +22,7 @@ const findMembershipByGroupId = id => Membership.findOne({
 // Takes an array of user IDs in the body and creates associations between those
 // users and the group (i.e., it create "memberships" for that group).
 const postMemberships = (req, res, next) => {
+  const { Group, Membership } = req.app.models
   const memberIds = req.body.contact_ids || []
 
   Group.findById(req.params.group_id)
@@ -49,6 +49,7 @@ const postMemberships = (req, res, next) => {
 // DELETE /groups/:group_id/users/:user_id
 // Takes the user ID from the parameters and removes its membership from the group.
 const deleteMembership = (req, res, next) => {
+  const { Membership } = require('../models')
   // This is simply to determine which route is being used to call this function.
   // The old API uses `contact_id` whereas the new one uses `user_id`.
   const userId = req.params.contact_id ?

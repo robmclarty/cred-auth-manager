@@ -1,15 +1,14 @@
 'use strict'
 
-const { User, Group, Membership } = require('../models')
 const {
   createError,
   BAD_REQUEST,
   NOT_FOUND
 } = require('../helpers/error_helper')
 
-const findGroupById = id => Group.findById(id, {
+const findGroupById = (models, id) => models.Group.findById(id, {
   include: [{
-    model: User,
+    model: models.User,
     as: 'members'
   }]
 })
@@ -22,14 +21,16 @@ const findGroupById = id => Group.findById(id, {
     return group
   })
 
-const createGroup = (userId, name) => Group.create({
+const createGroup = (models, userId, name) => models.Group.create({
   userId,
   name
 }, {
-  include: [User]
+  include: [models.User]
 })
 
 const getGroups = (req, res, next) => {
+  const { User, Group } = req.app.models
+
   Group.findAll({
     include: [{
       model: User,
@@ -48,6 +49,7 @@ const getGroups = (req, res, next) => {
 //
 // TODO: deprecate `group_contacts` param
 const postGroups = (req, res, next) => {
+  const { Group, Membership } = req.app.models
   const requestedMemberIds = req.body.memberIds || req.body.group_contacts || []
   const userId = req.body.userId
   const groupName = req.body.name
@@ -55,7 +57,7 @@ const postGroups = (req, res, next) => {
   // Ensure the owner is always in the membership.
   if (!requestedMemberIds.includes(userId)) requestedMemberIds.push(userId)
 
-  createGroup(userId, groupName)
+  createGroup(req.app.models, userId, groupName)
     .then(group => Promise.all([
       group,
       Membership.bulkCreate(requestedMemberIds.map(userId => ({
@@ -64,7 +66,7 @@ const postGroups = (req, res, next) => {
       })))
     ]))
     .then(([group, memberships]) => Promise.all([
-      findGroupById(group.id), // reload group to populate members
+      findGroupById(req.app.models, group.id), // reload group to populate members
       memberships.map(m => m.userId)
     ]))
     .then(([group, memberIds]) => res.json({
@@ -80,7 +82,7 @@ const postGroups = (req, res, next) => {
 const getGroup = (req, res, next) => {
   const groupId = req.params.group_id
 
-  findGroupById(groupId)
+  findGroupById(req.app.models, groupId)
     .then(group => res.json({
       ok: true,
       message: 'Group found',
@@ -107,11 +109,12 @@ const getGroup = (req, res, next) => {
 //
 // PUT /groups/:group_id
 const putGroup = (req, res, next) => {
+  const { Membership } = req.app.models
   const requestedMemberIds = req.body.memberIds || req.body.contact_ids || []
   const groupId = req.params.group_id
   const groupName = req.body.name || req.body.group_name
 
-  findGroupById(groupId)
+  findGroupById(req.app.models, groupId)
     .then(group => !groupName ? group : group.update({ name: groupName }))
     .then(group => Promise.all([
       group,
@@ -150,7 +153,7 @@ const putGroup = (req, res, next) => {
 const deleteGroup = (req, res, next) => {
   const groupId = req.params.group_id
 
-  findGroupById(groupId)
+  findGroupById(req.app.models, groupId)
     .then(group => group.destroy())
     .then(() => res.json({
       ok: true,
@@ -161,6 +164,7 @@ const deleteGroup = (req, res, next) => {
 
 // GET /users/:user_id/groups
 const getUserGroups = (req, res, next) => {
+  const { User, Group } = req.app.models
   const userId = req.params.user_id
 
   User.findById(userId, {
@@ -196,6 +200,7 @@ const getUserGroups = (req, res, next) => {
 // TODO: deprecate `group_contacts` param
 // TODO: deprecate `group_name` param
 const postUserGroups = (req, res, next) => {
+  const { User, Membership } = req.app.models
   const requestedMemberIds = req.body.memberIds || req.body.group_contacts || []
   const userId = req.params.user_id
   const groupName = req.body.name || req.body.group_name
@@ -210,7 +215,7 @@ const postUserGroups = (req, res, next) => {
         message: `No user with id '${ userId }'`
       })
 
-      return createGroup(userId, groupName)
+      return createGroup(req.app.models, userId, groupName)
     })
     .then(group => Promise.all([
       group,

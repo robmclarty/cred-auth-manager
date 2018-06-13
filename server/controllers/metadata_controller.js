@@ -1,15 +1,14 @@
 'use strict'
 
-const { User, Metadata } = require('../models')
 const {
   createError,
   BAD_REQUEST,
   NOT_FOUND
 } = require('../helpers/error_helper')
 
-const findMetadataById = id => Metadata.findById(id, {
+const findMetadataById = (models, id) => models.Metadata.findById(id, {
   include: [{
-    model: User,
+    model: models.User,
     as: 'members',
     attributes: ['id']
   }]
@@ -23,15 +22,17 @@ const findMetadataById = id => Metadata.findById(id, {
     return metadata
   })
 
-const createMetadata = (userId, name, value) => Metadata.create({
+const createMetadata = (models, userId, name, value) => models.Metadata.create({
   userId,
   name,
   value
 }, {
-  include: [User]
+  include: [models.User]
 })
 
-const findUserById = id => User.findById(id, { include: [Metadata] })
+const findUserById = (models, id) => models.User.findById(id, {
+  include: [models.Metadata]
+})
   .then(user => {
     if (!user) throw createError({
       status: NOT_FOUND,

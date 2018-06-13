@@ -21,13 +21,16 @@ const createApp = opts => {
 
   const app = require('./server')(opts.express)
 
-  app.connect = dir => buildModels(dir, opts.database, dialect)
-    .then(models => {
-      // Attach models to app instance for use throughout the app.
-      app.models = models
+  app.connect = dir => {
+    app.models = buildModels(dir, opts.database, dialect)
 
-      return models.sequelize.sync()
-    })
+    // .then(models => {
+      //console.log('prepped models: ', models)
+      // Attach models to app instance for use throughout the app.
+      //app.models = models
+
+    return app.models.sequelize.sync()
+  }
 
   return app
 }

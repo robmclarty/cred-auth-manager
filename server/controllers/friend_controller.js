@@ -15,7 +15,6 @@ const {
   BANNED,
   FRIENDSHIP_STATUSES
 } = require('../constants/friendship_status')
-const { Friendship, User, Metadata } = require('../models')
 const {
   findLinkedFriendships,
   createMutualFriendships,
@@ -64,6 +63,8 @@ const getFriendship = (req, res, next) => {
 }
 
 const deleteFriendship = (req, res, next) => {
+  const { Friendship } = req.app.models
+
   Friendship.findOne({
     where: {
       userId: req.params.user_id,

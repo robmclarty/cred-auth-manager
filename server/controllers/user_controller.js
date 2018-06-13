@@ -1,7 +1,6 @@
 'use strict'
 
 const { createError, BAD_REQUEST, UNPROCESSABLE, NOT_FOUND } = require('../helpers/error_helper')
-const { User, Resource, Permission, Friendship } = require('../models')
 
 const isAuthorizedToWritePermissions = (auth, appName) => {
   const appPermission = auth.permissions[appName]
@@ -13,16 +12,16 @@ const isAuthorizedToWritePermissions = (auth, appName) => {
   )
 }
 
-const findUserById = userId => User.findById(userId, {
+const findUserById = (models, userId) => models.User.findById(userId, {
   include: [
     {
-      model: Permission,
-      include: [Resource]
+      model: models.Permission,
+      include: [models.Resource]
     },
     {
-      model: Friendship,
+      model: models.Friendship,
       include: [{
-        model: User,
+        model: models.User,
         attributes: ['id', 'username'],
         as: 'friend'
       }]
@@ -38,7 +37,7 @@ const findUserById = userId => User.findById(userId, {
     return user
   })
 
-const findResourceByName = resourceName => Resource.findOne({
+const findResourceByName = (Resource, resourceName) => Resource.findOne({
   where: { name: resourceName }
 })
   .then(resource => {
@@ -52,6 +51,7 @@ const findResourceByName = resourceName => Resource.findOne({
 
 // POST /users
 const postUsers = (req, res, next) => {
+  const { User } = req.app.models
   const auth = req.cred.payload
   const canUpdatePermissions = isAuthorizedToWritePermissions(auth, req.app.get('app-name'))
   const permissions = req.body.permissions
@@ -74,6 +74,7 @@ const postUsers = (req, res, next) => {
 // for public-facing signup/registration with the app.
 // POST /registration
 const postRegister = (req, res, next) => {
+  const { User } = req.app.models
   const props = User.filterProps(false, req.body)
 
   User.create(props)
@@ -92,6 +93,8 @@ const postRegisterFacebook = (req, res, next) => {
 }
 
 const getUsers = (req, res, next) => {
+  const { User, Resource, Permission, Friendship } = req.app.models
+
   User.findAll({
     include: [
       {
@@ -137,7 +140,7 @@ const getUsers = (req, res, next) => {
 const getUser = (req, res, next) => {
   const userId = req.params.id
 
-  findUserById(userId)
+  findUserById(req.app.models, userId)
     .then(user => res.json({
       ok: true,
       message: 'User found',
@@ -150,13 +153,14 @@ const getUser = (req, res, next) => {
 // Only allow updating of specific fields, check for their existence explicitly,
 // and strip any html tags from String fields to mitigate XSS attacks.
 const putUser = (req, res, next) => {
+  const { User } = req.app.models
   const auth = req.cred.payload
   const canUpdatePermissions = isAuthorizedToWritePermissions(auth, req.app.get('app-name'))
   const userId = req.params.id
   const permissions = req.body.permissions
   const props = User.filterProps(auth.isAdmin, req.body)
 
-  findUserById(userId)
+  findUserById(req.app.models, userId)
     .then(user => user.update(props))
     .then(user => canUpdatePermissions ?
       user.updatePermissions(permissions) :
@@ -175,7 +179,7 @@ const putUser = (req, res, next) => {
 const deleteUser = (req, res, next) => {
   const userId = req.params.id
 
-  findUserById(userId)
+  findUserById(req.app.models, userId)
     .then(user => user.destroy())
     .then(() => res.json({
       ok: true,
@@ -189,7 +193,7 @@ const getPermissions = (req, res, next) => {
   const userId = req.params.id
   const resourceName = req.params.resource_name
 
-  findUserById(userId)
+  findUserById(req.app.models, userId)
     .then(user => user.toJSON())
     .then(user => {
       if (!user.permissions[resourceName]) throw createError({
@@ -214,6 +218,7 @@ const getPermissions = (req, res, next) => {
 
 // POST /users/:id/permissions/:resource_name
 const postPermissions = (req, res, next) => {
+  const { Resource } = req.app.models
   const userId = req.params.id
   const resourceName = req.params.resource_name
   const actions = req.body.actions
@@ -224,8 +229,8 @@ const postPermissions = (req, res, next) => {
   }))
 
   Promise.all([
-    findUserById(userId),
-    findResourceByName(resourceName)
+    findUserById(req.app.models, userId),
+    findResourceByName(Resource, resourceName)
   ])
     .then(userAndResource => {
       const user = userAndResource[0]
@@ -249,7 +254,7 @@ const deletePermissions = (req, res, next) => {
   const userId = req.params.id
   const resourceName = req.params.resource_name
 
-  findUserById(userId)
+  findUserById(req.app.models, userId)
     .then(user => {
       const userJson = user.toJSON()
 

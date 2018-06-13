@@ -1,9 +1,8 @@
 'use strict'
 
 const { createError, BAD_REQUEST, CONFLICT, NOT_FOUND } = require('../helpers/error_helper')
-const { Resource } = require('../models')
 
-const findResourceById = resourceId => Resource.findById(resourceId)
+const findResourceById = (Resource, resourceId) => Resource.findById(resourceId)
   .then(resource => {
     if (!resource) throw createError({
       status: NOT_FOUND,
@@ -15,6 +14,7 @@ const findResourceById = resourceId => Resource.findById(resourceId)
 
 // POST /resources
 const postResources = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceName = req.body.name
 
   Resource.create(req.body)
@@ -28,6 +28,8 @@ const postResources = (req, res, next) => {
 
 // GET /resources
 const getResources = (req, res, next) => {
+  const { Resource } = req.app.models
+
   Resource.findAll()
     .then(resources => res.json({
       ok: true,
@@ -39,9 +41,10 @@ const getResources = (req, res, next) => {
 
 // GET /resources/:id
 const getResource = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => res.json({
       ok: true,
       message: 'Resource found',
@@ -52,9 +55,10 @@ const getResource = (req, res, next) => {
 
 // PUT /resources/:id
 const putResource = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => resource.update(req.body))
     .then(resource => res.json({
       ok: true,
@@ -68,9 +72,10 @@ const putResource = (req, res, next) => {
 // TODO: when deleting an resource, also cycle through all users and remove any
 // references to the deleted resource from their permissions.
 const deleteResource = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => resource.destroy())
     .then(resource => res.json({
       ok: true,
@@ -81,9 +86,10 @@ const deleteResource = (req, res, next) => {
 
 // GET /resources/:id/actions
 const getActions = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => res.json({
       ok: true,
       message: 'Actions found',
@@ -94,6 +100,7 @@ const getActions = (req, res, next) => {
 
 // PUT /resources/:id/actions
 const putActions = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
   const actions = req.body.actions
 
@@ -102,7 +109,7 @@ const putActions = (req, res, next) => {
     message: 'No actions were provided to be added'
   }))
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => {
       resource.addActions(actions)
 
@@ -120,6 +127,7 @@ const putActions = (req, res, next) => {
 // Requires a variable called "actions" which is an array of strings sent in the
 // body containing a list of actions to be removed.
 const deleteActions = (req, res, next) => {
+  const { Resource } = req.app.models
   const resourceId = req.params.id
   const actions = req.body.actions
 
@@ -128,7 +136,7 @@ const deleteActions = (req, res, next) => {
     message: 'No actions were provided to be deleted'
   }))
 
-  findResourceById(resourceId)
+  findResourceById(Resource, resourceId)
     .then(resource => {
       resource.removeActions(actions)
 

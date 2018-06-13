@@ -10,19 +10,21 @@ const getModelFiles = dir => fs.readdirSync(dir)
 
 // Take an array of sequelize model files and load/init them with sequelize and
 // return an object containing each model as an attribute.
-const modelBuilder = (customDir, url, dialect) => new Promise((resolve, reject) => {
+const modelBuilder = (customDir, url, dialect) => {
+  const coreDir = `${ __dirname }/../models`
+  const customDirExistsAndIsUnique = customDir && customDir !== coreDir
   const sequelize = new Sequelize(url, { dialect, logging: false })
-  const models = {}
-  const customFiles = customDir ? getModelFiles(customDir) : []
-  const coreFiles = getModelFiles(path.resolve('server', 'models'))
+  const customFiles = customDirExistsAndIsUnique ? getModelFiles(customDir) : []
+  const coreFiles = getModelFiles(coreDir)
   const files = [...customFiles, ...coreFiles]
+  const models = {}
 
   files.forEach(file => {
     const model = sequelize.import(file)
 
     models[model.name] = model
 
-    console.log('Loaded model ', model.name)
+    console.log('Loaded model', model.name)
   })
 
   Object.keys(models).forEach(modelName => {
@@ -32,7 +34,7 @@ const modelBuilder = (customDir, url, dialect) => new Promise((resolve, reject) 
   models.sequelize = sequelize
   models.Sequelize = Sequelize
 
-  resolve(models)
-})
+  return models
+}
 
 module.exports = modelBuilder

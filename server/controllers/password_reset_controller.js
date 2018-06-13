@@ -6,7 +6,6 @@
 const { createToken, revoke } = require('../cred')
 const { createError, BAD_REQUEST } = require('../helpers/error_helper')
 const emailHelper = require('../helpers/email_helper')
-const { User } = require('../models')
 const config = require('../../config/server')
 
 // Requires a valid email to be sent in the request body which is used to match
@@ -15,6 +14,7 @@ const config = require('../../config/server')
 // public endpoint cannot be used to confirm if a particular email exists
 // in the database or not.
 function postPasswordReset(req, res, next) {
+  const { User } = req.app.models
   const host = req.get('origin')
   const userEmail = req.body.email
 
@@ -60,7 +60,8 @@ function getPasswordReset(req, res) {
 // Requires a non-blank password in the request body that will be used to change
 // the user account that is associated with the reset-token that is provided.
 function putPasswordReset(req, res, next) {
-  console.log('reset cred: ', req.resetCred)
+  const { User } = req.app.models
+
   User.findById(req.resetCred.userId)
     .then(user => {
       if (!user) throw createError({

@@ -6,7 +6,6 @@ const buildUrl = require('build-url')
 const base64url = require('base64-url')
 const gotCred = require('cred')
 const config = require('../config/server')
-const { User, Permission, Resource } = require('./models')
 
 // Authentication
 // --------------
@@ -35,6 +34,7 @@ const cred = gotCred({
 cred.use('basic', req => {
   const username = String(req.body.username)
   const password = String(req.body.password)
+  const { User, Permission, Resource } = req.app.models
 
   return User.findOne({
     where: { username },
@@ -66,6 +66,7 @@ cred.use('basic', req => {
 // user with that id.
 cred.use('facebook', req => {
   const facebookToken = req.body.facebookToken
+  const { User, Permission, Resource } = req.app.models
 
   if (!facebookToken) throw 'No Facebook access token provided'
 
