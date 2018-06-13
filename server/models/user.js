@@ -321,6 +321,9 @@ const UserSchema = function (sequelize, DataTypes) {
     },
     tableName: 'Users',
     classMethods: {
+      hashPassword: function (password) {
+        return hashPassword(password)
+      },
       associate: models => {
         User.hasMany(models.Permission, { foreignKey: 'userId' })
         User.hasMany(models.Metadata, { foreignKey: 'userId' })
@@ -344,9 +347,6 @@ const UserSchema = function (sequelize, DataTypes) {
       filterProps
     },
     instanceMethods: {
-      hashPassword: function (password) {
-        return hashPassword(password)
-      },
       verifyPassword: function (password) {
         return verifyPassword(password, this.password)
       },
