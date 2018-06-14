@@ -53,7 +53,7 @@ const MetadataSchema = function (sequelize, DataTypes) {
         return toJSON(this.get())
       }
     },
-    timestamps: false
+    timestamps: true
   })
 
   return Metadata
