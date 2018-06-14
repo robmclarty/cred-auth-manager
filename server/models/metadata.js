@@ -3,7 +3,7 @@
 const toJSON = metadata => ({
   id: metadata.id,
   userId: metadata.userId,
-  name: metadata.key,
+  name: metadata.name,
   value: metadata.value,
   createdAt: metadata.createdAt,
   updatedAt: metadata.updatedAt
