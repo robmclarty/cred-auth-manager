@@ -1,7 +1,6 @@
 'use strict'
 
 const buildModels = require('./server/helpers/model_builder')
-const cwd = process.cwd()
 
 const createApp = opts => {
   const dialect = opts.dialect || 'postgres'
@@ -10,8 +9,8 @@ const createApp = opts => {
   process.env['APP_NAME'] = opts.issuer
   process.env['DATABASE'] = opts.database
   process.env['DIALECT'] = dialect
-  process.env['ACCESS_PRIVATE_KEY'] = `${ cwd }/${ opts.accessPrivKey }`
-  process.env['ACCESS_PUBLIC_KEY'] = `${ cwd }/${ opts.accessPubKey }`
+  process.env['ACCESS_PRIVATE_KEY'] = opts.accessPrivKey
+  process.env['ACCESS_PUBLIC_KEY'] = opts.accessPubKey
   process.env['REFRESH_SECRET'] = opts.refreshSecret
   process.env['ASSETS_PATH'] = `${ __dirname }/build`
 
