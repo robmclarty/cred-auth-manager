@@ -24,7 +24,7 @@ const modelBuilder = (customDir, url, dialect) => {
 
     models[model.name] = model
 
-    console.log('Loaded model', model.name)
+    //console.log('Loaded model', model.name)
   })
 
   Object.keys(models).forEach(modelName => {

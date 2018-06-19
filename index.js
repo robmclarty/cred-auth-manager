@@ -1,7 +1,5 @@
 'use strict'
 
-const buildModels = require('./server/helpers/model_builder')
-
 const createApp = opts => {
   const dialect = opts.dialect || 'postgres'
 
@@ -18,18 +16,9 @@ const createApp = opts => {
   if (opts.refreshExpiresIn) process.env['REFRESH_EXPIRES_IN'] = opts.refreshExpiresIn
   if (opts.resetSecret) process.env['RESET_SECRET'] = opts.resetSecret
 
-  const app = require('./server')(opts.express)
+  const app = require('./server')(opts.express, opts.modelsPath)
 
-  app.connect = dir => {
-    app.models = buildModels(dir, opts.database, dialect)
-
-    // .then(models => {
-      //console.log('prepped models: ', models)
-      // Attach models to app instance for use throughout the app.
-      //app.models = models
-
-    return app.models.sequelize.sync()
-  }
+  app.connect = () => app.models.sequelize.sync()
 
   return app
 }

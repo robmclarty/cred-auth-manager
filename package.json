@@ -64,7 +64,7 @@
     "nodemailer-ses-transport": "1.5.1",
     "pg": "6.0.3",
     "redis": "2.6.2",
-    "sequelize": "4.37.10",
+    "sequelize": "3.23.6",
     "sequelize-cli": "2.8.0",
     "validator": "5.5.0"
   },

@@ -1,14 +1,17 @@
 'use strict'
 
+const env = process.env.NODE_ENV || 'development'
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const cred = require('./cred')
 const config = require('../config/server')
+const dbConfig = require('../config/database')[env]
+const buildModels = require('./helpers/model_builder')
 
 // Express App
 // -----------
-const createApp = (customExpress, useStatic = false) => {
+const createApp = (customExpress, dir, useStatic = false) => {
   // If an express reference was passed as a parameter, use that, otherwise use
   // the built-in express defined in cred-auth-manager's package.json.
   const express = customExpress ? customExpress : require('express')
@@ -121,6 +124,9 @@ const createApp = (customExpress, useStatic = false) => {
   app.cred = cred
 
   app.requireRefreshToken = cred.requireRefreshToken
+
+  // Build all Sequelize models and save a reference to them on `app.models`
+  app.models = buildModels(dir, dbConfig.url, dbConfig.dialect)
 
   return app
 }

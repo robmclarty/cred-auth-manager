@@ -58,6 +58,7 @@ cred.use('basic', req => {
       return user.loginUpdate()
     })
     .then(user => user.tokenPayload())
+    .catch(err => console.log('err: ', err))
 })
 
 // Find a user matching `req.body.facebookId`, verify the associated facebook
