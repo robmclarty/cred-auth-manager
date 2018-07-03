@@ -49,16 +49,12 @@ cred.use('basic', req => {
       return user
     })
     .then(user => Promise.all([user, user.verifyPassword(password)]))
-    .then(userMatch => {
-      const user = userMatch[0]
-      const isMatch = userMatch[1]
-
+    .then(([user, isMatch]) => {
       if (!isMatch) throw 'Username or password do not match'
 
       return user.loginUpdate()
     })
     .then(user => user.tokenPayload())
-    .catch(err => console.log('err: ', err))
 })
 
 // Find a user matching `req.body.facebookId`, verify the associated facebook
