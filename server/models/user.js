@@ -50,6 +50,47 @@ const filterProps = (isAdmin, props) => {
   return filteredProps
 }
 
+// `updates` is an array of objects containing attributes named `name` and `value`
+// which are used to find/udpate Metadata associated with this User.
+
+const updateMetadata = async (user, metadatas) => {
+  const { Metadata } = user.sequelize.models
+
+  return await metadatas.map(async metadata => {
+    let m = await Metadata.find({
+      where: {
+        userId: user.id,
+        key: metadata.key
+      }
+    })
+
+    if (!m) {
+      m = await Metadata.create({
+        userId: user.id,
+        name: metadata.name,
+        value: metadata.value
+      })
+    } else {
+      await m.update(metadata)
+    }
+
+    return m
+  })
+}
+
+const deleteMetadata = async (user, names) => {
+  const { Metadata } = user.sequelize.models
+
+  return await names.map(async name => {
+    const m = await Metadata.findOne({ where: { name } })
+
+    // Silently skip names that do not match.
+    if (!m) return
+
+    return m.destroy()
+  })
+}
+
 // If the user already has existing permission for this resource, update
 // the existing permission with the new actions (the valid ones).
 // ...otherwise, create a new permission.
@@ -358,6 +399,12 @@ const UserSchema = function (sequelize, DataTypes) {
       },
       updatePermissions: function (permissions) {
         return updatePermissions(this, permissions)
+      },
+      updateMetadata: function (metadatas) {
+        return updateMetadata(this, metadatas)
+      },
+      deleteMetadata: function (names) {
+        return deleteMetadata(this, names)
       },
       deletePermission: function (resourceName) {
         return deletePermission(this, resourceName)
