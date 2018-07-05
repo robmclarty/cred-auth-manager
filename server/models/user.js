@@ -52,7 +52,6 @@ const filterProps = (isAdmin, props) => {
 
 // `updates` is an array of objects containing attributes named `name` and `value`
 // which are used to find/udpate Metadata associated with this User.
-
 const updateMetadata = async (user, metadatas) => {
   const { Metadata } = user.sequelize.models
 
@@ -400,11 +399,11 @@ const UserSchema = function (sequelize, DataTypes) {
       updatePermissions: function (permissions) {
         return updatePermissions(this, permissions)
       },
-      updateMetadata: function (metadatas) {
-        return updateMetadata(this, metadatas)
+      updateMetadata: async function (metadatas) {
+        return await updateMetadata(this, metadatas)
       },
-      deleteMetadata: function (names) {
-        return deleteMetadata(this, names)
+      deleteMetadata: async function (names) {
+        return await deleteMetadata(this, names)
       },
       deletePermission: function (resourceName) {
         return deletePermission(this, resourceName)
