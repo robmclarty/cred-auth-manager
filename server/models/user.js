@@ -59,7 +59,7 @@ const updateMetadata = async (user, metadatas) => {
     let m = await Metadata.find({
       where: {
         userId: user.id,
-        key: metadata.key
+        name: metadata.name
       }
     })
 
