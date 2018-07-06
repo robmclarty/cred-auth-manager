@@ -164,6 +164,18 @@ const deletePermission = (user, resourceName) => {
     })
 }
 
+// Format email address for system (i.e., all lower case).
+const normalizeEmail = rawEmail => {
+  let email = validator.trim(rawEmail)
+  email = validator.escape(email)
+  email = validator.normalizeEmail(email, {
+    lowercase: true,
+    remove_dots: false,
+    remove_extension: true
+  })
+
+  return email
+}
 
 // TODO: Maybe include this as part of cred rather than defining it here.
 // Format an array of permissions for use in a JWT access token, returning an
@@ -316,13 +328,7 @@ const UserSchema = function (sequelize, DataTypes) {
       set: function (val) {
         if (!val) return this.setDataValue('email', '')
 
-        let email = validator.trim(val)
-        email = validator.escape(email)
-        email = validator.normalizeEmail(email, {
-          lowercase: true,
-          remove_dots: false,
-          remove_extension: true
-        })
+        const email = normalizeEmail(val)
 
         this.setDataValue('email', email)
       }
@@ -363,6 +369,9 @@ const UserSchema = function (sequelize, DataTypes) {
     classMethods: {
       hashPassword: function (password) {
         return hashPassword(password)
+      },
+      normalizeEmail: function (email) {
+        return normalizeEmail(email)
       },
       associate: models => {
         User.hasMany(models.Permission, { foreignKey: 'userId' })
